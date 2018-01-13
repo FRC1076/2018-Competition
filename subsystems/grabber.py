@@ -12,11 +12,13 @@ class Grabber:
 		self.sensor = sensor
 
 	def absorb(self, speed=1.0):
-		pass
+		# @Direction: We might need to reverse the signs
+		self.left_motor.set(speed)
+		self.right_motor.set(-speed)
 
 	def spit(self, speed=1.0):
-		pass
+		self.left_motor.set(-speed)
+		self.right_motor.set(speed)
 
 	def has_cube(self):
-		pass
-		
+		return self.sensor.get()
