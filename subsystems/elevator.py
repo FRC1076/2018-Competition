@@ -11,7 +11,7 @@ class Elevator:
         self.motor = motor
 
     def go_up(self, speed=1.0):
-        pass
+        self.motor.set(speed)
 
     def go_down(self, speed=1.0):
-        pass
+        self.motor.set(-speed)
