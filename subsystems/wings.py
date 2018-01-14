@@ -9,17 +9,18 @@ class Wings:
     def __init__(self, valve_left, valve_right, latch_left, latch_right):
         self.valve_left = valve_left
         self.valve_right = valve_right
+        # @Todo: Actually control the latches?
         self.latch_left = latch_left
         self.latch_right = latch_right
 
     def lower_left(self):
-        self.value_left.set(DoubleSolenoid.Value.kForward)
+        self.valve_left.set(DoubleSolenoid.Value.kForward)
 
     def lower_right(self):
-        self.value_right.set(DoubleSolenoid.Value.kForward)
+        self.valve_right.set(DoubleSolenoid.Value.kForward)
 
     def raise_left(self):
-        self.value_left.set(DoubleSolenoid.Value.kReverse)
+        self.valve_left.set(DoubleSolenoid.Value.kReverse)
 
     def raise_right(self):
-        self.value_right.set(DoubleSolenoid.Value.kReverse)
+        self.valve_right.set(DoubleSolenoid.Value.kReverse)
