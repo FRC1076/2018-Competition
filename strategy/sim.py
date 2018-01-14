@@ -1,0 +1,196 @@
+import random
+from random import *
+
+
+def team_bs():
+    global rpb
+    global force_cubesr, scale_b, power_cubesb
+    global boost_cubesr
+    global score_b, score_r
+    global boost_cubesb
+    
+    power_cubesb = randint(24, 36)
+    scale_b = randint(1, power_cubesb)
+    force_cubesr = 0
+    rpb = 0
+    boost_cubesr = 0
+    power_cubesb = randint(24, 36) 
+    power_cubesr = 60 - power_cubesb
+    boost_cubesb = 0
+    force_cubes = 0
+    score_r = 45    
+    score_b = 45
+    scale_b = randint(3, power_cubesb)
+    power_cubesb = power_cubesb - scale_b
+    switch_b_b = randint(0,power_cubesb)
+    power_cubesb = power_cubesb - switch_b_b
+    switch_r_b = randint(0, power_cubesb)
+    power_cubesb = power_cubesb - switch_r_b 
+    if power_cubesb >= 3:
+        force_cubes = randint(0, 3)
+        if force_cubes == 1 and switch_b_b is False:
+        
+            score_b = score_b + 15    
+            score_r = 10 + score_r
+        if force_cubes == 2 and scale_b is False and scale_r is True:
+            score_b = score_b + 20
+            score_r = score_r - 10
+            if scale_r is False and scale_b is False:
+                score_b = score_b + 10
+        if force_cubes == 3 and switch_b_b or scale_b is False:
+            score_b = score_b + 15
+            if scale_b is False and scale_r is True:
+                score_b = score_b + 10
+                score_r = score_r - 10
+                if scale_b is False and scale_r is False:
+                    score_b = score_b + 10
+            if switch_b_b is False:
+                score_b = score_b + 10
+        power_cubesb - force_cubes == power_cubesb
+    if power_cubesb >= 3:
+        boost_cubesb = randint(0, 3)
+        if boost_cubesb == 1 and switch_b_b is True:
+            score_b = score_b + 15
+        if boost_cubesb == 2 and scale_b is True:
+            score_b = score_b + 20
+        if boost_cubesb == 3 and switch_b_b or scale_b is True:
+            score_b = score_b + 15
+            if scale_b is True:
+                score_b = score_b + 10 
+            if switch_b_b is True:
+                score_b = score_b + 10
+        power_cubesb = power_cubesb - boost_cubesb
+    robo1_blue = randint(1,3)
+    robo2_blue = randint(1,3)
+    robo3_blue = randint(1,3)
+    z = 0
+    if robo1_blue == 1:
+        z = z + 1
+    if robo2_blue == 1:
+        z = z + 1
+    if robo3_blue == 1:
+        z = z + 1
+    if z == 2 and power_cubesb >= 3:
+        score_b = score_b + 105
+        power_cubesb = power_cubesb - 3
+        rpb = rpb + 1
+    if z == 2 and power_cubesb <= 3:
+        score_b = score_b + 60
+    if z == 3:
+        score_b = score_b + 90
+        rpb = rpb + 1
+    if z == 1 and power_cubesb >= 3:
+     score_b = score_b + 75
+     power_cubesb = power_cubesb - 3
+    if z == 1 and power_cubesb <= 3:
+     score_b = score_b + 30
+    if z == 0 and power_cubesb >= 3:
+        score_b = score_b + 45
+        power_cubesb = power_cubesb - 3
+    else:
+        pass
+    
+ 
+    scale_r = randint(3, power_cubesr)
+    power_cubesr = power_cubesr - scale_r
+    switch_r_r = randint(0,power_cubesr)
+    power_cubesr = power_cubesr - switch_r_r
+    switch_b_r = randint(0, power_cubesr)
+    if power_cubesr >= 3:
+        force_cubesr = randint(0, 3)
+        if force_cubesr == 1 and switch_r_r is False:
+            score_r = score_r + 15
+            score_b = score_b - 10
+        if force_cubesr == 2 and scale_r is False and scale_b is True:
+            score_r = score_r + 20
+            score_b = score_b - 10
+            if scale_r is False and scale_b is False:
+                score_r = score_r + 20
+        if force_cubesr == 3 and switch_r_r or scale_r is False:
+            score_r = score_r + 15
+            if scale_r is False and scale_b is True:
+                score_r = score_r + 10
+                score_b = score_b - 10
+            if scale_b is False and scale_r is False:
+                score_r = score_r + 10
+            if switch_r_r is False:
+                score_r = score_r + 10
+        power_cubesr = power_cubesr - force_cubesr
+    if power_cubesr >= 3:
+        boost_cubesr = randint(0, 3)
+        if boost_cubesr == 1 and switch_r_r is True:
+            score_r = score_r + 15
+        if boost_cubesr == 2 and scale_r is True:
+            score_r = score_r + 20
+        if boost_cubesr == 3 and switch_r_r or scale_r is True:
+            score_r = score_r + 15
+            if scale_r is True:
+                score_r = score_r + 10
+            if switch_r_r is True:
+                score_r = score_r + 10
+        power_cubesr = power_cubesr - boost_cubesr
+    robo1_red = randint(1,3)
+    robo2_red = randint(1,3)
+    robo3_red = randint(1,3)
+    zr = 0
+    rpb = 0
+    rpr = 0
+    if robo1_red == 1:
+        zr = zr + 1
+    if robo2_red == 1:
+        zr = zr + 1
+    if robo3_red == 1:
+        zr = zr + 1
+    if zr == 2 and power_cubesr >= 3:
+        score_r = score_r + 105
+        power_cubesr = power_cubesr - 3
+        rpr = rpr + 1
+    if zr == 2 and power_cubesr <= 3:
+        score_r = score_r + 60
+    if zr == 3:
+        score_r = score_r + 90
+        rpr = rpr + 1
+    if zr == 1 and power_cubesr >= 3:
+     score_r = score_r + 75
+     power_cubesr = power_cubesr - 3
+    if zr == 1 and power_cubesr <= 3:
+     score_r = score_r + 30
+    if zr == 0 and power_cubesr >= 3:
+        score_r = score_r + 45
+        power_cubesr = power_cubesr - 3
+    else:
+        pass
+    if scale_r > scale_b:
+        scale_r is True
+        scale_b is False 
+        score_r = score_r + 165
+    elif scale_b > scale_r:
+        scale_b is True
+        scale_r is False
+        score_b = score_b + 165
+ 
+    if switch_r_r > switch_r_b:
+        score_r = score_r + 135
+        switch_r_r is True
+        switch_r_b is False
+    elif switch_r_b > switch_r_r:
+        switch_r_r is False
+    if switch_b_b > switch_b_r:
+        score_b = score_b + 135
+        switch_b_b is True
+        switch_b_r is False
+    elif switch_b_r > switch_b_b:
+        switch_b_b is False
+    if score_b > score_r:
+        rpb = rpb + 2
+    if score_r > score_b:
+        rpr = rpr + 2
+    else:
+        rpb = rpb + 1
+        rpr = rpr + 1
+    print ("This is the data for blue:" "score:", score_b, "scale weight:", scale_b, " weight on home side:", switch_b_b, " weight on opposing side:", switch_r_b," cubes used for boost powerup:", boost_cubesb, "cubes used for force powerup:" ,force_cubes, "number of robots who successfully climbed the tower:", z, "ranking points:", rpb)             
+    print (" this is the data for red:", "score", score_r, "scale weight:", scale_r, "weight on home side:", switch_r_r, "weight on opposing side:", switch_b_r, "cubes used for boost powerup:", boost_cubesr, "cubes used for force powerup:",force_cubesr, "number of robots who successfully climbed the tower:", zr, "ranking points", rpr)
+team_bs()
+
+
+    
