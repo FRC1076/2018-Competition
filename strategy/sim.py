@@ -2,24 +2,14 @@ import random
 from random import *
 
 
-def team_bs():
-    global rpb
-    global force_cubesr, scale_b, power_cubesb
-    global boost_cubesr
-    global score_b, score_r
-    global boost_cubesb
-
-    power_cubesb = randint(24, 36)
-    scale_b = randint(1, power_cubesb)
-    force_cubesr = 0
+def team_bs():   
     rpb = 0
-    boost_cubesr = 0
     power_cubesb = randint(24, 36) 
     power_cubesr = 60 - power_cubesb
-    boost_cubesb = 0
-    force_cubes = 0
-    score_r = 45    
-    score_b = 45
+    boost_cubesb = boost_cubesr = 0
+    force_cubesb = force_cubesr = 0
+    score_r = score_b = 45
+
     scale_b = randint(3, power_cubesb)
     power_cubesb = power_cubesb - scale_b
     switch_b_b = randint(0,power_cubesb)
@@ -27,16 +17,16 @@ def team_bs():
     switch_r_b = randint(0, power_cubesb)
     power_cubesb = power_cubesb - switch_r_b 
     if power_cubesb >= 3:
-        force_cubes = randint(0, 3)
-        if force_cubes == 1 and not switch_b_b:
+        force_cubesb = randint(0, 3)
+        if force_cubesb == 1 and not switch_b_b:
             score_b = score_b + 15    
             score_r = 10 + score_r
-        if force_cubes == 2 and not scale_b and scale_r:
+        if force_cubesb == 2 and not scale_b and scale_r:
             score_b = score_b + 20
             score_r = score_r - 10
             if not scale_r and not scale_b:
                 score_b = score_b + 10
-        if force_cubes == 3 and switch_b_b or not scale_b:
+        if force_cubesb == 3 and switch_b_b or not scale_b:
             score_b = score_b + 15
             if not scale_b and scale_r:
                 score_b = score_b + 10
@@ -45,7 +35,7 @@ def team_bs():
                     score_b = score_b + 10
             if not switch_b_b:
                 score_b = score_b + 10
-        power_cubesb - force_cubes == power_cubesb
+        power_cubesb - force_cubesb == power_cubesb
     if power_cubesb >= 3:
         boost_cubesb = randint(0, 3)
         if boost_cubesb == 1 and switch_b_b:
@@ -86,8 +76,6 @@ def team_bs():
     if z == 0 and power_cubesb >= 3:
         score_b = score_b + 45
         power_cubesb = power_cubesb - 3
-    else:
-        pass
     
  
     scale_r = randint(3, power_cubesr)
@@ -157,8 +145,6 @@ def team_bs():
     if zr == 0 and power_cubesr >= 3:
         score_r = score_r + 45
         power_cubesr = power_cubesr - 3
-    else:
-        pass
 
     if scale_r > scale_b:
         score_r = score_r + 165
@@ -167,13 +153,9 @@ def team_bs():
 
     if switch_r_r > switch_r_b:
         score_r = score_r + 135
-    elif switch_r_b > switch_r_r:
-        pass
 
     if switch_b_b > switch_b_r:
         score_b = score_b + 135
-    elif switch_b_r > switch_b_b:
-        pass
 
     if score_b > score_r:
         rpb = rpb + 2
@@ -182,9 +164,8 @@ def team_bs():
     else:
         rpb = rpb + 1
         rpr = rpr + 1
-    print ("This is the data for blue:" "score:", score_b, "scale weight:", scale_b, " weight on home side:", switch_b_b, " weight on opposing side:", switch_r_b," cubes used for boost powerup:", boost_cubesb, "cubes used for force powerup:" ,force_cubes, "number of robots who successfully climbed the tower:", z, "ranking points:", rpb)             
+    print ("This is the data for blue:" "score:", score_b, "scale weight:", scale_b, " weight on home side:", switch_b_b, " weight on opposing side:", switch_r_b," cubes used for boost powerup:", boost_cubesb, "cubes used for force powerup:" ,force_cubesb, "number of robots who successfully climbed the tower:", z, "ranking points:", rpb)             
     print (" this is the data for red:", "score", score_r, "scale weight:", scale_r, "weight on home side:", switch_r_r, "weight on opposing side:", switch_b_r, "cubes used for boost powerup:", boost_cubesr, "cubes used for force powerup:",force_cubesr, "number of robots who successfully climbed the tower:", zr, "ranking points", rpr)
+
 team_bs()
-
-
     
