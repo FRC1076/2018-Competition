@@ -116,7 +116,6 @@ def points_for_possesion():
 
 
 def print_data(data):
-    # @Todo: Make this use the dictionary
     print(
         "score:", data['score'],
         "scale weight:", data['scale'],
