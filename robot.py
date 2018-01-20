@@ -3,11 +3,21 @@ import wpilib
 from wpilib.interfaces import GenericHID
 
 from subsystems.drivetrain import Drivetrain
+from subsystems.elevator import Elevator
+from subsystems.grabber import Grabber
+from subsystems.wings import Wings
 
 LEFT_STICK = GenericHID.Hand.kLeft
 RIGHT_STICK = GenericHID.Hand.kRight
 
 
+# @TODO: Actually have motor IDs for these
+ELEVATOR_ID = 5
+LEFT_GRABBER_ID = 6
+RIGHT_GRABBER_ID = 7
+
+# !! These are the motor IDs for the Purple robot!
+# They may not be the correct ones for this year's competition robot
 LEFT1_ID = 3
 LEFT2_ID = 4
 RIGHT1_ID = 1
@@ -23,6 +33,17 @@ class Robot(wpilib.IterativeRobot):
         right = wpilib.SpeedControllerGroup(right1, right2)
         self.drivetrain = Drivetrain(left, right, None)
 
+        left_grabber = ctre.WPI_TalonSRX(LEFT_GRABBER_ID)
+        right_grabber = ctre.WPI_TalonSRX(RIGHT_GRABBER_ID)
+        self.grabber = Grabber(left_grabber, right_grabber, None)
+
+        self.elevator = Elevator(ctre.WPI_TalonSRX(ELEVATOR_ID))
+
+        # @TODO: Do we even have latches?
+        # @TODO: Find actual non-placeholder values for the channel IDs
+        wings_left = wpilib.DoubleSolenoid(0, 1)
+        wings_right = wpilib.DoubleSolenoid(2, 3)
+        self.wings = Wings(wings_left, wings_right, None, None)
 
         self.driver = wpilib.XboxController(0)
         self.operator = wpilib.XboxController(1)
