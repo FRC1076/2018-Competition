@@ -60,7 +60,7 @@ def force_cubes(force_cubes, our_score, other_score, own_switch, own_scale):
     return our_score, other_score
 
 
-def boost_cubes(boost_cubes, own_switch, our_score, own_scale, other_score):
+def boost_cubes(boost_cubes, our_score, other_score, own_switch, own_scale):
     if boost_cubes == 1 and own_switch:
         our_score += 15
     if boost_cubes == 2 and own_scale:
@@ -113,6 +113,22 @@ def points_for_possesion():
         score_r += 135
     elif bswitch_b > bswitch_r:
         score_b += 135
+
+
+def print_data(data):
+    # @Todo: Make this use the dictionary
+    print(
+        "score:", data['score'],
+        "scale weight:", data['scale'],
+        "weight on home side:", data['own_switch'],
+        "weight on opposing side:", data['other_switch'],
+        "cubes used for boost powerup:", data['boost_cubes'],
+        "cubes used for force powerup:", data['force_cubes'],
+        "number of robots who successfully climbed the tower:", data['z'],
+        "ranking points:", data['rp'],
+    )
+
+
 def run_sim():
     rpb = rpr = 0
     power_cubesb = randint(24, 36) 
@@ -121,17 +137,17 @@ def run_sim():
     force_cubesb = force_cubesr = 0
     score_r = score_b = 45
     
-    power_cubesb, own_scale, bswitch_b, rswitch_b, force_cubesb, boost_cubesb = power_cube_distribution(power_cubesb)
+    power_cubesb, scale_b, bswitch_b, rswitch_b, force_cubesb, boost_cubesb = power_cube_distribution(power_cubesb)
     zb, rpb, power_cubesb, score_b = climbing(rpb, power_cubesb, score_b)
 
-    power_cubesr, other_scale, rswitch_r, bswitch_r, force_cubesr, boost_cubesr = power_cube_distribution(power_cubesr) 
+    power_cubesr, scale_r, rswitch_r, bswitch_r, force_cubesr, boost_cubesr = power_cube_distribution(power_cubesr) 
     zr, rpr, power_cubesr, score_r = climbing(rpr, power_cubesr, score_r)
     
-    owner_b, owner_r, owner_scale = determine_owners(bswitch_b, bswitch_r, rswitch_b, rswitch_r, own_scale, other_scale)
+    owner_b, owner_r, owner_scale = determine_owners(bswitch_b, bswitch_r, rswitch_b, rswitch_r, scale_b, scale_r)
 
-    if other_scale > own_scale:
+    if scale_r > scale_b:
         score_r += 165
-    elif own_scale > other_scale:
+    elif scale_b > scale_r:
         score_b += 165
 
     if rswitch_r > rswitch_b:
@@ -143,6 +159,7 @@ def run_sim():
     score_r, score_b = force_cubes(force_cubesr, score_r, score_b, owner_r == 'red', owner_scale == 'red')
     score_b, score_r = boost_cubes(boost_cubesb, score_b, score_r, owner_b == 'blue', owner_scale == 'blue')
     score_r, score_b = boost_cubes(boost_cubesr, score_r, score_b, owner_r == 'red', owner_scale == 'red')
+
     if score_b > score_r:
         rpb += 2
     elif score_r > score_b:
@@ -150,28 +167,40 @@ def run_sim():
     else:
         rpb += 1
         rpr += 1
-    print(
-        "This is the data for blue:",
-        "score:", score_b,
-        "scale weight:", own_scale,
-        "weight on home side:", bswitch_b,
-        "weight on opposing side:", rswitch_b,
-        "cubes used for boost powerup:", boost_cubesb,
-        "cubes used for force powerup:", force_cubesb,
-        "number of robots who successfully climbed the tower:", zb,
-        "ranking points:", rpb,
-    )
-    print(
-        "This is the data for red:", 
-        "score", score_r,
-        "scale weight:", other_scale,
-        "weight on home side:", rswitch_r,
-        "weight on opposing side:", bswitch_r,
-        "cubes used for boost powerup:", boost_cubesr,
-        "cubes used for force powerup:", force_cubesr,
-        "number of robots who successfully climbed the tower:", zr,
-        "ranking points", rpr,
-    )
+
+    blue_data = {
+        'color': 'blue',
+        'score': score_b,
+        'scale': scale_b,
+        'bswitch': bswitch_b,
+        'rswitch': rswitch_b,
+        'own_switch': bswitch_b,
+        'other_switch': rswitch_b,
+        'boost_cubes': boost_cubesb,
+        'force_cubes': force_cubesb,
+        'z': zb,
+        'rp': rpb,
+    }
+
+    red_data = {
+        'color': 'red',
+        'score': score_r,
+        'scale': scale_r,
+        'rswitch': rswitch_r,
+        'bswitch': bswitch_r,
+        'own_switch': rswitch_r,
+        'other_switch': bswitch_r,
+        'boost_cubes': boost_cubesr,
+        'force_cubes': force_cubesr,
+        'z': zr,
+        'rp': rpr,
+    }
+    
+    return blue_data, red_data
 
 if __name__ == '__main__':
-    run_sim()
+    blue, red = run_sim()
+    print("This is the data for blue:")
+    print_data(blue)
+    print("This is the data for red:")
+    print_data(red)
