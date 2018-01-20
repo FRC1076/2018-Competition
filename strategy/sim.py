@@ -1,17 +1,26 @@
 import random
-from random import *
+
+
+def split_cubes():
+    power_cubesb = power_cubesr = 0
+    for i in range(60):
+        if random.randint(0, 1):
+            power_cubesb += 1
+        else:
+            power_cubesr += 1
+    return power_cubesb, power_cubesr
 
 
 def power_cube_distribution(power_cubes):
-    scale = randint(3, power_cubes)
+    scale = random.randint(3, power_cubes)
     power_cubes -= scale
-    own_switch = randint(0, power_cubes)
+    own_switch = random.randint(0, power_cubes)
     power_cubes -= own_switch
-    other_switch = randint(0, power_cubes)
+    other_switch = random.randint(0, power_cubes)
     power_cubes -= other_switch
-    force_cubes = randint(0, min(3, power_cubes))
+    force_cubes = random.randint(0, min(3, power_cubes))
     power_cubes -= force_cubes
-    boost_cubes = randint(0, min(3, power_cubes))
+    boost_cubes = random.randint(0, min(3, power_cubes))
     power_cubes -= boost_cubes
     return power_cubes, scale, own_switch, other_switch, force_cubes, boost_cubes
 
@@ -74,9 +83,9 @@ def boost_cubes(boost_cubes, our_score, other_score, own_switch, own_scale):
     return our_score, other_score
 
 def climbing(rp, power_cubes, score):
-    robo1_blue = randint(1, 3)
-    robo2_blue = randint(1, 3)
-    robo3_blue = randint(1, 3)
+    robo1_blue = random.randint(1, 3)
+    robo2_blue = random.randint(1, 3)
+    robo3_blue = random.randint(1, 3)
     climb_count = 0
     if robo1_blue > 1:
         climb_count += 1
@@ -103,17 +112,6 @@ def climbing(rp, power_cubes, score):
         power_cubes -= 3
     return climb_count, rp, power_cubes, score
 
-def points_for_possesion():
-    if own_scale > other:
-        score_r += 165
-    elif own_scale > other_scale:
-        score_b += 165
-
-    if rswitch_r > rswitch_b:
-        score_r += 135
-    elif bswitch_b > bswitch_r:
-        score_b += 135
-
 
 def print_data(data):
     print(
@@ -130,16 +128,14 @@ def print_data(data):
 
 def run_sim():
     rpb = rpr = 0
-    power_cubesb = randint(24, 36) 
-    power_cubesr = 60 - power_cubesb
-    boost_cubesb = boost_cubesr = 0
-    force_cubesb = force_cubesr = 0
     score_r = score_b = 45
-    
-    power_cubesb, scale_b, bswitch_b, rswitch_b, force_cubesb, boost_cubesb = power_cube_distribution(power_cubesb)
-    climb_countb, rpb, power_cubesb, score_b = climbing(rpb, power_cubesb, score_b)
 
-    power_cubesr, scale_r, rswitch_r, bswitch_r, force_cubesr, boost_cubesr = power_cube_distribution(power_cubesr) 
+    initial_power_cubesb, initial_power_cubesr = split_cubes()
+    
+    power_cubesb, scale_b, bswitch_b, rswitch_b, force_cubesb, boost_cubesb = power_cube_distribution(initial_power_cubesb)
+    power_cubesr, scale_r, rswitch_r, bswitch_r, force_cubesr, boost_cubesr = power_cube_distribution(initial_power_cubesr)
+
+    climb_countb, rpb, power_cubesb, score_b = climbing(rpb, power_cubesb, score_b) 
     climb_countr, rpr, power_cubesr, score_r = climbing(rpr, power_cubesr, score_r)
     
     owner_b, owner_r, owner_scale = determine_owners(bswitch_b, bswitch_r, rswitch_b, rswitch_r, scale_b, scale_r)
@@ -169,6 +165,7 @@ def run_sim():
 
     blue_data = {
         'color': 'blue',
+        'initial_cubes': initial_power_cubesb,
         'score': score_b,
         'scale': scale_b,
         'bswitch': bswitch_b,
@@ -183,6 +180,7 @@ def run_sim():
 
     red_data = {
         'color': 'red',
+        'initial_cubes': initial_power_cubesr,
         'score': score_r,
         'scale': scale_r,
         'rswitch': rswitch_r,

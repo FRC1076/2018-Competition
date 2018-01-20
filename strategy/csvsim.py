@@ -12,6 +12,7 @@ COLS = [
     'blue_force_cubes', 'red_force_cubes',
     'blue_climb_count', 'red_climb_count',
     'blue_rp', 'red_rp',
+    'blue_initial', 'red_initial',
 ]
 
 
@@ -26,6 +27,7 @@ def make_row(run, blue, red):
         blue['force_cubes'], red['force_cubes'],
         blue['climb_count'], red['climb_count'],
         blue['rp'], red['rp'],
+        blue['initial_cubes'], red['initial_cubes'],
     ]
 
 
