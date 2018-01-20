@@ -7,6 +7,8 @@ from subsystems.elevator import Elevator
 from subsystems.grabber import Grabber
 from subsystems.wings import Wings
 
+from autonomous import ArcadeAutonomous
+
 LEFT_STICK = GenericHID.Hand.kLeft
 RIGHT_STICK = GenericHID.Hand.kRight
 
@@ -49,7 +51,7 @@ class Robot(wpilib.IterativeRobot):
         self.operator = wpilib.XboxController(1)
 
     def teleopInit(self):
-        pass
+        print()
 
     def teleopPeriodic(self):
         forward = self.driver.getY(RIGHT_STICK)
@@ -57,10 +59,10 @@ class Robot(wpilib.IterativeRobot):
         self.drivetrain.arcade_drive(forward, rotate)
 
     def autonomousInit(self):
-        pass
+        self.auton = ArcadeAutonomous(self.drivetrain, 0, 0.4, 1000)
 
     def autonomousPeriodic(self):
-        pass
+        self.auton.execute()
 
 
 if __name__ == '__main__':
