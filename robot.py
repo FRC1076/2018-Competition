@@ -50,6 +50,8 @@ class Robot(wpilib.IterativeRobot):
         self.driver = wpilib.XboxController(0)
         self.operator = wpilib.XboxController(1)
 
+        self.auto_exec = iter([])
+
     def teleopInit(self):
         print()
 
@@ -59,10 +61,19 @@ class Robot(wpilib.IterativeRobot):
         self.drivetrain.arcade_drive(forward, rotate)
 
     def autonomousInit(self):
-        self.auton = ArcadeAutonomous(self.drivetrain, 0, 0.4, 1000)
+        self.auton = ArcadeAutonomous(self.drivetrain, 0, 0.4, 1)
+        self.auton.init()
+        self.auton_exec = self.auton.execute()
 
     def autonomousPeriodic(self):
-        self.auton.execute()
+        try:
+            next(self.auton_exec)
+        except StopIteration:
+            # WPILib prints a ton of error messages when the motor has no output
+            # send to it, so we stop the drivetrain to make it quiet. Also,
+            # this ensures that we actually stop at the end of autonomous instead
+            # of potentially running away for no reason.
+            self.drivetrain.stop()
 
 
 if __name__ == '__main__':

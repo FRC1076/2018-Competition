@@ -1,3 +1,9 @@
+# Robotpy Stuff
+pip_cache/
+opkg_cache/
+.installer_config
+.deploy_cfg
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
