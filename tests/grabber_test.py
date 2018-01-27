@@ -1,14 +1,6 @@
+from helper import GetSet
 from subsystems.grabber import Grabber
 
-class GetSet:
-    def __init__(self, state):
-        self.state = state
-
-    def get(self):
-        return self.state
-
-    def set(self, state):
-        self.state = state
 
 def test_make_grabber():
     left_motor = GetSet(0)
@@ -31,6 +23,3 @@ def test_make_grabber():
     assert not grabber.has_cube()
     sensor.state = True
     assert grabber.has_cube()
-
-   
-

@@ -1,15 +1,6 @@
+from helper import GetSet
 from subsystems.elevator import Elevator
 
-
-class GetSet:
-    def __init__(self, state):
-        self.state = state
-
-    def get(self):
-        return self.state
-
-    def set(self, state):
-        self.state = state
 
 def test_elevator():
     motor = GetSet(0)
