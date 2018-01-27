@@ -61,6 +61,7 @@ class Robot(wpilib.IterativeRobot):
         forward = self.driver.getY(RIGHT_STICK)
         rotate = self.driver.getX(LEFT_STICK)
         self.drivetrain.arcade_drive(forward, rotate)
+        self.elevator.go_up(self.operator.getY(RIGHT_STICK))
 
     def autonomousInit(self):
         pass
