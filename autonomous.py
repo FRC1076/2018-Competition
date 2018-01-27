@@ -1,5 +1,7 @@
 import time
+
 import wpilib
+
 
 class Timed:
     def __init__(self, auto, duration):

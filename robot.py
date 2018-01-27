@@ -2,12 +2,11 @@ import ctre
 import wpilib
 from wpilib.interfaces import GenericHID
 
+from autonomous import ArcadeAutonomous
 from subsystems.drivetrain import Drivetrain
 from subsystems.elevator import Elevator
 from subsystems.grabber import Grabber
 from subsystems.wings import Wings
-
-from autonomous import ArcadeAutonomous
 
 LEFT_STICK = GenericHID.Hand.kLeft
 RIGHT_STICK = GenericHID.Hand.kRight
@@ -53,7 +52,7 @@ class Robot(wpilib.IterativeRobot):
         self.auto_exec = iter([])
 
     def teleopInit(self):
-        print()
+        pass
 
     def teleopPeriodic(self):
         forward = self.driver.getY(RIGHT_STICK)
