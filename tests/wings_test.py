@@ -1,17 +1,9 @@
-from subsystems.wings import Wings
 from wpilib import DoubleSolenoid
 
+from helper import GetSet
+from subsystems.wings import Wings
+
 Value = DoubleSolenoid.Value
-
-class GetSet:
-    def __init__(self, state):
-        self.state = state
-
-    def get(self):
-        return self.state
-
-    def set(self, state):
-        self.state = state
 
 def test_make_wings():
     valve_left = GetSet(Value.kOff)
