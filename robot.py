@@ -25,25 +25,31 @@ RIGHT2_ID = 2
 
 class Robot(wpilib.IterativeRobot):
     def robotInit(self):
-        left1 = ctre.WPI_TalonSRX(LEFT1_ID)
-        left2 = ctre.WPI_TalonSRX(LEFT2_ID)
-        left = wpilib.SpeedControllerGroup(left1, left2)
-        right1 = ctre.WPI_TalonSRX(RIGHT1_ID)
-        right2 = ctre.WPI_TalonSRX(RIGHT2_ID)
-        right = wpilib.SpeedControllerGroup(right1, right2)
+        left = wpilib.SpeedControllerGroup(
+            ctre.WPI_TalonSRX(LEFT1_ID),
+            ctre.WPI_TalonSRX(LEFT2_ID),
+        )
+        right = wpilib.SpeedControllerGroup(
+            ctre.WPI_TalonSRX(RIGHT1_ID),
+            ctre.WPI_TalonSRX(RIGHT2_ID),
+        )
         self.drivetrain = Drivetrain(left, right, None)
 
-        left_grabber = ctre.WPI_TalonSRX(LEFT_GRABBER_ID)
-        right_grabber = ctre.WPI_TalonSRX(RIGHT_GRABBER_ID)
-        self.grabber = Grabber(left_grabber, right_grabber, None)
+        self.grabber = Grabber(
+            ctre.WPI_TalonSRX(LEFT_GRABBER_ID),
+            ctre.WPI_TalonSRX(RIGHT_GRABBER_ID),
+            None,
+        )
 
         self.elevator = Elevator(ctre.WPI_TalonSRX(ELEVATOR_ID))
 
         # @TODO: Do we even have latches?
         # @TODO: Find actual non-placeholder values for the channel IDs
-        wings_left = wpilib.DoubleSolenoid(0, 1)
-        wings_right = wpilib.DoubleSolenoid(2, 3)
-        self.wings = Wings(wings_left, wings_right, None, None)
+        self.wings = Wings(
+            wpilib.DoubleSolenoid(0, 1),
+            wpilib.DoubleSolenoid(2, 3),
+            None, None,
+        )
 
         self.driver = wpilib.XboxController(0)
         self.operator = wpilib.XboxController(1)
