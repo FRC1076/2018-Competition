@@ -35,6 +35,7 @@ class RotateAutonomous:
         self.gyro = gyro
         self.speed = speed
         self.angle = angle
+        assert speed > 0, "Speed ({}) must be positive!".format(speed)
 
     def init(self):
         self.start_angle = self.gyro.getAngle()

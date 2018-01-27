@@ -70,7 +70,7 @@ class Robot(wpilib.IterativeRobot):
         print(self.gyro.getAngle())
 
     def autonomousInit(self):
-        self.auton = RotateAutonomous(self.drivetrain, self.gyro, 45, 0.5)
+        self.auton = RotateAutonomous(self.drivetrain, self.gyro, -45, 0.5)
         self.auton.init()
         self.auton_exec = self.auton.execute()
 
