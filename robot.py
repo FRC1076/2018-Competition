@@ -52,6 +52,13 @@ class Robot(wpilib.IterativeRobot):
 
         self.auto_exec = iter([])
 
+        self.gyro = wpilib.ADXRS450_Gyro()
+
+# Make a ADXRsomething Gyro in robotInit
+# print out the gyros angle in teleopperiodic
+# self.myGyro = wpilib.ADXRsomethingGyro()
+# self.myGyro.sometinghere()
+
     def teleopInit(self):
         print()
 
@@ -59,6 +66,7 @@ class Robot(wpilib.IterativeRobot):
         forward = self.driver.getY(RIGHT_STICK)
         rotate = self.driver.getX(LEFT_STICK)
         self.drivetrain.arcade_drive(forward, rotate)
+        print(self.gyro.getAngle())
 
     def autonomousInit(self):
         self.auton = ArcadeAutonomous(self.drivetrain, 0, 0.4, 1)
