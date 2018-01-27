@@ -24,7 +24,32 @@ class Timed:
                 pass
             yield
 
+class RotateAutonomous:
+    """
+    Rotate the robot by the specified angle in degrees.
+    Positive values will rotate clockwise, while negative values will rotate
+    counterclockwise.
+    """
+    def __init__(self, drivetrain, gyro, angle, speed):
+        self.drivetrain = drivetrain
+        self.gyro = gyro
+        self.speed = speed
+        self.angle = angle
 
+    def init(self):
+        self.start_angle = self.gyro.getAngle()
+        # self.
+
+    def execute(self):
+        if self.angle > 0:
+            while self.gyro.getAngle() - self.start_angle < self.angle:
+                self.drivetrain.arcade_drive(0, self.speed)
+                yield
+        else:
+            while self.gyro.getAngle() - self.start_angle > self.angle:
+                self.drivetrain.arcade_drive(0, -self.speed)
+                yield
+        self.drivetrain.stop()
 
 class ArcadeAutonomous:
     """

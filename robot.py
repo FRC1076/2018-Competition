@@ -8,6 +8,7 @@ from subsystems.grabber import Grabber
 from subsystems.wings import Wings
 
 from autonomous import ArcadeAutonomous
+from autonomous import RotateAutonomous
 
 LEFT_STICK = GenericHID.Hand.kLeft
 RIGHT_STICK = GenericHID.Hand.kRight
@@ -34,7 +35,7 @@ class Robot(wpilib.IterativeRobot):
         right2 = ctre.WPI_TalonSRX(RIGHT2_ID)
         right = wpilib.SpeedControllerGroup(right1, right2)
         self.drivetrain = Drivetrain(left, right, None)
-
+        
         left_grabber = ctre.WPI_TalonSRX(LEFT_GRABBER_ID)
         right_grabber = ctre.WPI_TalonSRX(RIGHT_GRABBER_ID)
         self.grabber = Grabber(left_grabber, right_grabber, None)
@@ -69,7 +70,7 @@ class Robot(wpilib.IterativeRobot):
         print(self.gyro.getAngle())
 
     def autonomousInit(self):
-        self.auton = ArcadeAutonomous(self.drivetrain, 0, 0.4, 1)
+        self.auton = RotateAutonomous(self.drivetrain, self.gyro, 45, 0.5)
         self.auton.init()
         self.auton_exec = self.auton.execute()
 
