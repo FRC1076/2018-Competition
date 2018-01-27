@@ -18,15 +18,6 @@ class Timed:
                 break
             yield
 
-        auto_exec = self.auto.execute()
-        while time.time() < self.end_time():
-            try:
-                next(auto_exec)
-            except StopIteration:
-                pass
-            yield
-
-
 
 class ArcadeAutonomous:
     """
