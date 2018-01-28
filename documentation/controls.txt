@@ -1,0 +1,18 @@
+
+Driver:
+  Left joystick: controls speed/going forward
+    - y values
+  right joystick: controls turning
+    - x values
+  triggers: control gear shifting
+
+Operator:
+  hold A and B on both controllers as safety (w wings)
+  bumpers (with safety held): unlock wing latches
+    - once wings are down, triggers will raise the wings
+    - with just operator safety: the bumper lowers the wing
+  right joystick: elevator up and down
+    - y values
+  left joystick:
+  one trigger: take with Grabber
+  two triggers: spit with grabber
