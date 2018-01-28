@@ -83,15 +83,15 @@ def boost_cubes(boost_cubes, our_score, other_score, own_switch, own_scale):
     return our_score, other_score
 
 def climbing(rp, power_cubes, score):
-    robo1_blue = random.randint(1, 3)
-    robo2_blue = random.randint(1, 3)
-    robo3_blue = random.randint(1, 3)
+    robo1 = random.randint(1, 3)
+    robo2 = random.randint(1, 3)
+    robo3 = random.randint(1, 3)
     climb_count = 0
-    if robo1_blue > 1:
+    if robo1 > 1:
         climb_count += 1
-    if robo2_blue > 1:
+    if robo2 > 1:
         climb_count += 1
-    if robo3_blue > 1:
+    if robo3 > 1:
         climb_count += 1
     if climb_count == 2 and power_cubes >= 3:
         score += 105
@@ -138,7 +138,7 @@ def run_sim():
     climb_countb, rpb, power_cubesb, score_b = climbing(rpb, power_cubesb, score_b) 
     climb_countr, rpr, power_cubesr, score_r = climbing(rpr, power_cubesr, score_r)
     
-    owner_b, owner_r, owner_scale = determine_owners(bswitch_b, bswitch_r, rswitch_b, rswitch_r, scale_b, scale_r)
+    owner_b, owner_r, owner_scale = determine_owners(bswitch_b, bswitch_r, rswitch_r, rswitch_b, scale_b, scale_r)
 
     if scale_r > scale_b:
         score_r += 165
@@ -194,7 +194,7 @@ def run_sim():
     }
     
     return blue_data, red_data
-
+    
 if __name__ == '__main__':
     blue, red = run_sim()
     print("This is the data for blue:")
