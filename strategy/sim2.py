@@ -2,54 +2,97 @@
 # as a timer.
 
 import queue
-import enum
+from enum import Enum, auto
 
-class Team(enum.Enum):
-    RED = 0
-    BLUE = 1
+class Team(Enum):
+    RED = auto()
+    BLUE = auto()
+
+class Location(Enum):
+    RED_PORTAL = -15
+    RED_PILE = -13  # has cubes
+    RED_SWITCH = -8  # has cubes
+    RED_SCALE = -5
+    BLUE_SCALE = 5
+    BLUE_SWITCH = 8  # has cubes
+    BLUE_PILE =  13 # has cubes
+    BLUE_PORTAL = 15
+
+    def __init__(self, position):
+        self.position = position
+
 
 class Robot:
-    def __init__(self, name, team, world):
+    def __init__(self, name, team, world, speed, location):
         self.name = name
         self.team = team
         self.world = world
+        self.speed = speed
+        self.location = location
+        self.has_cube = True
 
     def __lt__(self, other):
         return hash(self) < hash(other)
 
     def __repr__(self):
-        return f'Robot({self.name!r})'
+        return f'Robot({self.name!r}, {self.location!r})'
+
+    def drive(self, to):
+        distance = abs(self.location.position - to.position)
+        yield distance / self.speed
+        self.location = to
+    
+    def pick_up(self):
+        if self.has_cube or self.world[self.location]['cubes'] <= 0:
+            return
+        self.world[self.location]['cubes'] -= 1
+        yield 2
+        self.has_cube = True
+    
+    def put_down(self):
+        if not self.has_cube:
+            return
+        self.has_cube = False
+        yield 2
+        self.world[self.location][self.team] += 1
    
     def run(self):
-        self.gen = self.drive()
+        self.gen = self._run()
         return self
 
-    def drive(self):
+    def _run(self):
         yield 0
    
     def resume(self):
         return next(self.gen)
 
+# Add a "robot" for the field that every turn checks the stuff and tracks points
+# Make the robots smarter
+
+# while True:
+#     handle score
+#     yield 1
 
 class ARobot(Robot):
-    def drive(self):
-        yield 5
-        yield 3
-        yield 1
+    def _run(self):
+        yield from self.drive(Location.RED_PILE)
+        yield from self.pick_up()
+        yield from self.drive(Location.RED_SWITCH)
+        yield from self.put_down()
+        yield from self.drive(Location.RED_PILE)
 
 
 class BRobot(Robot):
-    def drive(self):
-        yield 6
-        yield 4
-        yield 2
+    def _run(self):
+        yield from self.drive(Location.RED_SCALE)
+        yield from self.drive(Location.BLUE_SWITCH)
 
 
 class CRobot(Robot):
-    def drive(self):
-        yield 7
-        yield 6
-        yield 5
+    def _run(self):
+        yield from self.drive(Location.RED_SWITCH)
+        yield from self.drive(Location.RED_PILE)
+        yield from self.drive(Location.BLUE_SCALE)
 
 
 def schedule(events):
@@ -66,11 +109,16 @@ def schedule(events):
 
 
 if __name__ == '__main__':
-    world = {}
+    # @Todo: Add all the other locations
+    world = {
+        Location.RED_PILE: {'cubes': 10, Team.RED: 0, Team.BLUE: 0},
+        Location.RED_SWITCH: {'cubes': 0, Team.RED: 0, Team.BLUE: 0},
+        Location.BLUE_PILE: {'cubes': 10, Team.RED: 0, Team.BLUE: 0},
+    }
     robots = [
-        ARobot('A', Team.RED, world),
-        BRobot('B', Team.BLUE, world),
-        CRobot('C', Team.RED, world),
+        ARobot('A', Team.RED, world, 4, Location.RED_PORTAL),
+        BRobot('B', Team.BLUE, world, 4, Location.BLUE_PORTAL),
+        CRobot('C', Team.RED, world, 4, Location.RED_PORTAL),
     ]
     events = queue.PriorityQueue()
     for robot in robots:
