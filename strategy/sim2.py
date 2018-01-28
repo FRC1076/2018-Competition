@@ -5,32 +5,47 @@ import queue
 
 
 class Robot:
-    def __init__(self, name, delay):
+    def __init__(self, name):
         self.name = name
-        self.delay = delay
 
     def __lt__(self, other):
         return hash(self) < hash(other)
 
     def __repr__(self):
         return f'Robot({self.name!r}, {self.delay})'
+   
+    def run(self):
+        self.gen = self.drive()
+        return self
+
+    def drive(self):
+        yield 0
+   
+    def resume(self):
+        return next(self.gen)
 
 
-robots = {
-    'A': Robot('A', 3),
-    'B': Robot('B', 7),
-    'C': Robot('C', 2),
-}
 
-events = queue.PriorityQueue()
-for robot in robots.values():
-    events.put((0, robot))
+def schedule(events):
+    while not events.empty():
+        time, robot = events.get()
+        print(time, robot)
+        if time > 150:
+            break
+        try:
+            delay = robot.resume()
+            events.put((time + delay, robot))
+        except StopIteration:
+            pass
 
-for i in range(30):
-    if events.empty():
-        break
 
-    time, robot = events.get()
-    print(i, time, robot)
-    events.put((robot.delay + time, robot))
-    
+if __name__ == '__main__':
+    robots = [
+        Robot('A'),
+        Robot('B'),
+        Robot('C'),
+    ]
+    events = queue.PriorityQueue()
+    for robot in robots:
+        events.put((0, robot.run()))
+    schedule(events)
