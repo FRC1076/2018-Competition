@@ -1,6 +1,15 @@
 import time
 import wpilib
 
+def forward_auto(drivetrain):
+    # Drive forward from the starting line to the switch
+    # time?
+    # speed?
+    # figure those out in the function
+    auto = ArcadeAutonomous(drivetrain, 1, 0, 10)
+    auto.init()
+    yield from auto.execute()
+
 class Timed:
     def __init__(self, auto, duration):
         self.auto = auto
