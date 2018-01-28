@@ -6,7 +6,7 @@ def forward_auto(drivetrain):
     # time?
     # speed?
     # figure those out in the function
-    auto = ArcadeAutonomous(drivetrain, 1, 0, 10)
+    auto = ArcadeAutonomous(drivetrain, 1, 0, 3)
     auto.init()
     yield from auto.execute()
 

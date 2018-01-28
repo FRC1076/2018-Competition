@@ -9,6 +9,7 @@ from subsystems.wings import Wings
 
 from autonomous import ArcadeAutonomous
 from autonomous import RotateAutonomous
+import autonomous
 
 LEFT_STICK = GenericHID.Hand.kLeft
 RIGHT_STICK = GenericHID.Hand.kRight
@@ -70,13 +71,11 @@ class Robot(wpilib.IterativeRobot):
         print(self.gyro.getAngle())
 
     def autonomousInit(self):
-        self.auton = RotateAutonomous(self.drivetrain, self.gyro, -45, 0.5)
-        self.auton.init()
-        self.auton_exec = self.auton.execute()
+        self.auto = autonomous.forward_auto(self.drivetrain)
 
     def autonomousPeriodic(self):
         try:
-            next(self.auton_exec)
+            next(self.auto)
         except StopIteration:
             # WPILib prints a ton of error messages when the motor has no output
             # send to it, so we stop the drivetrain to make it quiet. Also,
