@@ -10,6 +10,21 @@ def forward_auto(drivetrain):
     auto.init()
     yield from auto.execute()
 
+def chained_auto(drivetrain, gyro):
+    print("Forward")
+    auto1 = ArcadeAutonomous(drivetrain, 1, 0, 3)
+    auto1.init()
+    yield from auto1.execute()
+    print("Rotate")
+    auto2 = RotateAutonomous(drivetrain, gyro, 180, 0.5)
+    auto2.init()
+    yield from auto2.execute()
+    print("Backwards")
+    auto3 = ArcadeAutonomous(drivetrain, 1, 0, 3)
+    auto3.init()
+    yield from auto3.execute()
+    print("End")
+
 class Timed:
     def __init__(self, auto, duration):
         self.auto = auto
