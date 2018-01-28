@@ -2,17 +2,23 @@
 # as a timer.
 
 import queue
+import enum
 
+class Team(enum.Enum):
+    RED = 0
+    BLUE = 1
 
 class Robot:
-    def __init__(self, name):
+    def __init__(self, name, team, world):
         self.name = name
+        self.team = team
+        self.world = world
 
     def __lt__(self, other):
         return hash(self) < hash(other)
 
     def __repr__(self):
-        return f'Robot({self.name!r}, {self.delay})'
+        return f'Robot({self.name!r})'
    
     def run(self):
         self.gen = self.drive()
@@ -24,6 +30,26 @@ class Robot:
     def resume(self):
         return next(self.gen)
 
+
+class ARobot(Robot):
+    def drive(self):
+        yield 5
+        yield 3
+        yield 1
+
+
+class BRobot(Robot):
+    def drive(self):
+        yield 6
+        yield 4
+        yield 2
+
+
+class CRobot(Robot):
+    def drive(self):
+        yield 7
+        yield 6
+        yield 5
 
 
 def schedule(events):
@@ -40,10 +66,11 @@ def schedule(events):
 
 
 if __name__ == '__main__':
+    world = {}
     robots = [
-        Robot('A'),
-        Robot('B'),
-        Robot('C'),
+        ARobot('A', Team.RED, world),
+        BRobot('B', Team.BLUE, world),
+        CRobot('C', Team.RED, world),
     ]
     events = queue.PriorityQueue()
     for robot in robots:
