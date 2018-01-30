@@ -44,12 +44,10 @@ class Robot(wpilib.IterativeRobot):
 
         self.elevator = Elevator(ctre.WPI_TalonSRX(ELEVATOR_ID))
 
-        # @TODO: Do we even have latches?
         # @TODO: Find actual non-placeholder values for the channel IDs
         self.wings = Wings(
             wpilib.DoubleSolenoid(0, 1),
             wpilib.DoubleSolenoid(2, 3),
-            None, None,
         )
 
         self.driver = wpilib.XboxController(0)
