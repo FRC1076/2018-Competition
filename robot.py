@@ -7,10 +7,8 @@ from subsystems.elevator import Elevator
 from subsystems.grabber import Grabber
 from subsystems.wings import Wings
 
-LEFT_STICK = GenericHID.Hand.kLeft
-RIGHT_STICK = GenericHID.Hand.kRight
-LEFT_BUMPER = GenericHID.Hand.kLeft
-RIGHT_BUMPER = GenericHID.Hand.kRight
+LEFT = GenericHID.Hand.kLeft
+RIGHT = GenericHID.Hand.kRight
 
 # @TODO: Actually have motor IDs for these
 ELEVATOR_ID = 5
@@ -60,17 +58,17 @@ class Robot(wpilib.IterativeRobot):
         pass
 
     def teleopPeriodic(self):
-        forward = self.driver.getY(RIGHT_STICK)
-        rotate = self.driver.getX(LEFT_STICK)
+        forward = self.driver.getY(RIGHT)
+        rotate = self.driver.getX(LEFT)
         self.drivetrain.arcade_drive(forward, rotate)
-        self.elevator.go_up(self.operator.getY(RIGHT_STICK))
+        self.elevator.go_up(self.operator.getY(RIGHT))
         
-        left_trigger = self.operator.getTriggerAxis(LEFT_STICK)
-        right_trigger = self.operator.getTriggerAxis(RIGHT_STICK)
+        left_trigger = self.operator.getTriggerAxis(LEFT)
+        right_trigger = self.operator.getTriggerAxis(RIGHT)
         operator_safety = self.operator.getAButton() and self.operator.getBButton()
         driver_safety = self.driver.getAButton() and self.driver.getBButton()
-        left_bumper = self.operator.getBumper(LEFT_BUMPER)
-        right_bumper = self.operator.getBumper(RIGHT_BUMPER)
+        left_bumper = self.operator.getBumper(LEFT)
+        right_bumper = self.operator.getBumper(RIGHT)
         
         TRIGGER_LEVEL = 0.4
         if operator_safety and driver_safety:
