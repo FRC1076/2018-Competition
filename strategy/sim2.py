@@ -10,7 +10,8 @@ class Team(Enum):
 
 class Location(Enum):
     RED_PORTAL = -15
-    RED_PILE = -13  # has cubes
+    RED_PILE = -13 
+    RP_cubes = 10
     RED_SWITCH = -8  # has cubes
     RED_SCALE = -5
     BLUE_SCALE = 5
@@ -30,10 +31,36 @@ class Robot:
         self.speed = speed
         self.location = location
         self.has_cube = True
+    def Robot1(drive):
+        Robot.name = 'Robot#1'
+        Robot1.team = BLUE
+        Robot1.speed = 5
+        Robot1.location = BLUE_PORTAL
+        Robot1.has_cube = True
+        
+        
 
+        if has_cube == False:
+            Robot1.pick_up
+        else:     
+            Robot1.put_down
     def __lt__(self, other):
         return hash(self) < hash(other)
-
+    def world():
+        if time < 150:
+            return BLUE_PILE, BLUE_SWITCH, BLUE_SCALE 
+            return RED_PILE, RED_SWITCH, RED_SCALE
+            if BLUE_SWITCH == True:
+                BLUE_SCORE += 1
+            if RED_SWITCH == True:
+                RED_SCORE += 1
+            if RED_SCALE > BLUE_SCALE:
+                RED_SCORE += 1
+            if BLUE_SCALE > RED_SCALE:
+                BLUE_SCORE += 1
+            time += 1    
+            return RED_SCORE, BLUE_SCORE        
+            yield 1
     def __repr__(self):
         return f'Robot({self.name!r}, {self.location!r})'
 
@@ -112,8 +139,11 @@ if __name__ == '__main__':
     # @Todo: Add all the other locations
     world = {
         Location.RED_PILE: {'cubes': 10, Team.RED: 0, Team.BLUE: 0},
-        Location.RED_SWITCH: {'cubes': 0, Team.RED: 0, Team.BLUE: 0},
         Location.BLUE_PILE: {'cubes': 10, Team.RED: 0, Team.BLUE: 0},
+        Location.RED_SWITCH: {'cubes': 0, Team.RED: 0, Team.BLUE: 0},
+        Location.BLUE_SWITCH: {'cubes': 0, Team.RED: 0, Team.BLUE: 0},
+        Location.RED_SCALE: {'cubes': 0, Team.RED: 0, Team.BLUE: 0},
+        Location.BLUE_SCALE: {'cubes': 0, Team.RED: 0, Team.BLUE: 0},
     }
     robots = [
         ARobot('A', Team.RED, world, 4, Location.RED_PORTAL),
@@ -124,3 +154,4 @@ if __name__ == '__main__':
     for robot in robots:
         events.put((0, robot.run()))
     schedule(events)
+
