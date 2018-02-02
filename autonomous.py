@@ -1,5 +1,7 @@
 import time
+
 import wpilib
+
 
 class Timed:
     def __init__(self, auto, duration):
@@ -14,14 +16,6 @@ class Timed:
         for _ in self.auto.execute():
             if time.time() > self.end_time():
                 break
-            yield
-
-        auto_exec = self.auto.execute()
-        while time.time() < self.end_time():
-            try:
-                next(auto_exec)
-            except StopIteration:
-                pass
             yield
 
 class RotateAutonomous:
@@ -52,11 +46,12 @@ class RotateAutonomous:
                 yield
         self.drivetrain.stop()
 
+
 class ArcadeAutonomous:
     """
-    The elevator will lift the grabber up and down to reach the cube.
-    A motor will control a pulley/chain to bring it up or down.
-    Limit switches will stop the motor when it gets too high or too low.
+    Drive the robot as specified for the specific number of seconds
+    duration is in seconds
+    forward and rotate should be between and 1
     """
 
     def __init__(self, drivetrain, forward, rotate, duration):
