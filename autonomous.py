@@ -24,6 +24,38 @@ class Timed:
                 pass
             yield
 
+class VisionAuto:
+    """
+    Rotate the robot towards the target using incoming vision packets
+    vision_socket is a VisionSocket, not a Python socket
+    """
+    def __init__(self, drivetrain, vision_socket, gyro):
+        self.drivetrain = drivetrain
+        self.socket = vision_socket
+        self.gyro = gyro
+
+    def init(self):
+        self.init_angle = self.gyro.getAngle()
+        self.angle = 0.0 # Scaled such that 360 -> 1.0
+
+    def execute(self):
+        while True:
+            self.try_update_angle()
+            self.drivetrain.arcade_drive(0.0, -self.angle)
+            print(f"{-self.angle/2.0}")
+            yield
+
+    def try_update_angle(self):
+        try:
+            json = self.socket.get_packet()
+            if json["sender"] == "vision":
+                self.angle = json["angle"]/30.0
+        except IOError as e:
+            print(f"Couldn't update goal: {e}")
+
+
+
+
 class RotateAutonomous:
     """
     Rotate the robot by the specified angle in degrees.

@@ -10,6 +10,7 @@ from subsystems.wings import Wings
 from autonomous import ArcadeAutonomous
 from autonomous import RotateAutonomous
 
+import autonomous
 import network
 
 # Left and right sides for the Xbox Controller
@@ -61,15 +62,19 @@ class Robot(wpilib.IterativeRobot):
         self.auto_exec = iter([])
 
         self.gyro = wpilib.ADXRS450_Gyro()
-        network.init()
+        try:
+            self.vision_socket = network.VisionSocket()
+        except:
+            self.vision_socket = network.MockSocket()
         self.timer = 0
 
     def robotPeriodic(self):
         if self.timer % 100 == 0:
             try:
-                print(network.get_packet())
-            except Exception as e:
+                print(self.vision_socket.get_packet())
+            except IOError as e:
                 print(f"Failed to get a packet: {e}")
+            print(f"is bound: {self.vision_socket.is_bound()}")
         self.timer += 1
 
     def teleopInit(self):
@@ -82,7 +87,8 @@ class Robot(wpilib.IterativeRobot):
         # print(self.gyro.getAngle())
 
     def autonomousInit(self):
-        self.auton = network.rotate_to_target(self.drivetrain, self.gyro, 1.0)
+        print("Autonomous Begin!")
+        self.auton = autonomous.VisionAuto(self.drivetrain, self.vision_socket, self.gyro)
         self.auton.init()
         self.auton_exec = self.auton.execute()
 
