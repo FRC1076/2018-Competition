@@ -21,6 +21,10 @@ class BaseAutonomous:
         self.init()
         return self.execute()
 
+    def _execute(self):
+        yield from self.execute()
+        self.end
+
 class Timed:
     def __init__(self, auto, duration):
         self.auto = auto
@@ -32,7 +36,7 @@ class Timed:
 
     def execute(self):
         for _ in self.auto.execute():
-            if time.time() > self.end_time():
+            if time.time() > self.end():
                 break
             yield
 
