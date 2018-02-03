@@ -2,6 +2,24 @@ import time
 
 import wpilib
 
+def drive_and_rotate(drivetrain, gyro):
+    yield from ArcadeAutonomous(drivetrain, 0.3, 0, 3).run()
+    yield from RotateAutonomous(drivetrain, gyro, 90, 0.5).run()
+    yield from ArcadeAutonomous(drivetrain, 0.3, 0, 3).run()
+
+class BaseAutonomous:
+    def init(self):
+        return self
+
+    def execute(self):
+        pass
+
+    def end(self):
+        pass
+
+    def run(self):
+        self.init()
+        return self.execute()
 
 class Timed:
     def __init__(self, auto, duration):
@@ -18,7 +36,7 @@ class Timed:
                 break
             yield
 
-class RotateAutonomous:
+class RotateAutonomous(BaseAutonomous):
     """
     Rotate the robot by the specified angle in degrees.
     Positive values will rotate clockwise, while negative values will rotate
@@ -47,7 +65,7 @@ class RotateAutonomous:
         self.drivetrain.stop()
 
 
-class ArcadeAutonomous:
+class ArcadeAutonomous(BaseAutonomous):
     """
     Drive the robot as specified for the specific number of seconds
     duration is in seconds
