@@ -49,7 +49,6 @@ class Robot(wpilib.IterativeRobot):
             wpilib.DoubleSolenoid(2, 3),
             None, None,
         )
-        self.wing_mode = False
 
         self.driver = wpilib.XboxController(0)
         self.operator = wpilib.XboxController(1)
@@ -58,38 +57,44 @@ class Robot(wpilib.IterativeRobot):
         pass
 
     def teleopPeriodic(self):
+        # @Todo: Deadzone these
         forward = self.driver.getY(RIGHT)
         rotate = self.driver.getX(LEFT)
         self.drivetrain.arcade_drive(forward, rotate)
         self.elevator.go_up(self.operator.getY(RIGHT))
-        
+
+        if self.operator.getPOV() != -1 and self.driver.getPOV() != -1:
+            op_pov = self.operator.getPOV()
+            driver_pov = self.driver.getPOV()
+            left_wing_up = (
+                (op_pov < 20 or 340 < op_pov) and
+                (driver_pov < 20 or 340 < driver_pov)
+            )
+            left_wing_down = 160 < op_pov < 200 and 160 < driver_pov < 200
+        else:
+            left_wing_up = False
+            left_wing_down = False
+
+        right_wing_up = self.operator.getYButton() and self.driver.getYButton()
+        right_wing_down = self.operator.getAButton() and self.driver.getAButton()
+
+        if left_wing_up:
+            self.wings.raise_left()
+        if left_wing_down:
+            self.wings.lower_left()
+        if right_wing_up:
+            self.wings.raise_right()
+        if right_wing_down:
+            self.wings.lower_right()
+
         left_trigger = self.operator.getTriggerAxis(LEFT)
         right_trigger = self.operator.getTriggerAxis(RIGHT)
-        operator_safety = self.operator.getAButton() and self.operator.getBButton()
-        driver_safety = self.driver.getAButton() and self.driver.getBButton()
-        left_bumper = self.operator.getBumper(LEFT)
-        right_bumper = self.operator.getBumper(RIGHT)
-        
         TRIGGER_LEVEL = 0.4
-        if operator_safety and driver_safety:
-            wing_mode = True
-        
-        if wing_mode:
-            if left_trigger > TRIGGER_LEVEL:
-                self.wings.raise_left()
-            if right_trigger > TRIGGER_LEVEL:
-                self.wings.raise_right()
-            if operator_safety:
-                if left_bumper:
-                    self.wings.lower_left()
-                if right_bumper:
-                    self.wings.lower_right()
-        else:
-            if right_trigger > TRIGGER_LEVEL and left_trigger > TRIGGER_LEVEL:
-                self.grabber.spit(min(right_trigger, left_trigger))
-            elif right_trigger > TRIGGER_LEVEL or left_trigger > TRIGGER_LEVEL:
-                self.grabber.absorb(max(right_trigger, left_trigger))
-            
+        if right_trigger > TRIGGER_LEVEL and left_trigger > TRIGGER_LEVEL:
+            self.grabber.spit(min(right_trigger, left_trigger))
+        elif right_trigger > TRIGGER_LEVEL or left_trigger > TRIGGER_LEVEL:
+            self.grabber.absorb(max(right_trigger, left_trigger))
+
 
     def autonomousInit(self):
         pass
