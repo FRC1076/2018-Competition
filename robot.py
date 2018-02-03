@@ -12,6 +12,11 @@ from autonomous import RotateAutonomous
 
 import network
 
+# Left and right sides for the Xbox Controller
+# Note that these dont' referr to just the sticks, but more generally
+# Refer to the left and right features of the controller.
+# Ex: LEFT_STICK may refer to the actual left joystick, the left trigger,
+# or left bumper.
 LEFT_STICK = GenericHID.Hand.kLeft
 RIGHT_STICK = GenericHID.Hand.kRight
 
@@ -37,7 +42,7 @@ class Robot(wpilib.IterativeRobot):
         right2 = ctre.WPI_TalonSRX(RIGHT2_ID)
         right = wpilib.SpeedControllerGroup(right1, right2)
         self.drivetrain = Drivetrain(left, right, None)
-        
+
         left_grabber = ctre.WPI_TalonSRX(LEFT_GRABBER_ID)
         right_grabber = ctre.WPI_TalonSRX(RIGHT_GRABBER_ID)
         self.grabber = Grabber(left_grabber, right_grabber, None)
@@ -59,18 +64,16 @@ class Robot(wpilib.IterativeRobot):
         network.init()
         self.timer = 0
 
-    # Make a ADXRsomething Gyro in robotInit
-    # print out the gyros angle in teleopperiodic
-    # self.myGyro = wpilib.ADXRsomethingGyro()
-    # self.myGyro.sometinghere()
-    
     def robotPeriodic(self):
         if self.timer % 100 == 0:
-            network.debug()
-        self.timer+=1
+            try:
+                print(network.get_packet())
+            except Exception as e:
+                print(f"Failed to get a packet: {e}")
+        self.timer += 1
 
     def teleopInit(self):
-        print()
+        print("Teleop Init Begin!")
 
     def teleopPeriodic(self):
         forward = self.driver.getY(RIGHT_STICK)
@@ -79,15 +82,13 @@ class Robot(wpilib.IterativeRobot):
         # print(self.gyro.getAngle())
 
     def autonomousInit(self):
-        # self.auton = network.rotate_to_target(self.drivetrain, self.gyro, 1.0)
-        # self.auton.init()
-        # self.auton_exec = self.auton.execute()
-        self.vision_auto = network.rotate_to_target(self.drivetrain, self.gyro, 1.0)
+        self.auton = network.rotate_to_target(self.drivetrain, self.gyro, 1.0)
+        self.auton.init()
+        self.auton_exec = self.auton.execute()
 
     def autonomousPeriodic(self):
         try:
-            # next(self.auton_exec)
-            next(self.vision_auto)
+            next(self.auton_exec)
         except StopIteration:
             # WPILib prints a ton of error messages when the motor has no output
             # send to it, so we stop the drivetrain to make it quiet. Also,

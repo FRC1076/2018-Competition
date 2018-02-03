@@ -9,40 +9,40 @@ BUFFER_SIZE = 1024
 lookFor = "cube" # Cube or retroreflective based on what you want to find
 
 socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+socket.settimeout(0.1) # Timeout after 0.1 seconds
 
+"""
+Attempts to bind to the socket. Should be run once but may be run multiple times
+if binding fails(?)
+"""
 def init():
     try:
         socket.bind((UDP_IP, UDP_PORT))
-        socket.settimeout(1) # Timeout after 1 second
     except Exception as e:
         print("Could not bind: {}".format(e))
 
+"""
+Attempts to get a packet from the socket and
+returns the dictionary recieved from the socket.
+Throws IOError if unable to recieve the packet.
+"""
+def get_packet():
+    data = socket.recv(BUFFER_SIZE)
+    return json.loads(data.decode())
 
-def debug():
-    try:
-        data = socket.recv(BUFFER_SIZE)
-    except IOError:
-        print("Timed out!")
-        return
-    print("got packet: " + data.decode())
-    print(json.loads(data.decode()))
-
+"""
+Builds a RotateAutonomous object which attempts to rotate towards the target.
+If it cannot get a packet, it will return a RotateAutonomous object which
+does no rotation
+"""
 def rotate_to_target(drivetrain, gyro, speed):
     try:
-        data = socket.recv(BUFFER_SIZE)
-    except IOError:
-        print("Timed out!")
-        return
-
-    json = json.loads(data)
-    print(json)
+        json = get_packet()
+    except IOError as e:
+        print(f"Failed to get a packet: {e}")
+        return RotateAutonomous(drivetrain, gyro, 0, 0.0)
 
     if json["sender"] == "vision":
         if json["object"] == lookFor:
             angle = json["angle"]
-            rotate = autonomous.RotateAutonomous(drivetrain, gyro, angle, speed)
-            rotate.init()
-            yield from rotate.execute()
-
-
-
+            return RotateAutonomous(drivetrain, gyro, angle, speed)
