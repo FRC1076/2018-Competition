@@ -10,6 +10,8 @@ from subsystems.wings import Wings
 from autonomous import ArcadeAutonomous
 from autonomous import RotateAutonomous
 
+import network
+
 LEFT_STICK = GenericHID.Hand.kLeft
 RIGHT_STICK = GenericHID.Hand.kRight
 
@@ -54,11 +56,18 @@ class Robot(wpilib.IterativeRobot):
         self.auto_exec = iter([])
 
         self.gyro = wpilib.ADXRS450_Gyro()
+        network.init()
+        self.timer = 0
 
-# Make a ADXRsomething Gyro in robotInit
-# print out the gyros angle in teleopperiodic
-# self.myGyro = wpilib.ADXRsomethingGyro()
-# self.myGyro.sometinghere()
+    # Make a ADXRsomething Gyro in robotInit
+    # print out the gyros angle in teleopperiodic
+    # self.myGyro = wpilib.ADXRsomethingGyro()
+    # self.myGyro.sometinghere()
+    
+    def robotPeriodic(self):
+        if self.timer % 100 == 0:
+            network.debug()
+        self.timer+=1
 
     def teleopInit(self):
         print()
@@ -67,16 +76,18 @@ class Robot(wpilib.IterativeRobot):
         forward = self.driver.getY(RIGHT_STICK)
         rotate = self.driver.getX(LEFT_STICK)
         self.drivetrain.arcade_drive(forward, rotate)
-        print(self.gyro.getAngle())
+        # print(self.gyro.getAngle())
 
     def autonomousInit(self):
-        self.auton = RotateAutonomous(self.drivetrain, self.gyro, -45, 0.5)
-        self.auton.init()
-        self.auton_exec = self.auton.execute()
+        # self.auton = network.rotate_to_target(self.drivetrain, self.gyro, 1.0)
+        # self.auton.init()
+        # self.auton_exec = self.auton.execute()
+        self.vision_auto = network.rotate_to_target(self.drivetrain, self.gyro, 1.0)
 
     def autonomousPeriodic(self):
         try:
-            next(self.auton_exec)
+            # next(self.auton_exec)
+            next(self.vision_auto)
         except StopIteration:
             # WPILib prints a ton of error messages when the motor has no output
             # send to it, so we stop the drivetrain to make it quiet. Also,
