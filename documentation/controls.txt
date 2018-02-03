@@ -9,10 +9,12 @@ Driver:
 Operator:
   right joystick: elevator up and down
     - y values
-  hold A and B on both controllers to switch into wing_mode
-  wing_mode
-    - triggers will raise the wings
-    - with just operator safety: the bumper lowers the wing
-  not wing_mode
-    one trigger: absorb with Grabber
-    two triggers: spit with grabber  
+
+  one trigger: absorb with Grabber
+  two triggers: spit with Grabber
+
+  Y button: right wing up
+  B button: right wing down
+  DPad up or down: left wing up or down
+  as a safety: driver controller must be pressing down the same controls
+  in order to move wings up or down 
