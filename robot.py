@@ -2,6 +2,7 @@ import ctre
 import wpilib
 from wpilib.interfaces import GenericHID
 
+from autonomous import ArcadeAutonomous
 from subsystems.drivetrain import Drivetrain
 from subsystems.elevator import Elevator
 from subsystems.grabber import Grabber
@@ -16,10 +17,10 @@ import network
 # Left and right sides for the Xbox Controller
 # Note that these dont' referr to just the sticks, but more generally
 # Refer to the left and right features of the controller.
-# Ex: LEFT_STICK may refer to the actual left joystick, the left trigger,
+# Ex: LEFT may refer to the actual left joystick, the left trigger,
 # or left bumper.
-LEFT_STICK = GenericHID.Hand.kLeft
-RIGHT_STICK = GenericHID.Hand.kRight
+LEFT = GenericHID.Hand.kLeft
+RIGHT = GenericHID.Hand.kRight
 
 
 # @TODO: Actually have motor IDs for these
@@ -36,25 +37,29 @@ RIGHT2_ID = 2
 
 class Robot(wpilib.IterativeRobot):
     def robotInit(self):
-        left1 = ctre.WPI_TalonSRX(LEFT1_ID)
-        left2 = ctre.WPI_TalonSRX(LEFT2_ID)
-        left = wpilib.SpeedControllerGroup(left1, left2)
-        right1 = ctre.WPI_TalonSRX(RIGHT1_ID)
-        right2 = ctre.WPI_TalonSRX(RIGHT2_ID)
-        right = wpilib.SpeedControllerGroup(right1, right2)
+        left = wpilib.SpeedControllerGroup(
+            ctre.WPI_TalonSRX(LEFT1_ID),
+            ctre.WPI_TalonSRX(LEFT2_ID),
+        )
+        right = wpilib.SpeedControllerGroup(
+            ctre.WPI_TalonSRX(RIGHT1_ID),
+            ctre.WPI_TalonSRX(RIGHT2_ID),
+        )
         self.drivetrain = Drivetrain(left, right, None)
 
-        left_grabber = ctre.WPI_TalonSRX(LEFT_GRABBER_ID)
-        right_grabber = ctre.WPI_TalonSRX(RIGHT_GRABBER_ID)
-        self.grabber = Grabber(left_grabber, right_grabber, None)
+        self.grabber = Grabber(
+            ctre.WPI_TalonSRX(LEFT_GRABBER_ID),
+            ctre.WPI_TalonSRX(RIGHT_GRABBER_ID),
+            None,
+        )
 
         self.elevator = Elevator(ctre.WPI_TalonSRX(ELEVATOR_ID))
 
-        # @TODO: Do we even have latches?
         # @TODO: Find actual non-placeholder values for the channel IDs
-        wings_left = wpilib.DoubleSolenoid(0, 1)
-        wings_right = wpilib.DoubleSolenoid(2, 3)
-        self.wings = Wings(wings_left, wings_right, None, None)
+        self.wings = Wings(
+            wpilib.DoubleSolenoid(0, 1),
+            wpilib.DoubleSolenoid(2, 3),
+        )
 
         self.driver = wpilib.XboxController(0)
         self.operator = wpilib.XboxController(1)
@@ -62,8 +67,8 @@ class Robot(wpilib.IterativeRobot):
         self.auto_exec = iter([])
 
         self.gyro = wpilib.ADXRS450_Gyro()
-            self.vision_socket = network.VisionSocket()
 
+        self.vision_socket = network.VisionSocket()
         self.vision_socket.start()
         self.timer = 0
 
@@ -77,10 +82,43 @@ class Robot(wpilib.IterativeRobot):
         print("Teleop Init Begin!")
 
     def teleopPeriodic(self):
-        forward = self.driver.getY(RIGHT_STICK)
-        rotate = self.driver.getX(LEFT_STICK)
+        # @Todo: Deadzone these
+        forward = self.driver.getY(RIGHT)
+        rotate = self.driver.getX(LEFT)
         self.drivetrain.arcade_drive(forward, rotate)
-        # print(self.gyro.getAngle())
+        self.elevator.go_up(self.operator.getY(RIGHT))
+
+        if self.operator.getPOV() != -1 and self.driver.getPOV() != -1:
+            op_pov = self.operator.getPOV()
+            driver_pov = self.driver.getPOV()
+            left_wing_up = (
+                (op_pov < 20 or 340 < op_pov) and
+                (driver_pov < 20 or 340 < driver_pov)
+            )
+            left_wing_down = 160 < op_pov < 200 and 160 < driver_pov < 200
+        else:
+            left_wing_up = False
+            left_wing_down = False
+
+        right_wing_up = self.operator.getYButton() and self.driver.getYButton()
+        right_wing_down = self.operator.getAButton() and self.driver.getAButton()
+
+        if left_wing_up:
+            self.wings.raise_left()
+        if left_wing_down:
+            self.wings.lower_left()
+        if right_wing_up:
+            self.wings.raise_right()
+        if right_wing_down:
+            self.wings.lower_right()
+
+        left_trigger = self.operator.getTriggerAxis(LEFT)
+        right_trigger = self.operator.getTriggerAxis(RIGHT)
+        TRIGGER_LEVEL = 0.4
+        if right_trigger > TRIGGER_LEVEL and left_trigger > TRIGGER_LEVEL:
+            self.grabber.spit(min(right_trigger, left_trigger))
+        elif right_trigger > TRIGGER_LEVEL or left_trigger > TRIGGER_LEVEL:
+            self.grabber.absorb(max(right_trigger, left_trigger))
 
     def autonomousInit(self):
         print("Autonomous Begin!")

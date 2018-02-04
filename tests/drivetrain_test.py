@@ -1,15 +1,8 @@
 from wpilib import DoubleSolenoid
+
+from helper import GetSet
 from subsystems.drivetrain import Drivetrain
 
-class GetSet:
-    def __init__(self, state):
-        self.state = state
-
-    def get(self):
-        return self.state
-
-    def set(self, state):
-        self.state = state
 
 def test_forward():
     left_motor = GetSet(0)
