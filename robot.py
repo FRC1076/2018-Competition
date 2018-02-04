@@ -62,18 +62,14 @@ class Robot(wpilib.IterativeRobot):
         self.auto_exec = iter([])
 
         self.gyro = wpilib.ADXRS450_Gyro()
-        try:
             self.vision_socket = network.VisionSocket()
-        except:
-            self.vision_socket = network.MockSocket()
+
+        self.vision_socket.start()
         self.timer = 0
 
     def robotPeriodic(self):
         if self.timer % 100 == 0:
-            try:
-                print(self.vision_socket.get_packet())
-            except IOError as e:
-                print(f"Failed to get a packet: {e}")
+            print(self.vision_socket.get_angle(1.0))
             print(f"is bound: {self.vision_socket.is_bound()}")
         self.timer += 1
 
@@ -101,6 +97,10 @@ class Robot(wpilib.IterativeRobot):
             # this ensures that we actually stop at the end of autonomous instead
             # of potentially running away for no reason.
             self.drivetrain.stop()
+
+    # Close the socket when the main process ends.
+    def __del__(self):
+        self.vision_socket.close()
 
 
 if __name__ == '__main__':

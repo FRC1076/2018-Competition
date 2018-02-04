@@ -35,25 +35,18 @@ class VisionAuto:
         self.gyro = gyro
 
     def init(self):
-        self.init_angle = self.gyro.getAngle()
-        self.angle = 0.0 # Scaled such that 360 -> 1.0
+        # TODO: Use the gyro to better rotate to the target
+        pass
 
     def execute(self):
         while True:
-            self.try_update_angle()
-            self.drivetrain.arcade_drive(0.0, -self.angle)
-            print(f"{-self.angle/2.0}")
+            angle = self.socket.get_angle(0.1) # Angle must be at most 0.1s old
+            if angle is not None:
+                self.drivetrain.arcade_drive(0.0, -angle/30.0)
+            else:
+                self.drivetrain.stop()
+            print(f"{angle}")
             yield
-
-    def try_update_angle(self):
-        try:
-            json = self.socket.get_packet()
-            if json["sender"] == "vision":
-                self.angle = json["angle"]/30.0
-        except IOError as e:
-            print(f"Couldn't update goal: {e}")
-
-
 
 
 class RotateAutonomous:
