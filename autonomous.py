@@ -36,7 +36,7 @@ class Timed:
 
     def execute(self):
         for _ in self.auto.execute():
-            if time.time() > self.end():
+            if time.time() > self.end_time:
                 break
             yield
 

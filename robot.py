@@ -81,7 +81,7 @@ class Robot(wpilib.IterativeRobot):
 
     def autonomousPeriodic(self):
         try:
-            next(self.auton.end())
+            next(self.auton)
         except StopIteration:
             # WPILib prints a ton of error messages when the motor has no output
             # send to it, so we stop the drivetrain to make it quiet. Also,
