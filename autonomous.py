@@ -23,7 +23,7 @@ class BaseAutonomous:
 
     def _execute(self):
         yield from self.execute()
-        self.end
+        self.end()
 
 class Timed:
     def __init__(self, auto, duration):
