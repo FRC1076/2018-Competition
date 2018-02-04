@@ -102,7 +102,7 @@ def rotate_to_target(drivetrain, gyro, speed):
     try:
         json = get_packet()
     except IOError as e:
-        print(f"Failed to get a packet: {e}")
+        print("Failed to get a packet: {}".format(e))
         return RotateAutonomous(drivetrain, gyro, 0, 0.0)
 
     if json["sender"] == "vision":

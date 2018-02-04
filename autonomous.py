@@ -40,7 +40,6 @@ class VisionAuto:
                 self.drivetrain.arcade_drive(0.0, -angle/30.0)
             else:
                 self.drivetrain.stop()
-            print(f"{angle}")
             yield
 
 
@@ -55,7 +54,7 @@ class RotateAutonomous:
         self.gyro = gyro
         self.speed = speed
         self.angle = angle
-        assert speed >= 0, f"Speed ({speed}) must be positive!"
+        assert speed >= 0, "Speed ({}) must be positive!".format(speed)
 
     def init(self):
         self.start_angle = self.gyro.getAngle()

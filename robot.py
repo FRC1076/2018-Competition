@@ -75,7 +75,7 @@ class Robot(wpilib.IterativeRobot):
     def robotPeriodic(self):
         if self.timer % 100 == 0:
             print(self.vision_socket.get_angle(1.0))
-            print(f"is bound: {self.vision_socket.is_bound()}")
+            print("is bound: {}".format(self.vision_socket.is_bound()))
         self.timer += 1
 
     def teleopInit(self):
