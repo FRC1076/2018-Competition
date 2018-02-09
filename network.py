@@ -42,22 +42,25 @@ class VisionSocket(Thread):
             print("Could not bind: {}".format(e))
         self.last_packet_time = time.time()
         self.angle = None
-        self.closed = False
+        self.running = True
+        # Marks that this thread is a Daemon, meaning the thread will be killed
+        # automatically when the main thread exits. This is done to prevent pytest
+        # from hanging forever (since it is waiting for all threads to exit and I
+        # can't seem to figure out how to make threads exit as a non-daemon thread)
+        self.daemon = True
+
 
     """
     Called as part of the Thread API. Don't call this yourself, use start()
     instead to start the thread.
     """
     def run(self):
-        while True:
+        while self.running:
             try:
                 self._read_packet()
             except IOError as e:
                 pass
-            # Return from the function if the socket has been closed
-            # This ends the thread
-            if self.closed:
-                break
+        print("good bye sockets")
 
     """
     Read a packet from the socket, and
@@ -91,7 +94,7 @@ class VisionSocket(Thread):
     """
     def close(self):
         self.socket.close()
-        self.closed = True
+        self.running = False
 
 """
 Builds a RotateAutonomous object which attempts to rotate towards the target.
