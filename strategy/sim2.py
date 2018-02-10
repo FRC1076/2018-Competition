@@ -8,6 +8,12 @@ class Team(Enum):
     RED = auto()
     BLUE = auto()
 
+    def opposing(self):
+        if self == Team.RED:
+            return Team.BLUE
+        else:
+            return Team.RED
+
 class Location(Enum):
     RED_PORTAL = -15
     RED_PILE = -13 
@@ -20,6 +26,13 @@ class Location(Enum):
 
     def __init__(self, position):
         self.position = position
+
+    @staticmethod
+    def pile(team):
+        if team == Team.RED:
+            return Location.RED_PILE
+        else:
+            return Location.BLUE_PILE
 
 
 class Robot:
@@ -36,6 +49,16 @@ class Robot:
 
     def __repr__(self):
         return f'Robot({self.name!r}, {self.location!r})'
+
+    def scale(self, team):
+        return (self.world[Location.RED_SCALE][team] +
+                self.world[Location.BLUE_SCALE][team])
+
+    def red_switch(self, team):
+        return self.world[Location.RED_SWITCH][team]
+
+    def blue_switch(self, team):
+        return self.world[Location.BLUE_SWITCH][team]
 
     def drive(self, to):
         distance = abs(self.location.position - to.position)
@@ -74,16 +97,6 @@ class Robot:
 #     yield 1
 
 class Score(Robot):
-    def scale(self, team):
-        return (self.world[Location.RED_SCALE][team] +
-                self.world[Location.BLUE_SCALE][team])
-
-    def red_switch(self, team):
-        return self.world[Location.RED_SWITCH][team]
-
-    def blue_switch(self, team):
-        return self.world[Location.BLUE_SWITCH][team]
-
     def _run(self):
         while True:
             if self.scale(Team.RED) > self.scale(Team.BLUE):
@@ -134,6 +147,23 @@ class CRobot(Robot):
         yield from self.drive(Location.BLUE_SCALE)
 
 
+class ContestBot(Robot):
+    def pick_contested_spot(self):
+        if self.scale(self.team) <= self.scale(self.team.opposing()):
+            pass
+        # @Todo: Pick a location to go to
+        self.contested_spot = None
+
+    def _run(self):
+        while True:
+            yield from self.pick_contested_spot()
+            # @Todo: Pick cubes from locations more smartly
+            yield from self.drive(Location.pile(self.team))
+            yield from self.pick_up()
+            yield from self.drive(self.contested_spot)
+            yield from self.put_down()
+
+
 def schedule(events):
     while not events.empty():
         time, robot = events.get()
@@ -160,9 +190,12 @@ if __name__ == '__main__':
     }
     robots = [
         Score('Score', None, world, 0, None),
-        ARobot('A', Team.RED, world, 4, Location.RED_PORTAL),
-        BRobot('B', Team.BLUE, world, 4, Location.BLUE_PORTAL),
-        CRobot('C', Team.RED, world, 4, Location.RED_PORTAL),
+        ContestBot('R1', Team.RED, world, 4, Location.RED_PORTAL),
+        ContestBot('R2', Team.RED, world, 4, Location.RED_PORTAL),
+        ContestBot('R3', Team.RED, world, 4, Location.RED_PORTAL),
+        ContestBot('B1', Team.BLUE, world, 4, Location.BLUE_PORTAL),
+        ContestBot('B2', Team.BLUE, world, 4, Location.BLUE_PORTAL),
+        ContestBot('B3', Team.BLUE, world, 4, Location.BLUE_PORTAL),
     ]
     events = queue.PriorityQueue()
     for robot in robots:
