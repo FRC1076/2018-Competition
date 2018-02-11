@@ -8,14 +8,11 @@ from subsystems.elevator import Elevator
 from subsystems.grabber import Grabber
 from subsystems.wings import Wings
 
-
-from autonomous import ArcadeAutonomous
 from autonomous import RotateAutonomous
 import autonomous
 
-LEFT_STICK = GenericHID.Hand.kLeft
-RIGHT_STICK = GenericHID.Hand.kRight
-
+LEFT = GenericHID.Hand.kLeft
+RIGHT = GenericHID.Hand.kRight
 
 # @TODO: Actually have motor IDs for these
 ELEVATOR_ID = 5
@@ -71,10 +68,43 @@ class Robot(wpilib.IterativeRobot):
         pass
 
     def teleopPeriodic(self):
-        forward = self.driver.getY(RIGHT_STICK)
-        rotate = self.driver.getX(LEFT_STICK)
+        # @Todo: Deadzone these
+        forward = self.driver.getY(RIGHT)
+        rotate = self.driver.getX(LEFT)
         self.drivetrain.arcade_drive(forward, rotate)
-        print(self.gyro.getAngle())
+        self.elevator.go_up(self.operator.getY(RIGHT))
+
+        if self.operator.getPOV() != -1 and self.driver.getPOV() != -1:
+            op_pov = self.operator.getPOV()
+            driver_pov = self.driver.getPOV()
+            left_wing_up = (
+                (op_pov < 20 or 340 < op_pov) and
+                (driver_pov < 20 or 340 < driver_pov)
+            )
+            left_wing_down = 160 < op_pov < 200 and 160 < driver_pov < 200
+        else:
+            left_wing_up = False
+            left_wing_down = False
+
+        right_wing_up = self.operator.getYButton() and self.driver.getYButton()
+        right_wing_down = self.operator.getAButton() and self.driver.getAButton()
+
+        if left_wing_up:
+            self.wings.raise_left()
+        if left_wing_down:
+            self.wings.lower_left()
+        if right_wing_up:
+            self.wings.raise_right()
+        if right_wing_down:
+            self.wings.lower_right()
+
+        left_trigger = self.operator.getTriggerAxis(LEFT)
+        right_trigger = self.operator.getTriggerAxis(RIGHT)
+        TRIGGER_LEVEL = 0.4
+        if right_trigger > TRIGGER_LEVEL and left_trigger > TRIGGER_LEVEL:
+            self.grabber.spit(min(right_trigger, left_trigger))
+        elif right_trigger > TRIGGER_LEVEL or left_trigger > TRIGGER_LEVEL:
+            self.grabber.absorb(max(right_trigger, left_trigger))
 
     def autonomousInit(self):
         self.auton = autonomous.drive_and_rotate(self.drivetrain, self.gyro)
