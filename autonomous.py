@@ -17,13 +17,13 @@ class BaseAutonomous:
     def end(self):
         pass
 
-    def run(self):
-        self.init()
-        return self.execute()
-
     def _execute(self):
         yield from self.execute()
         self.end()
+
+    def run(self):
+        self.init()
+        return self._execute()
 
 class Timed:
     def __init__(self, auto, duration):
