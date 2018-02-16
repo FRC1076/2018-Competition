@@ -2,17 +2,13 @@ import ctre
 import wpilib
 from wpilib.interfaces import GenericHID
 
-from autonomous import ArcadeAutonomous
+import autonomous
+import network
+from autonomous import ArcadeAutonomous, RotateAutonomous
 from subsystems.drivetrain import Drivetrain
 from subsystems.elevator import Elevator
 from subsystems.grabber import Grabber
 from subsystems.wings import Wings
-
-from autonomous import ArcadeAutonomous
-from autonomous import RotateAutonomous
-
-import autonomous
-import network
 
 # Left and right sides for the Xbox Controller
 # Note that these dont' referr to just the sticks, but more generally
@@ -122,13 +118,11 @@ class Robot(wpilib.IterativeRobot):
 
     def autonomousInit(self):
         print("Autonomous Begin!")
-        self.auton = autonomous.VisionAuto(self.drivetrain, self.vision_socket, self.gyro)
-        self.auton.init()
-        self.auton_exec = self.auton.execute()
+        self.auton = autonomous.drive_and_rotate(self.drivetrain, self.gyro)
 
     def autonomousPeriodic(self):
         try:
-            next(self.auton_exec)
+            next(self.auton)
         except StopIteration:
             # WPILib prints a ton of error messages when the motor has no output
             # send to it, so we stop the drivetrain to make it quiet. Also,
