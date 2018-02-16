@@ -2,17 +2,22 @@ import ctre
 import wpilib
 from wpilib.interfaces import GenericHID
 
-from autonomous import ArcadeAutonomous
+import autonomous
+import network
+from autonomous import ArcadeAutonomous, RotateAutonomous
 from subsystems.drivetrain import Drivetrain
 from subsystems.elevator import Elevator
 from subsystems.grabber import Grabber
 from subsystems.wings import Wings
 
-from autonomous import RotateAutonomous
-import autonomous
-
+# Left and right sides for the Xbox Controller
+# Note that these dont' referr to just the sticks, but more generally
+# Refer to the left and right features of the controller.
+# Ex: LEFT may refer to the actual left joystick, the left trigger,
+# or left bumper.
 LEFT = GenericHID.Hand.kLeft
 RIGHT = GenericHID.Hand.kRight
+
 
 # @TODO: Actually have motor IDs for these
 ELEVATOR_ID = 5
@@ -59,13 +64,18 @@ class Robot(wpilib.IterativeRobot):
 
         self.gyro = wpilib.ADXRS450_Gyro()
 
-# Make a ADXRsomething Gyro in robotInit
-# print out the gyros angle in teleopperiodic
-# self.myGyro = wpilib.ADXRsomethingGyro()
-# self.myGyro.sometinghere()
+        self.vision_socket = network.VisionSocket()
+        self.vision_socket.start()
+        self.timer = 0
+
+    def robotPeriodic(self):
+        if self.timer % 100 == 0:
+            print(self.vision_socket.get_angle(1.0))
+            print("is bound: {}".format(self.vision_socket.is_bound()))
+        self.timer += 1
 
     def teleopInit(self):
-        pass
+        print("Teleop Init Begin!")
 
     def teleopPeriodic(self):
         # @Todo: Deadzone these
@@ -107,6 +117,7 @@ class Robot(wpilib.IterativeRobot):
             self.grabber.absorb(max(right_trigger, left_trigger))
 
     def autonomousInit(self):
+        print("Autonomous Begin!")
         self.auton = autonomous.drive_and_rotate(self.drivetrain, self.gyro)
 
     def autonomousPeriodic(self):
@@ -118,6 +129,10 @@ class Robot(wpilib.IterativeRobot):
             # this ensures that we actually stop at the end of autonomous instead
             # of potentially running away for no reason.
             self.drivetrain.stop()
+
+    # Close the socket when the main process ends.
+    def __del__(self):
+        self.vision_socket.close()
 
 
 if __name__ == '__main__':
