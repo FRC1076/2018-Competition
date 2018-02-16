@@ -19,6 +19,58 @@ class Timed:
             yield
 
 
+class VisionAuto:
+    """
+    Rotate the robot towards the target using incoming vision packets
+    vision_socket is a VisionSocket, not a Python socket
+    """
+    def __init__(self, drivetrain, vision_socket, gyro):
+        self.drivetrain = drivetrain
+        self.socket = vision_socket
+        self.gyro = gyro
+
+    def init(self):
+        # TODO: Use the gyro to better rotate to the target
+        pass
+
+    def execute(self):
+        while True:
+            angle = self.socket.get_angle(0.1) # Angle must be at most 0.1s old
+            if angle is not None:
+                self.drivetrain.arcade_drive(0.0, -angle/30.0)
+            else:
+                self.drivetrain.stop()
+            yield
+
+
+class RotateAutonomous:
+    """
+    Rotate the robot by the specified angle in degrees.
+    Positive values will rotate clockwise, while negative values will rotate
+    counterclockwise.
+    """
+    def __init__(self, drivetrain, gyro, angle, speed):
+        self.drivetrain = drivetrain
+        self.gyro = gyro
+        self.speed = speed
+        self.angle = angle
+        assert speed >= 0, "Speed ({}) must be positive!".format(speed)
+
+    def init(self):
+        self.start_angle = self.gyro.getAngle()
+
+    def execute(self):
+        if self.angle > 0:
+            while self.gyro.getAngle() - self.start_angle < self.angle:
+                self.drivetrain.arcade_drive(0, self.speed)
+                yield
+        else:
+            while self.gyro.getAngle() - self.start_angle > self.angle:
+                self.drivetrain.arcade_drive(0, -self.speed)
+                yield
+        self.drivetrain.stop()
+
+
 class ArcadeAutonomous:
     """
     Drive the robot as specified for the specific number of seconds

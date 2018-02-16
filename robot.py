@@ -8,8 +8,20 @@ from subsystems.elevator import Elevator
 from subsystems.grabber import Grabber
 from subsystems.wings import Wings
 
+from autonomous import ArcadeAutonomous
+from autonomous import RotateAutonomous
+
+import autonomous
+import network
+
+# Left and right sides for the Xbox Controller
+# Note that these dont' referr to just the sticks, but more generally
+# Refer to the left and right features of the controller.
+# Ex: LEFT may refer to the actual left joystick, the left trigger,
+# or left bumper.
 LEFT = GenericHID.Hand.kLeft
 RIGHT = GenericHID.Hand.kRight
+
 
 # @TODO: Actually have motor IDs for these
 ELEVATOR_ID = 5
@@ -54,8 +66,20 @@ class Robot(wpilib.IterativeRobot):
 
         self.auto_exec = iter([])
 
+        self.gyro = wpilib.ADXRS450_Gyro()
+
+        self.vision_socket = network.VisionSocket()
+        self.vision_socket.start()
+        self.timer = 0
+
+    def robotPeriodic(self):
+        if self.timer % 100 == 0:
+            print(self.vision_socket.get_angle(1.0))
+            print("is bound: {}".format(self.vision_socket.is_bound()))
+        self.timer += 1
+
     def teleopInit(self):
-        pass
+        print("Teleop Init Begin!")
 
     def teleopPeriodic(self):
         # @Todo: Deadzone these
@@ -96,9 +120,9 @@ class Robot(wpilib.IterativeRobot):
         elif right_trigger > TRIGGER_LEVEL or left_trigger > TRIGGER_LEVEL:
             self.grabber.absorb(max(right_trigger, left_trigger))
 
-
     def autonomousInit(self):
-        self.auton = ArcadeAutonomous(self.drivetrain, 0, 0.4, 1)
+        print("Autonomous Begin!")
+        self.auton = autonomous.VisionAuto(self.drivetrain, self.vision_socket, self.gyro)
         self.auton.init()
         self.auton_exec = self.auton.execute()
 
@@ -111,6 +135,10 @@ class Robot(wpilib.IterativeRobot):
             # this ensures that we actually stop at the end of autonomous instead
             # of potentially running away for no reason.
             self.drivetrain.stop()
+
+    # Close the socket when the main process ends.
+    def __del__(self):
+        self.vision_socket.close()
 
 
 if __name__ == '__main__':
