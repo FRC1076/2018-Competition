@@ -66,7 +66,8 @@ class VisionSocket(Thread):
     def run(self):
         while self.running:
             try:
-                self._read_packet()
+                data = self.socket.recv(BUFFER_SIZE)
+                self._read_packet(data)
             except IOError as e:
                 pass
         print("good bye sockets")
@@ -75,13 +76,13 @@ class VisionSocket(Thread):
     Read a packet from the socket, and
     updating the relevant values from said packets.
     """
-    def _read_packet(self):
-        data = self.socket.recv(BUFFER_SIZE)
+    def _read_packet(self, data):
         parsed = json.loads(data.decode())
         if parsed["sender"] == "vision":
             self.angle = parsed["angle"]
-            self.packet_id = parse["id"]
+            self.packet_id = parsed["id"]
         self.last_packet_time = time.time()
+
 
     """
     Returns the most recently received angle, or none if

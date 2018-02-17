@@ -64,7 +64,13 @@ class Robot(wpilib.IterativeRobot):
 
         self.gyro = wpilib.ADXRS450_Gyro()
 
-        self.vision_socket = network.VisionSocket()
+        if Robot.isReal():
+            self.vision_socket = network.VisionSocket()
+            self.switch_configuration = wpilib.DriverStation.getInstance().getGameSpecificMessage()
+        else:
+            self.vision_socket = network.MockSocket()
+            self.switch_configuration = "Sim Mode"
+
         self.vision_socket.start()
         self.timer = 0
 
