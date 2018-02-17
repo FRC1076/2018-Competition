@@ -1,11 +1,15 @@
 import time
-
+import math
 import wpilib
 
-def drive_and_rotate(drivetrain, gyro):
+def center_to_side(drivetrain, gyro, vision_socket):
+    yield from RotateAutonomous(drivetrain, gyro, 45, 0.5).run()
     yield from ArcadeAutonomous(drivetrain, 0.3, 0, 3).run()
-    yield from RotateAutonomous(drivetrain, gyro, 90, 0.5).run()
-    yield from ArcadeAutonomous(drivetrain, 0.3, 0, 3).run()
+    yield from RotateAutonomous(drivetrain, gyro, 45, -0.5).run()
+    yield from VisionAuto(drivetrain, gyro, vision_socket, 0.5).run()
+
+def drive_and_rotate(drivetrain, gyro, vision_socket):
+    yield from VisionAuto(drivetrain, gyro, vision_socket, 0.4).run()
 
 class BaseAutonomous:
     def init(self):
@@ -46,10 +50,26 @@ class VisionAuto:
     Rotate the robot towards the target using incoming vision packets
     vision_socket is a VisionSocket, not a Python socket
     """
-    def __init__(self, drivetrain, vision_socket, gyro):
+    def __init__(self, drivetrain, gyro, vision_socket, forward):
         self.drivetrain = drivetrain
         self.socket = vision_socket
         self.gyro = gyro
+        self.forward = forward
+        self.correction = 0
+        self.PID = wpilib.PIDController(0.03, 0.0, 0.0,
+            source=self._get_angle,
+            output=self._set_correction)
+
+    def _get_angle(self):
+        angle = self.socket.get_angle(max_staleness=0.5)/30.0
+        return angle
+
+    def _set_correction(self, value):
+        self.correction = value
+
+    def init(self):
+        self.PID.setInputRange(-35, 35)
+        self.PID.enable()
 
     def init(self):
         # TODO: Use the gyro to better rotate to the target
@@ -57,13 +77,19 @@ class VisionAuto:
 
     def execute(self):
         while True:
-            angle = self.socket.get_angle(0.1) # Angle must be at most 0.1s old
+            angle = self.socket.get_angle(max_staleness=0.5)
             if angle is not None:
-                self.drivetrain.arcade_drive(0.0, -angle/30.0)
+                correction = self.PID.get()
+                correction = math.copysign(self.correction, angle)
+                print("angle:{} correction: {}".format(angle, correction))
+                self.drivetrain.arcade_drive(self.forward, correction)
             else:
                 self.drivetrain.stop()
             yield
 
+    def end(self):
+        self.PID.disable()
+        self.PID.free()
 
 class RotateAutonomous(BaseAutonomous):
     """

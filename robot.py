@@ -125,7 +125,7 @@ class Robot(wpilib.IterativeRobot):
 
     def autonomousInit(self):
         print("Autonomous Begin!")
-        self.auton = autonomous.drive_and_rotate(self.drivetrain, self.gyro)
+        self.auton = autonomous.drive_and_rotate(self.drivetrain, self.gyro, self.vision_socket)
 
     def autonomousPeriodic(self):
         try:
