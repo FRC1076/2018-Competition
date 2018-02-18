@@ -1,5 +1,6 @@
 import ctre
 import wpilib
+from wpilib import DoubleSolenoid
 from wpilib.interfaces import GenericHID
 
 import autonomous
@@ -58,9 +59,11 @@ class Robot(wpilib.IterativeRobot):
 
         # @TODO: Find actual non-placeholder values for the channel IDs
         self.wings = Wings(
-            wpilib.DoubleSolenoid(0, 1),
             wpilib.DoubleSolenoid(2, 3),
+            wpilib.DoubleSolenoid(4, 5),
         )
+
+        self.brake = wpilib.DoubleSolenoid(0, 1)
 
         self.driver = wpilib.XboxController(0)
         self.operator = wpilib.XboxController(1)
@@ -120,12 +123,16 @@ class Robot(wpilib.IterativeRobot):
 
         if left_wing_up:
             self.wings.raise_left()
+            self.brake.set(DoubleSolenoid.Value.kReverse)
         if left_wing_down:
             self.wings.lower_left()
+            self.brake.set(DoubleSolenoid.Value.kForward)
         if right_wing_up:
             self.wings.raise_right()
+            self.brake.set(DoubleSolenoid.Value.kReverse)
         if right_wing_down:
             self.wings.lower_right()
+            self.brake.set(DoubleSolenoid.Value.kForward)
 
         left_trigger = self.operator.getTriggerAxis(LEFT)
         right_trigger = self.operator.getTriggerAxis(RIGHT)
