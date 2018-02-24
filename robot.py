@@ -1,6 +1,7 @@
 import ctre
 import wpilib
-from wpilib import DoubleSolenoid
+from networktables import NetworkTables
+from wpilib import DoubleSolenoid, SmartDashboard
 from wpilib.interfaces import GenericHID
 
 import autonomous
@@ -81,11 +82,21 @@ class Robot(wpilib.IterativeRobot):
         self.vision_socket.start()
         self.timer = 0
 
+        self.sd = NetworkTables.getTable('SmartDashboard')
+
+        self.chooser = wpilib.SendableChooser()
+        self.chooser.addObject('left', 'left')
+        self.chooser.addObject('right', 'right')
+        self.chooser.addObject('center', 'center')
+
+        SmartDashboard.putData("side_selector", self.chooser)
+
     def robotPeriodic(self):
         if self.timer % 1000 == 0:
             print(self.vision_socket.get_angle(1.0))
             print("ID: {}".format(self.vision_socket.get_id()))
             print("is bound: {}".format(self.vision_socket.is_bound()))
+            print("choosen: ", self.chooser.getSelected())
         self.timer += 1
 
     def teleopInit(self):
