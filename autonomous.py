@@ -29,7 +29,7 @@ class BaseAutonomous:
         self.init()
         return _execute()
 
-class Timed:
+class Timed(BaseAutonomous):
     def __init__(self, auto, duration):
         self.auto = auto
         self.duration = duration
@@ -101,21 +101,26 @@ class RotateAutonomous(BaseAutonomous):
         self.drivetrain = drivetrain
         self.gyro = gyro
         self.speed = speed
-        self.angle = angle
         assert speed >= 0, "Speed ({}) must be positive!".format(speed)
+        self.angle_goal = angle
 
     def init(self):
         self.start_angle = self.gyro.getAngle()
 
     def execute(self):
-        if self.angle > 0:
-            while self.gyro.getAngle() - self.start_angle < self.angle:
-                self.drivetrain.arcade_drive(0, self.speed)
-                yield
-        else:
-            while self.gyro.getAngle() - self.start_angle > self.angle:
-                self.drivetrain.arcade_drive(0, -self.speed)
-                yield
+        while True:
+            angle_error = abs(self.angle_goal) - abs(self.start_angle - self.gyro.getAngle())
+            correction_factor = angle_error / 10.0
+            if correction_factor > 1.0:
+                correction_factor = 1.0
+
+            if self.angle_goal > 0:
+                self.drivetrain.arcade_drive(0, self.speed * correction_factor)
+            else:
+                self.drivetrain.arcade_drive(0, -self.speed * correction_factor)
+            yield
+
+    def stop(self):
         self.drivetrain.stop()
 
 
@@ -126,17 +131,18 @@ class ArcadeAutonomous(BaseAutonomous):
     forward and rotate should be between and 1
     """
 
-    def __init__(self, drivetrain, forward, rotate, duration):
+    def __init__(self, drivetrain, forward, rotate):
         self.drivetrain = drivetrain
         self.forward = forward
         self.rotate = rotate
-        self.duration = duration
 
     def init(self):
         self.end_time = time.time() + self.duration
 
     def execute(self):
-        while time.time() < self.end_time:
+        while True:
             self.drivetrain.arcade_drive(self.forward, self.rotate)
             yield
+
+    def stop(self):
         self.drivetrain.stop()

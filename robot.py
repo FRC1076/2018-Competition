@@ -33,14 +33,19 @@ RIGHT2_ID = 2
 
 class Robot(wpilib.IterativeRobot):
     def robotInit(self):
-        left = wpilib.SpeedControllerGroup(
-            ctre.WPI_TalonSRX(LEFT1_ID),
-            ctre.WPI_TalonSRX(LEFT2_ID),
-        )
-        right = wpilib.SpeedControllerGroup(
-            ctre.WPI_TalonSRX(RIGHT1_ID),
-            ctre.WPI_TalonSRX(RIGHT2_ID),
-        )
+        left1 = ctre.WPI_TalonSRX(LEFT1_ID)
+        left2 = ctre.WPI_TalonSRX(LEFT2_ID)
+        left = wpilib.SpeedControllerGroup(left1, left2)
+        left1.setNeutralMode(ctre.NeutralMode.Brake)
+        left2.setNeutralMode(ctre.NeutralMode.Brake)
+
+        right1 = ctre.WPI_TalonSRX(RIGHT1_ID)
+        right2 = ctre.WPI_TalonSRX(RIGHT2_ID)
+        right = wpilib.SpeedControllerGroup(right1, right2)
+        right1.setNeutralMode(ctre.NeutralMode.Brake)
+        right2.setNeutralMode(ctre.NeutralMode.Brake)
+
+
         self.drivetrain = Drivetrain(left, right, None)
 
         self.grabber = Grabber(
@@ -88,7 +93,12 @@ class Robot(wpilib.IterativeRobot):
         # @Todo: Deadzone these
         forward = self.driver.getY(RIGHT)
         rotate = self.driver.getX(LEFT)
-        self.drivetrain.arcade_drive(forward, rotate)
+
+        if self.driver.getXButton():
+            self.drivetrain.stop()
+        else:
+            self.drivetrain.arcade_drive(forward, rotate)
+
         self.elevator.go_up(self.operator.getY(RIGHT))
 
         if self.operator.getPOV() != -1 and self.driver.getPOV() != -1:
