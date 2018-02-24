@@ -83,11 +83,13 @@ class Robot(wpilib.IterativeRobot):
         if self.timer % 100 == 0:
             print(self.vision_socket.get_angle(1.0))
             print("ID: {}".format(self.vision_socket.get_id()))
-            # print("is bound: {}".format(self.vision_socket.is_bound()))
+            print("is bound: {}".format(self.vision_socket.is_bound()))
         self.timer += 1
 
     def teleopInit(self):
         print("Teleop Init Begin!")
+        self.switch_configuration = wpilib.DriverStation.getInstance().getGameSpecificMessage()
+        print(self.switch_configuration)
 
     def teleopPeriodic(self):
         # @Todo: Deadzone these
@@ -135,7 +137,14 @@ class Robot(wpilib.IterativeRobot):
 
     def autonomousInit(self):
         print("Autonomous Begin!")
-        self.auton = autonomous.drive_and_rotate(self.drivetrain, self.gyro, self.vision_socket)
+        self.switch_configuration = wpilib.DriverStation.getInstance().getGameSpecificMessage()
+        print(self.switch_configuration)
+        if len(self.switch_configuration) > 0:
+            switch_position = self.switch_configuration[0]
+        else:
+            switch_position = "NONE"
+        print("Switch Position: {}", switch_position)
+        self.auton = autonomous.center_to_side(self.drivetrain, self.gyro, self.vision_socket, switch_position)
 
     def autonomousPeriodic(self):
         try:

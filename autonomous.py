@@ -2,14 +2,34 @@ import time
 import math
 import wpilib
 
-def center_to_side(drivetrain, gyro, vision_socket):
-    yield from RotateAutonomous(drivetrain, gyro, 45, 0.5).run()
-    yield from ArcadeAutonomous(drivetrain, 0.3, 0, 3).run()
-    yield from RotateAutonomous(drivetrain, gyro, 45, -0.5).run()
-    yield from VisionAuto(drivetrain, gyro, vision_socket, 0.5).run()
+def center_to_side(drivetrain, gyro, vision_socket, side):
+    # angle = 45
+    # sign = 1 if side == "R" else -1
+    yield from Timed(ArcadeAutonomous(drivetrain, 0.7, 0), 1.5).run()
+    yield from Timed(RotateAutonomous(drivetrain, gyro, -45, 0.6), 1).run()
+    yield from Timed(ArcadeAutonomous(drivetrain, 0.7, 0), 3).run()
+    yield from Timed(RotateAutonomous(drivetrain, gyro, 50, 0.6), 1).run()
+    yield from Timed(ArcadeAutonomous(drivetrain, 0.7, 0), 2).run() # TODO: Lower how far forward this goes
+    # yield from VisionAuto(drivetrain, gyro, vision_socket, 0.5).run()
 
-def drive_and_rotate(drivetrain, gyro, vision_socket):
-    yield from VisionAuto(drivetrain, gyro, vision_socket, 0.4).run()
+def simple_forward(drivetrain, gyro, vision_socket, side):
+    angle = 15
+    sign = 1 if side == "L" else -1
+    yield from Timed(RotateAutonomous(drivetrain, gyro, angle * sign, 0.5), 1).run()
+    yield from Timed(VisionAuto(drivetrain, gyro, vision_socket, 0.6), 1).run()
+
+def all_the_way_round(drivetrain, gyro, vision_socket, side):
+    angle = 90
+    sign = 1 if side == "L" else -1
+    yield from Timed(ArcadeAutonomous(drivetrain, 0.7, 0, 4), 1.0).run()
+    yield from Timed(RotateAutonomous(drivetrain, gyro, angle * sign, 0.5), 1.0).run()
+    yield from Timed(ArcadeAutonomous(drivetrain, 0.7, 0, 4), 1.0).run()
+    yield from Timed(RotateAutonomous(drivetrain, gyro, angle * sign, 0.5), 1.0).run()
+    yield from Timed(ArcadeAutonomous(drivetrain, 0.3, 0, 2), 1.0).run()
+
+
+def drive_and_rotate(drivetrain, gyro, vision_socket, side):
+    yield from VisionAuto(drivetrain, gyro, vision_socket, 0.3).run()
 
 class BaseAutonomous:
     def init(self):
@@ -135,9 +155,6 @@ class ArcadeAutonomous(BaseAutonomous):
         self.drivetrain = drivetrain
         self.forward = forward
         self.rotate = rotate
-
-    def init(self):
-        self.end_time = time.time() + self.duration
 
     def execute(self):
         while True:
