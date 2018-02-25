@@ -112,6 +112,9 @@ class Timed(BaseAutonomous):
                 break
             yield
 
+    def end(self):
+        self.auto.end()
+
 
 class VisionAuto:
     """
@@ -177,6 +180,7 @@ class RotateAutonomous(BaseAutonomous):
 
     def execute(self):
         while True:
+            # We need the different between the goal angle delta and the current angle delta
             angle_error = abs(self.angle_goal) - abs(self.start_angle - self.gyro.getAngle())
             correction_factor = angle_error / 10.0
             if correction_factor > 1.0:

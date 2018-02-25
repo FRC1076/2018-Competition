@@ -68,6 +68,8 @@ class VisionSocket(Thread):
                 self._read_packet(data)
             except IOError as e:
                 pass
+            except KeyError as e:
+                print(e)
         print("good bye sockets")
 
     """
