@@ -77,8 +77,6 @@ class Robot(wpilib.IterativeRobot):
         else:
             self.vision_socket = network.MockSocket()
 
-        self.switch_configuration = autonomous.get_game_specific_message()
-
         self.vision_socket.start()
         self.timer = 0
 
@@ -91,8 +89,6 @@ class Robot(wpilib.IterativeRobot):
 
     def teleopInit(self):
         print("Teleop Init Begin!")
-        self.switch_configuration = autonomous.get_game_specific_message()
-        print(self.switch_configuration)
 
     def teleopPeriodic(self):
         # @Todo: Deadzone these
@@ -144,8 +140,11 @@ class Robot(wpilib.IterativeRobot):
 
     def autonomousInit(self):
         print("Autonomous Begin!")
-
-        self.switch_configuration = autonomous.get_game_specific_message()
+        # The game specific message is only given once autonomous starts
+        # It is not avaliable during disable mode before the game starts
+        # and it is not useful in teleop mode, so we only get the message here.
+        game_message = wpilib.DriverStation.getInstance().getGameSpecificMessage()
+        self.switch_configuration = autonomous.get_game_specific_message(game_message)
         print("Switch and Scale Position: ", self.switch_configuration)
         self.auton = autonomous.center_to_switch(self.drivetrain, self.gyro, self.vision_socket, self.switch_configuration)
 

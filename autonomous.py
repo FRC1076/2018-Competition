@@ -22,24 +22,16 @@ class RobotStartPosition(Enum):
 def is_left_side(switch_scale_position):
     return switch_scale_position == SwitchScalePosition.LLL or switch_scale_position == SwitchScalePosition.LRL
 
-# Describes the position of the robot at the start of the game
-class RobotStartPosition(Enum):
-    LEFT = "Left"
-    CENTER = "Center"
-    RIGHT = "Right"
-
-
 '''Returns the switch and scale configurations'''
-def get_game_specific_message():
-    game_message = wpilib.DriverStation.getInstance().getGameSpecificMessage()
+def get_game_specific_message(game_message):
     if game_message == "LLL":
         return SwitchScalePosition.LLL
     elif game_message == "LRL":
-        SwitchScalePosition.LRL
+        return SwitchScalePosition.LRL
     elif game_message == "RLR":
-        SwitchScalePosition.RLR
+        return SwitchScalePosition.RLR
     elif game_message == "RRR":
-        SwitchScalePosition.RRR
+        return SwitchScalePosition.RRR
     else:
         # Is this a good idea?
         return None
