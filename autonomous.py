@@ -2,34 +2,39 @@ import time
 import math
 import wpilib
 
-def center_to_side(drivetrain, gyro, vision_socket, side):
+# Used when the robot starts in the center
+def center_to_switch(drivetrain, gyro, vision_socket, side):
     # angle = 45
-    # sign = 1 if side == "R" else -1
-    yield from Timed(ArcadeAutonomous(drivetrain, 0.7, 0), 1.5).run()
-    yield from Timed(RotateAutonomous(drivetrain, gyro, -45, 0.6), 1).run()
-    yield from Timed(ArcadeAutonomous(drivetrain, 0.7, 0), 3).run()
-    yield from Timed(RotateAutonomous(drivetrain, gyro, 50, 0.6), 1).run()
-    yield from Timed(ArcadeAutonomous(drivetrain, 0.7, 0), 2).run() # TODO: Lower how far forward this goes
+    sign = 1 if side == "L" else -1
+    yield from Timed(ArcadeAutonomous(drivetrain, forward=0.7, rotate=0), duration=1.5).run()
+    yield from Timed(RotateAutonomous(drivetrain, gyro, angle=45 * sign, turn_speed=0.6), duration=1).run()
+    yield from Timed(ArcadeAutonomous(drivetrain, forward=0.7, rotate=0), duration=3).run()
+    yield from Timed(RotateAutonomous(drivetrain, gyro, angle=-50 * sign, turn_speed=0.6), duration=1).run()
+    yield from Timed(ArcadeAutonomous(drivetrain, forward=0.7, rotate=0), duration=2).run() # TODO: Lower how far forward this goes
     # yield from VisionAuto(drivetrain, gyro, vision_socket, 0.5).run()
 
-def simple_forward(drivetrain, gyro, vision_socket, side):
+# Used when the switch is on the same side of the starting position. For
+# example, when the robot starts on the left side and the switch is on the left side
+def switch_same_side(drivetrain, gyro, vision_socket, side):
     angle = 15
     sign = 1 if side == "L" else -1
-    yield from Timed(RotateAutonomous(drivetrain, gyro, angle * sign, 0.5), 1).run()
-    yield from Timed(VisionAuto(drivetrain, gyro, vision_socket, 0.6), 1).run()
+    yield from Timed(RotateAutonomous(drivetrain, gyro, angle=angle * sign, turn_speed=0.5), duration=1).run()
+    yield from Timed(VisionAuto(drivetrain, gyro, vision_socket, 0.6), duration=1).run()
 
-def all_the_way_round(drivetrain, gyro, vision_socket, side):
+# Used when the switch is on the opposite side of the starting position. For
+# example, when the robot starts on the left side but the switch is on the right side
+def switch_opposite_side(drivetrain, gyro, vision_socket, side):
     angle = 90
     sign = 1 if side == "L" else -1
-    yield from Timed(ArcadeAutonomous(drivetrain, 0.7, 0, 4), 1.0).run()
-    yield from Timed(RotateAutonomous(drivetrain, gyro, angle * sign, 0.5), 1.0).run()
-    yield from Timed(ArcadeAutonomous(drivetrain, 0.7, 0, 4), 1.0).run()
-    yield from Timed(RotateAutonomous(drivetrain, gyro, angle * sign, 0.5), 1.0).run()
-    yield from Timed(ArcadeAutonomous(drivetrain, 0.3, 0, 2), 1.0).run()
+    yield from Timed(ArcadeAutonomous(drivetrain, forward=0.7, rotate=0), duration=1.0).run()
+    yield from Timed(RotateAutonomous(drivetrain, gyro, angle=angle * sign, turn_speed=0.5), duration=1.0).run()
+    yield from Timed(ArcadeAutonomous(drivetrain, forward=0.7, rotate=0), duration=1.0).run()
+    yield from Timed(RotateAutonomous(drivetrain, gyro, angle=angle * sign, turn_speed=0.5), duration=1.0).run()
+    yield from Timed(ArcadeAutonomous(drivetrain, forward=0.3, rotate=0), duration=1.0).run()
 
 
-def drive_and_rotate(drivetrain, gyro, vision_socket, side):
-    yield from VisionAuto(drivetrain, gyro, vision_socket, 0.3).run()
+def forward_with_vision(drivetrain, gyro, vision_socket, side):
+    yield from VisionAuto(drivetrain, gyro, vision_socket, duration=0.3).run()
 
 class BaseAutonomous:
     def init(self):
@@ -50,7 +55,7 @@ class BaseAutonomous:
         return _execute()
 
 class Timed(BaseAutonomous):
-    def __init__(self, auto, duration):
+    def __init__(self, auto, duration=0):
         self.auto = auto
         self.duration = duration
 
@@ -117,7 +122,7 @@ class RotateAutonomous(BaseAutonomous):
     Positive values will rotate clockwise, while negative values will rotate
     counterclockwise.
     """
-    def __init__(self, drivetrain, gyro, angle, speed):
+    def __init__(self, drivetrain, gyro, angle=0, turn_speed=0):
         self.drivetrain = drivetrain
         self.gyro = gyro
         self.speed = speed
@@ -151,7 +156,7 @@ class ArcadeAutonomous(BaseAutonomous):
     forward and rotate should be between and 1
     """
 
-    def __init__(self, drivetrain, forward, rotate):
+    def __init__(self, drivetrain, forward=0, rotate=0):
         self.drivetrain = drivetrain
         self.forward = forward
         self.rotate = rotate

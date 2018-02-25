@@ -151,7 +151,7 @@ class Robot(wpilib.IterativeRobot):
         else:
             switch_position = "NONE"
         print("Switch Position: {}", switch_position)
-        self.auton = autonomous.center_to_side(self.drivetrain, self.gyro, self.vision_socket, switch_position)
+        self.auton = autonomous.center_to_switch(self.drivetrain, self.gyro, self.vision_socket, switch_position)
 
     def autonomousPeriodic(self):
         try:
