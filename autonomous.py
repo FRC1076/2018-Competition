@@ -152,7 +152,6 @@ class VisionAuto(BaseAutonomous):
             if angle is not None:
                 correction = self.PID.get()
                 correction = math.copysign(self.correction, angle)
-                print("angle:{} correction: {}".format(angle, correction))
                 self.drivetrain.arcade_drive(self.forward, correction)
             else:
                 self.drivetrain.stop()
@@ -160,7 +159,6 @@ class VisionAuto(BaseAutonomous):
 
     def end(self):
         self.PID.disable()
-        self.PID.free()
 
 class RotateAutonomous(BaseAutonomous):
     """
