@@ -1,11 +1,54 @@
-import time
 import math
+import time
+from enum import Enum
+
 import wpilib
+
+
+# Describes the position of the scales and switches
+class SwitchScalePosition(Enum):
+    # Format is always our switch, scale, enemy side switch
+    LLL = "Left Left Left"
+    LRL = "Left Right Left"
+    RLR = "Right Left Right"
+    RRR = "Right Right Right"
+
+# Describes the position of the robot at the start of the game
+class RobotStartPosition(Enum):
+    LEFT = "Left"
+    CENTER = "Center"
+    RIGHT = "Right"
+
+def is_left_side(switch_scale_position):
+    return switch_scale_position == SwitchScalePosition.LLL or switch_scale_position == SwitchScalePosition.LRL
+
+# Describes the position of the robot at the start of the game
+class RobotStartPosition(Enum):
+    LEFT = "Left"
+    CENTER = "Center"
+    RIGHT = "Right"
+
+
+'''Returns the switch and scale configurations'''
+def get_game_specific_message():
+    game_message = wpilib.DriverStation.getInstance().getGameSpecificMessage()
+    if game_message == "LLL":
+        return SwitchScalePosition.LLL
+    elif game_message == "LRL":
+        SwitchScalePosition.LRL
+    elif game_message == "RLR":
+        SwitchScalePosition.RLR
+    elif game_message == "RRR":
+        SwitchScalePosition.RRR
+    else:
+        # Is this a good idea?
+        return None
+
 
 # Used when the robot starts in the center
 def center_to_switch(drivetrain, gyro, vision_socket, side):
     # angle = 45
-    sign = 1 if side == "L" else -1
+    sign = 1 if is_left_side(side) else -1
     yield from Timed(ArcadeAutonomous(drivetrain, forward=0.7, rotate=0), duration=1.5).run()
     yield from Timed(RotateAutonomous(drivetrain, gyro, angle=45 * sign, turn_speed=0.6), duration=1).run()
     yield from Timed(ArcadeAutonomous(drivetrain, forward=0.7, rotate=0), duration=3).run()
@@ -17,7 +60,7 @@ def center_to_switch(drivetrain, gyro, vision_socket, side):
 # example, when the robot starts on the left side and the switch is on the left side
 def switch_same_side(drivetrain, gyro, vision_socket, side):
     angle = 15
-    sign = 1 if side == "L" else -1
+    sign = 1 if is_left_side(side) else -1
     yield from Timed(RotateAutonomous(drivetrain, gyro, angle=angle * sign, turn_speed=0.5), duration=1).run()
     yield from Timed(VisionAuto(drivetrain, gyro, vision_socket, 0.6), duration=1).run()
 
@@ -25,7 +68,7 @@ def switch_same_side(drivetrain, gyro, vision_socket, side):
 # example, when the robot starts on the left side but the switch is on the right side
 def switch_opposite_side(drivetrain, gyro, vision_socket, side):
     angle = 90
-    sign = 1 if side == "L" else -1
+    sign = 1 if is_left_side(side) else -1
     yield from Timed(ArcadeAutonomous(drivetrain, forward=0.7, rotate=0), duration=1.0).run()
     yield from Timed(RotateAutonomous(drivetrain, gyro, angle=angle * sign, turn_speed=0.5), duration=1.0).run()
     yield from Timed(ArcadeAutonomous(drivetrain, forward=0.7, rotate=0), duration=1.0).run()
@@ -125,8 +168,8 @@ class RotateAutonomous(BaseAutonomous):
     def __init__(self, drivetrain, gyro, angle=0, turn_speed=0):
         self.drivetrain = drivetrain
         self.gyro = gyro
-        self.speed = speed
-        assert speed >= 0, "Speed ({}) must be positive!".format(speed)
+        self.speed = turn_speed
+        assert self.speed >= 0, "Speed ({}) must be positive!".format(self.speed)
         self.angle_goal = angle
 
     def init(self):

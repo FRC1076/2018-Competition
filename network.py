@@ -3,8 +3,6 @@ import socket
 import time
 from threading import Thread
 
-from autonomous import RotateAutonomous
-
 UDP_IP = '10.10.76.2' # 0.0.0.0
 UDP_PORT = 5880
 BUFFER_SIZE = 1024

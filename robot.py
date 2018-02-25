@@ -5,7 +5,6 @@ from wpilib.interfaces import GenericHID
 
 import autonomous
 import network
-from autonomous import ArcadeAutonomous, RotateAutonomous
 from subsystems.drivetrain import Drivetrain
 from subsystems.elevator import Elevator
 from subsystems.grabber import Grabber
@@ -18,7 +17,6 @@ from subsystems.wings import Wings
 # or left bumper.
 LEFT = GenericHID.Hand.kLeft
 RIGHT = GenericHID.Hand.kRight
-
 
 # @TODO: Actually have motor IDs for these
 ELEVATOR_ID = 5
@@ -72,12 +70,14 @@ class Robot(wpilib.IterativeRobot):
 
         self.gyro = wpilib.ADXRS450_Gyro()
 
+        # Use a mock socket in tests instead of a real one because we can't
+        # actually bind to a port when testing the code.
         if Robot.isReal():
             self.vision_socket = network.VisionSocket()
-            self.switch_configuration = wpilib.DriverStation.getInstance().getGameSpecificMessage()
         else:
             self.vision_socket = network.MockSocket()
-            self.switch_configuration = "Sim Mode"
+
+        self.switch_configuration = autonomous.get_game_specific_message()
 
         self.vision_socket.start()
         self.timer = 0
@@ -91,7 +91,7 @@ class Robot(wpilib.IterativeRobot):
 
     def teleopInit(self):
         print("Teleop Init Begin!")
-        self.switch_configuration = wpilib.DriverStation.getInstance().getGameSpecificMessage()
+        self.switch_configuration = autonomous.get_game_specific_message()
         print(self.switch_configuration)
 
     def teleopPeriodic(self):
@@ -144,14 +144,10 @@ class Robot(wpilib.IterativeRobot):
 
     def autonomousInit(self):
         print("Autonomous Begin!")
-        self.switch_configuration = wpilib.DriverStation.getInstance().getGameSpecificMessage()
-        print(self.switch_configuration)
-        if len(self.switch_configuration) > 0:
-            switch_position = self.switch_configuration[0]
-        else:
-            switch_position = "NONE"
-        print("Switch Position: {}", switch_position)
-        self.auton = autonomous.center_to_switch(self.drivetrain, self.gyro, self.vision_socket, switch_position)
+
+        self.switch_configuration = autonomous.get_game_specific_message()
+        print("Switch and Scale Position: ", self.switch_configuration)
+        self.auton = autonomous.center_to_switch(self.drivetrain, self.gyro, self.vision_socket, self.switch_configuration)
 
     def autonomousPeriodic(self):
         try:
