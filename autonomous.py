@@ -116,7 +116,7 @@ class Timed(BaseAutonomous):
         self.auto.end()
 
 
-class VisionAuto:
+class VisionAuto(BaseAutonomous):
     """
     Rotate the robot towards the target using incoming vision packets
     vision_socket is a VisionSocket, not a Python socket
