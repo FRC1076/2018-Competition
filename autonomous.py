@@ -57,7 +57,7 @@ def center_to_switch(drivetrain, gyro, vision_socket, switch_position):
 # example, when the robot starts on the left side and the switch is on the left side
 def switch_same_side(drivetrain, gyro, vision_socket, switch_position):
     angle = 15
-    sign = 1 if switch_position == Position.Left else -1
+    sign = 1 if switch_position == Position.LEFT else -1
     yield from Timed(RotateAutonomous(drivetrain, gyro, angle=angle * sign, turn_speed=0.5), duration=1).run()
     yield from Timed(VisionAuto(drivetrain, gyro, vision_socket, 0.6), duration=1).run()
 
@@ -65,7 +65,7 @@ def switch_same_side(drivetrain, gyro, vision_socket, switch_position):
 # example, when the robot starts on the left side but the switch is on the right side
 def switch_opposite_side(drivetrain, gyro, vision_socket, switch_position):
     angle = 90
-    sign = 1 if switch_position == Position.Left else -1
+    sign = 1 if switch_position == Position.LEFT else -1
     yield from Timed(ArcadeAutonomous(drivetrain, forward=0.7, rotate=0), duration=1.0).run()
     yield from Timed(RotateAutonomous(drivetrain, gyro, angle=angle * sign, turn_speed=0.5), duration=1.0).run()
     yield from Timed(ArcadeAutonomous(drivetrain, forward=0.7, rotate=0), duration=1.0).run()

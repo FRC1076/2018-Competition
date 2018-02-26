@@ -145,9 +145,21 @@ class Robot(wpilib.IterativeRobot):
         # It is not avaliable during disable mode before the game starts
         # and it is not useful in teleop mode, so we only get the message here.
         game_message = wpilib.DriverStation.getInstance().getGameSpecificMessage()
-        self.switch_configuration = autonomous.get_game_specific_message(game_message)
-        print("Switch and Scale Position: ", self.switch_configuration)
-        self.auton = autonomous.center_to_switch(self.drivetrain, self.gyro, self.vision_socket, self.switch_configuration)
+        switch_position = autonomous.get_game_specific_message(game_message)
+        robot_position = autonomous.Position.CENTER # TODO: have an actual way to set this outside of the program
+        routine = autonomous.get_routine(robot_position=robot_position, switch_position=switch_position)
+        print("Switch Position: ", switch_position)
+
+        if routine == autonomous.AutonomousRoutine.CENTER:
+            self.auton = autonomous.center_to_switch(self.drivetrain, self.gyro, self.vision_socket, switch_position)
+        elif routine == autonomous.AutonomousRoutine.SIDE_TO_SAME:
+            self.auton = autonomous.switch_same_side(self.drivetrain, self.gyro, self.vision_socket, switch_position)
+        elif routine == autonomous.AutonomousRoutine.SIDE_TO_OPPOSITE:
+            self.auton = autonomous.switch_opposite_side(self.drivetrain, self.gyro, self.vision_socket, switch_position)
+        else:
+            # Default to the center autonomous
+            self.auton = autonomous.center_to_switch(self.drivetrain, self.gyro, self.vision_socket, switch_position)
+
 
     def autonomousPeriodic(self):
         try:
