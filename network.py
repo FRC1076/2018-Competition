@@ -3,9 +3,29 @@ import socket
 import time
 from threading import Thread
 
+def _get_socket(ip, port):
+    the_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    the_socket.settimeout(0.1) # Timeout after 0.1 seconds
+    return the_socket
+
 UDP_IP = '10.10.76.2' # 0.0.0.0
 UDP_PORT = 5880
 BUFFER_SIZE = 1024
+
+LIGHT_RING_IP = '10.10.76.17'
+LIGHT_RING_PORT = 8888
+
+LIGHT_RING_SOCKET = _get_socket(LIGHT_RING_IP, LIGHT_RING_PORT)
+
+def send_light_message(socket, show_index):
+    json_string = bytes(json.dumps({"message" : "light-show",
+                                    "show-index" : show_index}), 'utf-8')
+    try:
+        data = socket.sendto(json_string, (LIGHT_RING_IP, LIGHT_RING_PORT))
+    except IOError as e:
+        print(e)
+        # IOError thrown when the socket times out
+        pass
 
 class MockSocket(Thread):
     def __init__(self):
@@ -70,7 +90,6 @@ class VisionSocket(Thread):
                 pass
             except KeyError as e:
                 print(e)
-        print("good bye sockets")
 
     """
     Read a packet from the socket, and

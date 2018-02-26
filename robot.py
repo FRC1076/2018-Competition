@@ -87,9 +87,9 @@ class Robot(wpilib.IterativeRobot):
         self.sd = NetworkTables.getTable('SmartDashboard')
 
         self.chooser = wpilib.SendableChooser()
-        self.chooser.addObject('left', autonomous.RobotStartPosition.LEFT)
-        self.chooser.addObject('right', autonomous.RobotStartPosition.RIGHT)
-        self.chooser.addObject('center', autonomous.RobotStartPosition.CENTER)
+        self.chooser.addObject('left', autonomous.Position.LEFT)
+        self.chooser.addObject('right', autonomous.Position.RIGHT)
+        self.chooser.addObject('center', autonomous.Position.CENTER)
         SmartDashboard.putData(SIDE_SELECTOR, self.chooser)
 
     def robotPeriodic(self):
