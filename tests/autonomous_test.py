@@ -1,6 +1,6 @@
 import network
 import autonomous
-from autonomous import Position, AutonomousRoutine, get_game_specific_message
+from autonomous import Position, AutonomousRoutine, get_routine, get_game_specific_message
 from subsystems.drivetrain import Drivetrain
 import os
 
@@ -9,6 +9,23 @@ def test_get_game_specific_message():
     assert get_game_specific_message("LRL") == Position.LEFT
     assert get_game_specific_message("RLR") == Position.RIGHT
     assert get_game_specific_message("RRR") == Position.RIGHT
+
+
+def test_routine():
+    assert get_routine(Position.LEFT, Position.LEFT) == AutonomousRoutine.SIDE_TO_SAME
+    assert get_routine(Position.LEFT, Position.LEFT) == AutonomousRoutine.SIDE_TO_SAME
+    assert get_routine(Position.LEFT, Position.RIGHT) == AutonomousRoutine.SIDE_TO_OPPOSITE
+    assert get_routine(Position.LEFT, Position.RIGHT) == AutonomousRoutine.SIDE_TO_OPPOSITE
+
+    assert get_routine(Position.RIGHT, Position.LEFT) == AutonomousRoutine.SIDE_TO_OPPOSITE
+    assert get_routine(Position.RIGHT, Position.LEFT) == AutonomousRoutine.SIDE_TO_OPPOSITE
+    assert get_routine(Position.RIGHT, Position.RIGHT) == AutonomousRoutine.SIDE_TO_SAME
+    assert get_routine(Position.RIGHT, Position.RIGHT) == AutonomousRoutine.SIDE_TO_SAME
+
+    assert get_routine(Position.CENTER, Position.LEFT) == AutonomousRoutine.CENTER
+    assert get_routine(Position.CENTER, Position.LEFT) == AutonomousRoutine.CENTER
+    assert get_routine(Position.CENTER, Position.RIGHT) == AutonomousRoutine.CENTER
+    assert get_routine(Position.CENTER, Position.RIGHT) == AutonomousRoutine.CENTER
 
 
 # These aren't really rigous tests, just ones mean as a spot check that

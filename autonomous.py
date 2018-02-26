@@ -18,6 +18,14 @@ class AutonomousRoutine(Enum):
     SIDE_TO_SAME = "robot on side, switch same side"
     SIDE_TO_OPPOSITE = "robot on side, switch opposite side"
 
+def get_routine(robot_position, switch_position):
+    if robot_position == Position.CENTER:
+        return AutonomousRoutine.CENTER
+    elif robot_position == switch_position:
+        return AutonomousRoutine.SIDE_TO_SAME
+    else:
+        return AutonomousRoutine.SIDE_TO_OPPOSITE
+
 
 '''Returns the switch and scale configurations'''
 def get_game_specific_message(game_message):
