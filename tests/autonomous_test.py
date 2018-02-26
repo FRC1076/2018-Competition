@@ -1,14 +1,15 @@
 import network
 import autonomous
-from autonomous import SwitchScalePosition, get_game_specific_message
+from autonomous import Position, AutonomousRoutine, get_game_specific_message
 from subsystems.drivetrain import Drivetrain
 import os
 
 def test_get_game_specific_message():
-    assert get_game_specific_message("LLL") == SwitchScalePosition.LLL
-    assert get_game_specific_message("LRL") == SwitchScalePosition.LRL
-    assert get_game_specific_message("RLR") == SwitchScalePosition.RLR
-    assert get_game_specific_message("RRR") == SwitchScalePosition.RRR
+    assert get_game_specific_message("LLL") == Position.LEFT
+    assert get_game_specific_message("LRL") == Position.LEFT
+    assert get_game_specific_message("RLR") == Position.RIGHT
+    assert get_game_specific_message("RRR") == Position.RIGHT
+
 
 # These aren't really rigous tests, just ones mean as a spot check that
 # they don't cause crashes.
@@ -23,11 +24,11 @@ def test_autonomous_routines():
         drivetrain = MockDrivetrain()
         gyro = MockGyro()
         vision_socket = network.MockSocket()
-        auton = autonomous.center_to_switch(drivetrain, gyro, vision_socket, autonomous.SwitchScalePosition.LLL)
+        auton = autonomous.center_to_switch(drivetrain, gyro, vision_socket, autonomous.Position.LEFT)
         for _ in auton: pass
-        auton = autonomous.switch_same_side(drivetrain, gyro, vision_socket, autonomous.SwitchScalePosition.LLL)
+        auton = autonomous.switch_same_side(drivetrain, gyro, vision_socket, autonomous.Position.LEFT)
         for _ in auton: pass
-        auton = autonomous.switch_opposite_side(drivetrain, gyro, vision_socket, autonomous.SwitchScalePosition.LLL)
+        auton = autonomous.switch_opposite_side(drivetrain, gyro, vision_socket, autonomous.Position.LEFT)
         for _ in auton: pass
 
 def test_arcade_autonomous():

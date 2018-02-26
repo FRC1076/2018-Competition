@@ -30,6 +30,7 @@ LEFT2_ID = 4
 RIGHT1_ID = 1
 RIGHT2_ID = 2
 
+
 class Robot(wpilib.IterativeRobot):
     def robotInit(self):
         left1 = ctre.WPI_TalonSRX(LEFT1_ID)
@@ -81,7 +82,7 @@ class Robot(wpilib.IterativeRobot):
         self.timer = 0
 
     def robotPeriodic(self):
-        if self.timer % 100 == 0:
+        if self.timer % 1000 == 0:
             print(self.vision_socket.get_angle(1.0))
             print("ID: {}".format(self.vision_socket.get_id()))
             print("is bound: {}".format(self.vision_socket.is_bound()))
