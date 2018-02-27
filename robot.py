@@ -81,7 +81,12 @@ class Robot(wpilib.IterativeRobot):
         # @Todo: Deadzone these
         forward = self.driver.getY(RIGHT)
         rotate = self.driver.getX(LEFT)
-        self.drivetrain.arcade_drive(forward, rotate)
+
+        if self.driver.getXButton():
+            self.drivetrain.stop()
+        else:
+            self.drivetrain.arcade_drive(forward, rotate)
+
         self.elevator.go_up(self.operator.getY(RIGHT))
 
         if self.operator.getPOV() != -1 and self.driver.getPOV() != -1:
