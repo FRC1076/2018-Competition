@@ -8,16 +8,16 @@ def test_make_grabber():
     sensor = GetSet(False)
 
     grabber = Grabber(left_motor, right_motor, sensor)
-    grabber.absorb()
+    grabber.set()
     assert left_motor.state == 1
     assert right_motor.state == -1
-    grabber.absorb(speed=0.5)
+    grabber.set(speed=0.5)
     assert left_motor.state == 0.5
     assert right_motor.state == -0.5
-    grabber.spit()
+    grabber.set(speed=-1.0)
     assert left_motor.state == -1
     assert right_motor.state == 1
-    grabber.spit(speed=0.5)
+    grabber.set(speed=-0.5)
     assert left_motor.state == -0.5
     assert right_motor.state == 0.5
     assert not grabber.has_cube()

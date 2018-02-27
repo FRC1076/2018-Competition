@@ -116,10 +116,11 @@ class Robot(wpilib.IterativeRobot):
         left_trigger = self.operator.getTriggerAxis(LEFT)
         right_trigger = self.operator.getTriggerAxis(RIGHT)
         TRIGGER_LEVEL = 0.4
-        if right_trigger > TRIGGER_LEVEL and left_trigger > TRIGGER_LEVEL:
-            self.grabber.spit(min(right_trigger, left_trigger))
-        elif right_trigger > TRIGGER_LEVEL or left_trigger > TRIGGER_LEVEL:
-            self.grabber.absorb(max(right_trigger, left_trigger))
+        self.grabber.set(left_trigger - right_trigger)
+        # if right_trigger > TRIGGER_LEVEL and left_trigger > TRIGGER_LEVEL:
+        #     self.grabber.spit(min(right_trigger, left_trigger))
+        # elif right_trigger > TRIGGER_LEVEL or left_trigger > TRIGGER_LEVEL:
+        #     self.grabber.absorb(max(right_trigger, left_trigger))
 
     def autonomousInit(self):
         print("Autonomous Begin!")
