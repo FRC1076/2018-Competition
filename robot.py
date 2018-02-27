@@ -20,16 +20,16 @@ RIGHT = GenericHID.Hand.kRight
 
 
 # @TODO: Actually have motor IDs for these
-ELEVATOR_ID = 5
-LEFT_GRABBER_ID = 6
-RIGHT_GRABBER_ID = 7
-
+ELEVATOR_ID = 6
+LEFT_GRABBER_ID = 3 # TODO
+RIGHT_GRABBER_ID = 4 # TODO
+# 5 not mapped (yet?)
 # !! These are the motor IDs for the Purple robot!
 # They may not be the correct ones for this year's competition robot
-LEFT1_ID = 3
-LEFT2_ID = 4
-RIGHT1_ID = 1
-RIGHT2_ID = 2
+LEFT1_ID = 1
+LEFT2_ID = 2
+RIGHT1_ID = 7
+RIGHT2_ID = 8
 
 class Robot(wpilib.IterativeRobot):
     def robotInit(self):
