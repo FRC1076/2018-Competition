@@ -19,17 +19,17 @@ LEFT = GenericHID.Hand.kLeft
 RIGHT = GenericHID.Hand.kRight
 
 
-# @TODO: Actually have motor IDs for these
+
 ELEVATOR_ID = 6
-LEFT_GRABBER_ID = 3 # TODO
-RIGHT_GRABBER_ID = 4 # TODO
-# 5 not mapped (yet?)
-# !! These are the motor IDs for the Purple robot!
-# They may not be the correct ones for this year's competition robot
+LEFT_GRABBER_ID = 3 # TODO: Make sure this is the right ID
+RIGHT_GRABBER_ID = 4 # TODO: Make sure this is the right ID
+
 LEFT1_ID = 1
 LEFT2_ID = 2
 RIGHT1_ID = 7
 RIGHT2_ID = 8
+
+# 5 is not mapped currently to any motor
 
 class Robot(wpilib.IterativeRobot):
     def robotInit(self):
@@ -78,7 +78,7 @@ class Robot(wpilib.IterativeRobot):
 
     def teleopPeriodic(self):
         # @Todo: Deadzone these
-        forward = self.driver.getY(RIGHT)
+        forward = -self.driver.getY(RIGHT)
         rotate = self.driver.getX(LEFT)
 
         if self.driver.getXButton():
