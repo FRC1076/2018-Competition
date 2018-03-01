@@ -41,7 +41,7 @@ class Robot(wpilib.IterativeRobot):
             ctre.WPI_TalonSRX(RIGHT1_ID),
             ctre.WPI_TalonSRX(RIGHT2_ID),
         )
-        self.drivetrain = Drivetrain(left, right, None)
+        self.drivetrain = Drivetrain(left, right, wpilib.DoubleSolenoid(2, 3))
 
         self.grabber = Grabber(
             ctre.WPI_TalonSRX(LEFT_GRABBER_ID),
@@ -51,10 +51,9 @@ class Robot(wpilib.IterativeRobot):
 
         self.elevator = Elevator(ctre.WPI_TalonSRX(ELEVATOR_ID))
 
-        # @TODO: Find actual non-placeholder values for the channel IDs
         self.wings = Wings(
             wpilib.DoubleSolenoid(0, 1),
-            wpilib.DoubleSolenoid(2, 3),
+            wpilib.DoubleSolenoid(4, 5),
         )
 
         self.driver = wpilib.XboxController(0)
@@ -86,6 +85,13 @@ class Robot(wpilib.IterativeRobot):
             self.drivetrain.stop()
         else:
             self.drivetrain.arcade_drive(forward, rotate)
+
+        gear_high = self.driver.getBumper(RIGHT)
+
+        if gear_high:
+            self.drivetrain.shift_high()
+        else:
+            self.drivetrain.shift_low()
 
         self.elevator.go_up(self.operator.getY(RIGHT))
 
@@ -121,6 +127,8 @@ class Robot(wpilib.IterativeRobot):
         #     self.grabber.spit(min(right_trigger, left_trigger))
         # elif right_trigger > TRIGGER_LEVEL or left_trigger > TRIGGER_LEVEL:
         #     self.grabber.absorb(max(right_trigger, left_trigger))
+
+
 
     def autonomousInit(self):
         print("Autonomous Begin!")
