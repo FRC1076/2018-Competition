@@ -34,6 +34,8 @@ RIGHT2_ID = 2
 # If you modify this key, also update the value in index.html!
 SIDE_SELECTOR = "side_selector"
 
+VISION_KEY = "vision_time"
+
 class Robot(wpilib.IterativeRobot):
     def robotInit(self):
         left1 = ctre.WPI_TalonSRX(LEFT1_ID)
@@ -91,6 +93,7 @@ class Robot(wpilib.IterativeRobot):
         self.chooser.addObject('right', autonomous.Position.RIGHT)
         self.chooser.addObject('center', autonomous.Position.CENTER)
         SmartDashboard.putData(SIDE_SELECTOR, self.chooser)
+        SmartDashboard.putNumber(VISION_KEY, 5)
 
     def robotPeriodic(self):
         if self.timer % 1000 == 0:
@@ -98,9 +101,11 @@ class Robot(wpilib.IterativeRobot):
             print("ID: ", self.vision_socket.get_id())
             print("is bound: ", self.vision_socket.is_bound())
             print("choosen: ", self.chooser.getSelected())
-            game_message = wpilib.DriverStation.getInstance().getGameSpecificMessage()
-            print("game msg: ", autonomous.get_game_specific_message(game_message))
-            print("routine: ", autonomous.get_routine(self.chooser.getSelected(), autonomous.get_game_specific_message(game_message)))
+            # game_message = wpilib.DriverStation.getInstance().getGameSpecificMessage()
+            # print("game msg: ", autonomous.get_game_specific_message(game_message))
+            # print("routine: ", autonomous.get_routine(self.chooser.getSelected(), autonomous.get_game_specific_message(game_message)))
+            autonomous.VISION_AUTO_DURATION = SmartDashboard.getNumber(VISION_KEY, 1)
+            print("vision", autonomous.VISION_AUTO_DURATION)
         self.timer += 1
 
     def teleopInit(self):

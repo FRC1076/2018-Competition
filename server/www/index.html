@@ -40,6 +40,12 @@
 
 	Where is the robot starting?: <select id="sideSelector"></select>
 
+	<br/>
+
+	Forward Time (seconds): <input type="text" id="visionTimeId">
+
+	Submit: <button id="submitButton" type="button" onclick="submit_values()">Submit</button>
+
 </div>
 
 <hr/>
@@ -52,6 +58,8 @@
 
 <script type="text/javascript">
 "use strict";
+
+const VISION_KEY = '/SmartDashboard/vision_time';
 
 // Runs when the page is loaded
 $(document).ready(function(){
@@ -99,6 +107,11 @@ function onNetworkTablesConnection(connected) {
 
 function is_smartdashboard_key(key) {
 	return key.match(/SmartDashboard/);
+}
+
+function submit_values() {
+	let vision_time = parseInt($('#visionTimeId').val(), 10);
+	NetworkTables.putValue(VISION_KEY, vision_time);
 }
 
 function onValueChanged(key, value, isNew) {

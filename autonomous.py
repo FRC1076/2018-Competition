@@ -5,6 +5,8 @@ from enum import Enum
 import wpilib
 
 
+VISION_AUTO_DURATION = 1
+
 # Describes the position of the scales and switches
 class Position(Enum):
     # Format is always our switch, scale, enemy side switch
@@ -59,7 +61,7 @@ def switch_same_side(drivetrain, gyro, vision_socket, switch_position):
     angle = 15
     sign = 1 if switch_position == Position.LEFT else -1
     yield from Timed(RotateAutonomous(drivetrain, gyro, angle=angle * sign, turn_speed=0.5), duration=1).run()
-    yield from Timed(VisionAuto(drivetrain, gyro, vision_socket, 0.6), duration=1).run()
+    yield from Timed(VisionAuto(drivetrain, gyro, vision_socket, 0.6), duration=VISION_AUTO_DURATION).run()
 
 # Used when the switch is on the opposite side of the starting position. For
 # example, when the robot starts on the left side but the switch is on the right side
