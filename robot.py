@@ -96,10 +96,14 @@ class Robot(wpilib.IterativeRobot):
         left_trigger = self.operator.getTriggerAxis(LEFT)
         right_trigger = self.operator.getTriggerAxis(RIGHT)
 
-        if left_trigger != 0:
+        TRIGGER_LEVEL = 0.4
+
+        if abs(left_trigger) > TRIGGER_LEVEL:
             self.elevator.go_up(left_trigger)
-        elif right_trigger != 0:
+        elif abs(right_trigger) > TRIGGER_LEVEL:
             self.elevator.go_down(right_trigger)
+        else:
+            self.elevator.stop()
 
         if self.operator.getPOV() != -1 and self.driver.getPOV() != -1:
             op_pov = self.operator.getPOV()
