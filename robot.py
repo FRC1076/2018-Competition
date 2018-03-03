@@ -21,8 +21,8 @@ RIGHT = GenericHID.Hand.kRight
 
 
 ELEVATOR_ID = 6
-LEFT_GRABBER_ID = 3 # TODO: Make sure this is the right ID
-RIGHT_GRABBER_ID = 4 # TODO: Make sure this is the right ID
+LEFT_GRABBER_ID = 4
+RIGHT_GRABBER_ID = 3
 
 LEFT1_ID = 1
 LEFT2_ID = 2
