@@ -14,5 +14,11 @@ class Grabber:
         self.left_motor.set(speed)
         self.right_motor.set(-speed)
 
+    def set_left(self, speed=1.0):
+        self.left_motor.set(speed)
+
+    def set_right(self, speed=1.0):
+        self.right_motor.set(-speed)
+
     def has_cube(self):
         return self.sensor.get()

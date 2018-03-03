@@ -93,7 +93,13 @@ class Robot(wpilib.IterativeRobot):
         else:
             self.drivetrain.shift_low()
 
-        self.elevator.go_up(self.operator.getY(RIGHT))
+        left_trigger = self.operator.getTriggerAxis(LEFT)
+        right_trigger = self.operator.getTriggerAxis(RIGHT)
+
+        if left_trigger != 0:
+            self.elevator.go_up(left_trigger)
+        elif right_trigger != 0:
+            self.elevator.go_down(right_trigger)
 
         if self.operator.getPOV() != -1 and self.driver.getPOV() != -1:
             op_pov = self.operator.getPOV()
@@ -119,10 +125,11 @@ class Robot(wpilib.IterativeRobot):
         if right_wing_down:
             self.wings.lower_right()
 
-        left_trigger = self.operator.getTriggerAxis(LEFT)
-        right_trigger = self.operator.getTriggerAxis(RIGHT)
-        TRIGGER_LEVEL = 0.4
-        self.grabber.set(left_trigger - right_trigger)
+        left_stick = self.operator.getY(LEFT)
+        right_stick = self.operator.getY(RIGHT)
+        # TRIGGER_LEVEL = 0.4
+        self.grabber.set_left(left_stick)
+        self.grabber.set_right(right_stick)
         # if right_trigger > TRIGGER_LEVEL and left_trigger > TRIGGER_LEVEL:
         #     self.grabber.spit(min(right_trigger, left_trigger))
         # elif right_trigger > TRIGGER_LEVEL or left_trigger > TRIGGER_LEVEL:
