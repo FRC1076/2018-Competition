@@ -68,7 +68,7 @@ class Robot(wpilib.IterativeRobot):
         self.timer = 0
 
     def robotPeriodic(self):
-        if self.timer % 100 == 0:
+        if self.timer % 5000 == 0:
             print(self.vision_socket.get_angle(1.0))
             print("is bound: {}".format(self.vision_socket.is_bound()))
         self.timer += 1
@@ -80,6 +80,12 @@ class Robot(wpilib.IterativeRobot):
         # @Todo: Deadzone these
         forward = -self.driver.getY(RIGHT)
         rotate = self.driver.getX(LEFT)
+
+        MAX_FORWARD = 0.8
+        MAX_ROTATE = 0.8
+
+        forward = forward * MAX_FORWARD
+        rotate = rotate * MAX_ROTATE
 
         if self.driver.getXButton():
             self.drivetrain.stop()
@@ -131,9 +137,8 @@ class Robot(wpilib.IterativeRobot):
 
         left_stick = self.operator.getY(LEFT)
         right_stick = self.operator.getY(RIGHT)
-        # TRIGGER_LEVEL = 0.4
-        self.grabber.set_left(left_stick)
-        self.grabber.set_right(right_stick)
+        self.grabber.set_left(left_stick/2.0)
+        self.grabber.set_right(right_stick/2.0)
         # if right_trigger > TRIGGER_LEVEL and left_trigger > TRIGGER_LEVEL:
         #     self.grabber.spit(min(right_trigger, left_trigger))
         # elif right_trigger > TRIGGER_LEVEL or left_trigger > TRIGGER_LEVEL:
@@ -158,7 +163,6 @@ class Robot(wpilib.IterativeRobot):
     # Close the socket when the main process ends.
     def __del__(self):
         self.vision_socket.close()
-
 
 if __name__ == '__main__':
     wpilib.run(Robot, physics_enabled=True)
