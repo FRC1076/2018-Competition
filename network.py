@@ -3,9 +3,7 @@ import socket
 import time
 from threading import Thread
 
-from autonomous import RotateAutonomous
-
-UDP_IP = '10.10.76.2'
+UDP_IP = '10.10.76.2' # 0.0.0.0
 UDP_PORT = 5880
 BUFFER_SIZE = 1024
 
@@ -23,7 +21,15 @@ class MockSocket(Thread):
         return 15
 
     def is_bound(self):
+        print("WARNING: This is a mock socket!")
         return True
+
+    def close(self):
+        pass
+
+    def get_id(self):
+        return -2 # -2 is never a valid packet ID
+
 
 class VisionSocket(Thread):
     """
@@ -48,6 +54,7 @@ class VisionSocket(Thread):
         # from hanging forever (since it is waiting for all threads to exit and I
         # can't seem to figure out how to make threads exit as a non-daemon thread)
         self.daemon = True
+        self.packet_id = -1 # -1 is never a valid packet ID
 
 
     """
@@ -57,21 +64,25 @@ class VisionSocket(Thread):
     def run(self):
         while self.running:
             try:
-                self._read_packet()
+                data = self.socket.recv(BUFFER_SIZE)
+                self._read_packet(data)
             except IOError as e:
                 pass
+            except KeyError as e:
+                print(e)
         print("good bye sockets")
 
     """
     Read a packet from the socket, and
     updating the relevant values from said packets.
     """
-    def _read_packet(self):
-        data = self.socket.recv(BUFFER_SIZE)
+    def _read_packet(self, data):
         parsed = json.loads(data.decode())
         if parsed["sender"] == "vision":
-            self.angle = parsed["angle"]/30.0
+            self.angle = parsed["angle"]
+            self.packet_id = parsed["id"]
         self.last_packet_time = time.time()
+
 
     """
     Returns the most recently received angle, or none if
@@ -81,7 +92,11 @@ class VisionSocket(Thread):
         if max_staleness > time.time() - self.last_packet_time:
             return self.angle
         else:
+            # print("Stale data! {}".format(time.time() - self.last_packet_time))
             return None
+
+    def get_id(self):
+        return self.packet_id
 
     """
     Returns true if the socket is bound to the IP adress. Use for debugging.
