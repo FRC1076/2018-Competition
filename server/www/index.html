@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<!-- Styling for the table -->
+	<style>
+	table { border: none; }
+	td { border: none; }
+	tr:nth-child(even) { background: #eee; }
+	td:first-child { text-align: right; padding-right: 10px; }
+	</style>
+</head>
+<body>
+
+<!-- This starts the NetworkTables websocket, it can be accessed from multiple
+     pages simultaneously -->
+<script src="/networktables/networktables.js"></script>
+<script src="/networktables/utils.js"></script>
+<!-- Required by networktables/utils.js-->
+<script src="jquery.js"></script>
+<script src="d3.js"></script>
+
+<div>
+	NetworkTables websocket: <span id="connectState">Unknown state</span>
+
+	<br/>
+
+	Robot: <span id="robotState">Unknown state</span> @ <span id="robotAddress">disconnected</span
+	>
+
+	<br/>
+
+	Info: <span id=robotStateInfo></span>
+
+	<br/>
+
+	Robot Indicator: <span id="robotIndicator"></span>
+
+	<br/>
+
+	Where is the robot starting?: <select id="sideSelector"></select>
+
+</div>
+
+<hr/>
+
+<!-- The table that displays SmartDashboard keys -->
+<table id="nt" border=1>
+	<tbody><tbody>
+</table>
+
+
+<script type="text/javascript">
+"use strict";
+
+// Runs when the page is loaded
+$(document).ready(function(){
+	// sets a function that will be called when the websocket connects/disconnects
+	NetworkTables.addWsConnectionListener(onNetworkTablesConnection, true);
+
+	// sets a function that will be called when the robot connects/disconnects
+	NetworkTables.addRobotConnectionListener(onRobotConnection, true);
+
+	// sets a function that will be called when any NetworkTables key/value changes
+	NetworkTables.addGlobalListener(onValueChanged, true);
+
+	// Add an indicator for if the robot is connected
+	attachRobotConnectionIndicator('#robotIndicator');
+
+    // attaches the select element to a SendableChooser object
+    // If you change the second argument (the SmartDashboard key)
+    // also change the key in robot.py!
+	attachSelectToSendableChooser("#sideSelector", "side_selector");
+});
+
+
+function onRobotConnection(connected) {
+	// Display status information
+	$('#robotState').text(connected ? "Connected!" : "DISCONNECTED");
+	$('#robotState').css('color', connected ? "green" : "red");
+	$('#robotState').css('font-weight', connected ? "normal" : "bold");
+
+	$('#robotAddress').text(connected ? NetworkTables.getRobotAddress() : "disconnected");
+	$('#robotAddress').css('color', connected ? "black" : "red");
+	$('#robotAddress').css('font-weight', connected ? "normal" : "bold");
+
+	$("#robotStateInfo").text(connected ? "The robot is connected." : "The robot is NOT connected, are you sure you're on the right network?");
+	$('#robotStateInfo').css('color', connected ? "black" : "red");
+}
+
+function onNetworkTablesConnection(connected) {
+	$('#connectState').text(connected ? "Connected!" : "Disconnected!");
+
+	// clear the table on connecting to refresh it
+	if (connected) {
+		$("#nt tbody > tr").remove();
+	}
+}
+
+function is_smartdashboard_key(key) {
+	return key.match(/SmartDashboard/);
+}
+
+function onValueChanged(key, value, isNew) {
+
+	// key thing here: we're using the various NetworkTable keys as
+	// the id of the elements that we're appending, for simplicity. However,
+	// the key names aren't always valid HTML identifiers, so we use
+	// the NetworkTables.keyToId() function to convert them appropriately
+
+
+	if (isNew) {
+		var tr = $('<tr></tr>').appendTo($('#nt > tbody:last'));
+		$('<td></td>').text(key).appendTo(tr);
+		$('<td></td>').attr('id', NetworkTables.keyToId(key))
+					   .text(value)
+					   .appendTo(tr);
+
+		if (!is_smartdashboard_key(key)) {
+			$(tr).css('color', '#aaa')
+		}
+	} else {
+		// similarly, use keySelector to convert the key to a valid jQuery
+		// selector. This should work for class names also, not just for ids
+		$('#' + NetworkTables.keySelector(key)).text(value);
+	}
+}
+</script>
+
+
+</body>
+</html>
