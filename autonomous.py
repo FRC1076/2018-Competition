@@ -8,9 +8,14 @@ import wpilib
 ROBOT_SPEED = 9.0*12
 DIST_SWITCH = 120.0 + 12.0 # TODO: Measure this
 
-
+# Edit this to try out different autonomi
 def test_auton(drivetrain, gyro, vision_socket, switch_position):
-    yield from VisionAuto(drivetrain, gyro, vision_socket, forward=0.7).run()
+    # Chaining together autonomi is as simple as just adding more yield froms!
+    yield from Timed(VisionAuto(drivetrain, gyro, vision_socket, forward=0.7), duration=1).run()
+    # yield from Timed(ArcadeAutonomous(drivetrain, forward=0.7, rotate=0), duration=1.5).run()
+    # yield from Timed(RotateAutonomous(drivetrain, gyro, angle=45, turn_speed=0.6), duration=1).run()
+
+
 
 # Describes the position of the scales and switches
 class Position(Enum):
@@ -131,6 +136,7 @@ class VisionAuto(BaseAutonomous):
         self.gyro = gyro
         self.forward = forward
         self.correction = 0
+        # PID Constants, tuned as of March 5th
         self.PID = wpilib.PIDController(0.03, 0.01, 0.0,
             source=self._get_angle,
             output=self._set_correction)
