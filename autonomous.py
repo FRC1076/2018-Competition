@@ -9,6 +9,9 @@ ROBOT_SPEED = 9.0*12
 DIST_SWITCH = 120.0 + 12.0 # TODO: Measure this
 
 
+def test_auton(drivetrain, gyro, vision_socket, switch_position):
+    yield from VisionAuto(drivetrain, gyro, vision_socket, forward=0.7).run()
+
 # Describes the position of the scales and switches
 class Position(Enum):
     # Format is always our switch, scale, enemy side switch
