@@ -4,6 +4,10 @@ from enum import Enum
 
 import wpilib
 
+# In inches per second
+ROBOT_SPEED = 9.0*12
+DIST_SWITCH = 120.0 + 12.0 # TODO: Measure this
+
 
 # Describes the position of the scales and switches
 class Position(Enum):
@@ -124,12 +128,14 @@ class VisionAuto(BaseAutonomous):
         self.gyro = gyro
         self.forward = forward
         self.correction = 0
-        self.PID = wpilib.PIDController(0.03, 0.0, 0.0,
+        self.PID = wpilib.PIDController(0.03, 0.01, 0.0,
             source=self._get_angle,
             output=self._set_correction)
 
     def _get_angle(self):
-        angle = self.socket.get_angle(max_staleness=0.5)/30.0
+        angle = self.socket.get_angle(max_staleness=0.5)
+        if angle is None:
+            return 0
         return angle
 
     def _set_correction(self, value):
@@ -139,16 +145,14 @@ class VisionAuto(BaseAutonomous):
         self.PID.setInputRange(-35, 35)
         self.PID.enable()
 
-    def init(self):
-        # TODO: Use the gyro to better rotate to the target
-        pass
-
     def execute(self):
         while True:
             angle = self.socket.get_angle(max_staleness=0.5)
             if angle is not None:
-                correction = self.PID.get()
-                correction = math.copysign(self.correction, angle)
+                correction = self.correction
+                # print("self.Correction: ", self.correction)
+                print("Correction: ", correction)
+                correction = math.copysign(self.correction, angle)/2.0
                 self.drivetrain.arcade_drive(self.forward, correction)
             else:
                 self.drivetrain.stop()
