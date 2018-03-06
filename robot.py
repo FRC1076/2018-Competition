@@ -78,14 +78,15 @@ class Robot(wpilib.IterativeRobot):
 
     def teleopPeriodic(self):
         # @Todo: Deadzone these
+        DEADZONE = 0.01
         forward = -self.driver.getY(RIGHT)
         rotate = self.driver.getX(LEFT)
 
         MAX_FORWARD = 0.8
-        MAX_ROTATE = 0.8
+        MAX_ROTATE = 1.0
 
-        forward = forward * MAX_FORWARD
-        rotate = rotate * MAX_ROTATE
+        forward = deadzone(forward * MAX_FORWARD, DEADZONE)
+        rotate = deadzone(rotate * MAX_ROTATE, DEADZONE)
 
         if self.driver.getXButton():
             self.drivetrain.stop()
@@ -135,10 +136,10 @@ class Robot(wpilib.IterativeRobot):
         if right_wing_down:
             self.wings.lower_right()
 
-        left_stick = self.operator.getY(LEFT)
-        right_stick = self.operator.getY(RIGHT)
-        self.grabber.set_left(left_stick/2.0)
-        self.grabber.set_right(right_stick/2.0)
+        left_stick = deadzone(self.operator.getY(LEFT), DEADZONE)
+        right_stick = deadzone(self.operator.getY(RIGHT), DEADZONE)
+        self.grabber.set_left(left_stick * 0.5)
+        self.grabber.set_right(right_stick * 0.5)
         # if right_trigger > TRIGGER_LEVEL and left_trigger > TRIGGER_LEVEL:
         #     self.grabber.spit(min(right_trigger, left_trigger))
         # elif right_trigger > TRIGGER_LEVEL or left_trigger > TRIGGER_LEVEL:
@@ -163,6 +164,11 @@ class Robot(wpilib.IterativeRobot):
     # Close the socket when the main process ends.
     def __del__(self):
         self.vision_socket.close()
+
+def deadzone(val, deadzone):
+    if abs(val) < deadzone:
+        return 0
+    return val
 
 if __name__ == '__main__':
     wpilib.run(Robot, physics_enabled=True)
