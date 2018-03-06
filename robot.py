@@ -1,15 +1,14 @@
+import autonomous
 import ctre
+import network
 import wpilib
 from networktables import NetworkTables
-from wpilib import DoubleSolenoid, SmartDashboard
-from wpilib.interfaces import GenericHID
-
-import autonomous
-import network
 from subsystems.drivetrain import Drivetrain
 from subsystems.elevator import Elevator
 from subsystems.grabber import Grabber
 from subsystems.wings import Wings
+from wpilib import DoubleSolenoid, SmartDashboard
+from wpilib.interfaces import GenericHID
 
 # Left and right sides for the Xbox Controller
 # Note that these dont' referr to just the sticks, but more generally
@@ -86,14 +85,14 @@ class Robot(wpilib.IterativeRobot):
         SmartDashboard.putData(SIDE_SELECTOR, self.chooser)
 
     def robotPeriodic(self):
-        if self.timer % 1000 == 0:
-            print(self.vision_socket.get_angle(1.0))
+        if self.timer % 250 == 0:
+            print("angle: ", self.vision_socket.get_angle(1.0))
             print("ID: ", self.vision_socket.get_id())
-            print("is bound: ", self.vision_socket.is_bound())
-            print("choosen: ", self.chooser.getSelected())
-            game_message = wpilib.DriverStation.getInstance().getGameSpecificMessage()
-            print("game msg: ", autonomous.get_game_specific_message(game_message))
-            print("routine: ", autonomous.get_routine(self.chooser.getSelected(), autonomous.get_game_specific_message(game_message)))
+            # print("is bound: ", self.vision_socket.is_bound())
+            # print("choosen: ", self.chooser.getSelected())
+            # game_message = wpilib.DriverStation.getInstance().getGameSpecificMessage()
+            # print("game msg: ", autonomous.get_game_specific_message(game_message))
+            # print("routine: ", autonomous.get_routine(self.chooser.getSelected(), autonomous.get_game_specific_message(game_message)))
         self.timer += 1
 
     def teleopInit(self):
@@ -182,6 +181,9 @@ class Robot(wpilib.IterativeRobot):
         game_message = wpilib.DriverStation.getInstance().getGameSpecificMessage()
         switch_position = autonomous.get_game_specific_message(game_message)
         robot_position = autonomous.Position.CENTER # TODO: have an actual way to set this outside of the program
+
+        alliance_side =  wpilib.DriverStation.getInstance().getAlliance()
+
         routine = autonomous.get_routine(robot_position=robot_position, switch_position=switch_position)
         print("Switch Position: ", switch_position)
         self.auton = autonomous.test_auton(self.drivetrain, self.gyro, self.vision_socket, switch_position)
