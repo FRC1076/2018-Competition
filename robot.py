@@ -101,7 +101,7 @@ class Robot(wpilib.IterativeRobot):
 
     def teleopPeriodic(self):
         # @Todo: Deadzone these
-        DEADZONE = 0.01
+        DEADZONE = 0.1
         forward = -self.driver.getY(RIGHT)
         rotate = self.driver.getX(LEFT)
 
@@ -159,8 +159,9 @@ class Robot(wpilib.IterativeRobot):
         if right_wing_down:
             self.wings.lower_right()
 
-        left_stick = deadzone(self.operator.getY(LEFT), DEADZONE)
-        right_stick = deadzone(self.operator.getY(RIGHT), DEADZONE)
+        INTAKE_DEADZONE = 0.2
+        left_stick = deadzone(self.operator.getY(LEFT), INTAKE_DEADZONE)
+        right_stick = deadzone(self.operator.getY(RIGHT), INTAKE_DEADZONE)
         self.grabber.set_left(left_stick * 0.5)
         self.grabber.set_right(right_stick * 0.5)
         # if right_trigger > TRIGGER_LEVEL and left_trigger > TRIGGER_LEVEL:
