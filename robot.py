@@ -1,10 +1,11 @@
 import ctre
 import wpilib
+from networktables import NetworkTables
+from wpilib import DoubleSolenoid, SmartDashboard
 from wpilib.interfaces import GenericHID
 
 import autonomous
 import network
-from autonomous import ArcadeAutonomous, RotateAutonomous
 from subsystems.drivetrain import Drivetrain
 from subsystems.elevator import Elevator
 from subsystems.grabber import Grabber
@@ -30,6 +31,9 @@ RIGHT1_ID = 7
 RIGHT2_ID = 8
 
 # 5 is not mapped currently to any motor
+
+# If you modify this key, also update the value in index.html!
+SIDE_SELECTOR = "side_selector"
 
 class Robot(wpilib.IterativeRobot):
     def robotInit(self):
@@ -63,14 +67,33 @@ class Robot(wpilib.IterativeRobot):
 
         self.gyro = wpilib.ADXRS450_Gyro()
 
-        self.vision_socket = network.VisionSocket()
+        # Use a mock socket in tests instead of a real one because we can't
+        # actually bind to a port when testing the code.
+        if Robot.isReal():
+            self.vision_socket = network.VisionSocket()
+        else:
+            self.vision_socket = network.MockSocket()
+
         self.vision_socket.start()
         self.timer = 0
 
+        self.sd = NetworkTables.getTable('SmartDashboard')
+
+        self.chooser = wpilib.SendableChooser()
+        self.chooser.addObject('left', autonomous.Position.LEFT)
+        self.chooser.addObject('right', autonomous.Position.RIGHT)
+        self.chooser.addObject('center', autonomous.Position.CENTER)
+        SmartDashboard.putData(SIDE_SELECTOR, self.chooser)
+
     def robotPeriodic(self):
-        if self.timer % 5000 == 0:
+        if self.timer % 1000 == 0:
             print(self.vision_socket.get_angle(1.0))
-            print("is bound: {}".format(self.vision_socket.is_bound()))
+            print("ID: ", self.vision_socket.get_id())
+            print("is bound: ", self.vision_socket.is_bound())
+            print("choosen: ", self.chooser.getSelected())
+            game_message = wpilib.DriverStation.getInstance().getGameSpecificMessage()
+            print("game msg: ", autonomous.get_game_specific_message(game_message))
+            print("routine: ", autonomous.get_routine(self.chooser.getSelected(), autonomous.get_game_specific_message(game_message)))
         self.timer += 1
 
     def teleopInit(self):
@@ -149,7 +172,25 @@ class Robot(wpilib.IterativeRobot):
 
     def autonomousInit(self):
         print("Autonomous Begin!")
-        self.auton = autonomous.drive_and_rotate(self.drivetrain, self.gyro)
+        # The game specific message is only given once autonomous starts
+        # It is not avaliable during disable mode before the game starts
+        # and it is not useful in teleop mode, so we only get the message here.
+        game_message = wpilib.DriverStation.getInstance().getGameSpecificMessage()
+        switch_position = autonomous.get_game_specific_message(game_message)
+        robot_position = autonomous.Position.CENTER # TODO: have an actual way to set this outside of the program
+        routine = autonomous.get_routine(robot_position=robot_position, switch_position=switch_position)
+        print("Switch Position: ", switch_position)
+
+        if routine == autonomous.AutonomousRoutine.CENTER:
+            self.auton = autonomous.center_to_switch(self.drivetrain, self.gyro, self.vision_socket, switch_position)
+        elif routine == autonomous.AutonomousRoutine.SIDE_TO_SAME:
+            self.auton = autonomous.switch_same_side(self.drivetrain, self.gyro, self.vision_socket, switch_position)
+        elif routine == autonomous.AutonomousRoutine.SIDE_TO_OPPOSITE:
+            self.auton = autonomous.switch_opposite_side(self.drivetrain, self.gyro, self.vision_socket, switch_position)
+        else:
+            # Default to the center autonomous
+            self.auton = autonomous.center_to_switch(self.drivetrain, self.gyro, self.vision_socket, switch_position)
+
 
     def autonomousPeriodic(self):
         try:
