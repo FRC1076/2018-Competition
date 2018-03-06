@@ -37,14 +37,14 @@ SIDE_SELECTOR = "side_selector"
 
 class Robot(wpilib.IterativeRobot):
     def robotInit(self):
-        left = wpilib.SpeedControllerGroup(
-            ctre.WPI_TalonSRX(LEFT1_ID),
-            ctre.WPI_TalonSRX(LEFT2_ID),
-        )
-        right = wpilib.SpeedControllerGroup(
-            ctre.WPI_TalonSRX(RIGHT1_ID),
-            ctre.WPI_TalonSRX(RIGHT2_ID),
-        )
+        self.left1 = ctre.WPI_TalonSRX(LEFT1_ID)
+        self.left2 = ctre.WPI_TalonSRX(LEFT2_ID)
+        left = wpilib.SpeedControllerGroup(self.left1, self.left2)
+
+        self.right1 = ctre.WPI_TalonSRX(RIGHT1_ID)
+        self.right2 = ctre.WPI_TalonSRX(RIGHT2_ID)
+        right = wpilib.SpeedControllerGroup(self.right1, self.right2)
+
         self.drivetrain = Drivetrain(left, right, wpilib.DoubleSolenoid(2, 3))
 
         self.grabber = Grabber(
@@ -169,7 +169,10 @@ class Robot(wpilib.IterativeRobot):
         # elif right_trigger > TRIGGER_LEVEL or left_trigger > TRIGGER_LEVEL:
         #     self.grabber.absorb(max(right_trigger, left_trigger))
 
-
+        debug_encoder(self.left1, "left1: ")
+        debug_encoder(self.right1, "right1: ")
+        debug_encoder(self.left2, "left2: ")
+        debug_encoder(self.right2, "right2: ")
 
     def autonomousInit(self):
         print("Autonomous Begin!")
@@ -211,6 +214,11 @@ def deadzone(val, deadzone):
     if abs(val) < deadzone:
         return 0
     return val
+
+def debug_encoder(talon, name):
+    # print(name, " encoder pos", talon.getPinStateQuadA())
+    print(name, " encoder vel", talon.getQuadratureVelocity())
+    # print(name, " encoder pins", talon.getQuadPinStates())
 
 if __name__ == '__main__':
     wpilib.run(Robot, physics_enabled=True)
