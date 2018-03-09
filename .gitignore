@@ -64,3 +64,6 @@ docs/_build/
 target/
 tests/.pytest_cache/v/cache/lastfailed
 yield_practice.py
+
+# MyPy
+.mypy_cache/
