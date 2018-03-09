@@ -6,7 +6,9 @@ import wpilib
 
 # In inches per second
 ROBOT_SPEED = 9.0*12
-ENCODER_TICKS_PER_FOOT = 830
+ENCODER_TICKS_PER_FOOT = 830.0
+ENCODER_TICKS_PER_INCH = 830.0 / 12.0
+
 
 # All measurements in inches unless specified
 
@@ -215,6 +217,25 @@ class RotateAutonomous(BaseAutonomous):
             else:
                 self.drivetrain.arcade_drive(0, -self.speed * correction_factor)
             yield
+
+    def stop(self):
+        self.drivetrain.stop()
+
+'''
+Drives the robot forward using the encoder
+'''
+class EncoderAutonomous(BaseAutonomous):
+    def __init__(self, drivetrain, speed=0, inches=0):
+        self.drivetrain = drivetrain
+        self.distance = inches * ENCODER_TICKS_PER_INCH
+        self.speed = speed
+
+    def init(self):
+        self.start_dist = self.drivetrain.get_encoder_position()
+
+    def execute(self):
+        while abs(self.start_dist - self.drivetrain.get_encoder_position()) < self.distance:
+            self.drivetrain.arcade_drive(self.forward, rotate=0)
 
     def stop(self):
         self.drivetrain.stop()

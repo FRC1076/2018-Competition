@@ -48,6 +48,14 @@ def test_autonomous_routines():
         auton = autonomous.switch_opposite_side(drivetrain, gyro, vision_socket, autonomous.Position.LEFT)
         for _ in auton: pass
 
+def test_encoder_autonomous():
+    drivetrain = MockDrivetrain()
+    auton = autonomous.EncoderAutonomous(drivetrain, speed=0.42, inches=1.0)
+    auton.init()
+    for _ in range(0, 100):
+        auton.run()
+    auton.stop()
+
 def test_arcade_autonomous():
     drivetrain = MockDrivetrain()
     auton = autonomous.ArcadeAutonomous(drivetrain, forward=-0.42, rotate=0.69)
@@ -90,3 +98,6 @@ class MockDrivetrain(Drivetrain):
 
     def shift_high(self):
         pass
+
+    def get_encoder_position(self):
+        return 1001
