@@ -73,13 +73,18 @@ def get_game_specific_message(game_message):
 
 
 # Used when the robot starts in the center
-def center_straight(drivetrain, gyro, vision_socket, switch_position):
-
-    yield from Timed(ArcadeAutonomous(drivetrain, forward=0.7, rotate=0), duration=1.5).run()
+def center_straight(grabber, elevator, drivetrain, gyro, vision_socket, switch_position):
+    self.grabber.set(1)
+    # Makes the elevator go up at the same time as the first drive forward phase
+    yield from Timed(Parallel(
+            ElevatorAutonomous(elevator, up_speed=1.0),
+            ArcadeAutonomous(drivetrain, forward=0.7, rotate=0),
+        ), duration=2.0).run()
     yield from Timed(RotateAutonomous(drivetrain, gyro, angle=45 * sign, turn_speed=0.6), duration=1).run()
     yield from Timed(ArcadeAutonomous(drivetrain, forward=0.7, rotate=0), duration=3).run()
     yield from Timed(RotateAutonomous(drivetrain, gyro, angle=-50 * sign, turn_speed=0.6), duration=1).run()
     yield from Timed(ArcadeAutonomous(drivetrain, forward=0.7, rotate=0), duration=2).run() # TODO: Lower how far forward this goes
+    self.grabber.set(0)
     # yield from VisionAuto(drivetrain, gyro, vision_socket, 0.5).run()
 
 # Used when the switch is on the same side of the starting position. For
@@ -265,3 +270,45 @@ class ArcadeAutonomous(BaseAutonomous):
 
     def stop(self):
         self.drivetrain.stop()
+
+
+class ElevatorAutonomous(BaseAutonomous):
+    """ Controls the elevator and cube manipulator during autonomous"""
+    def __init__(self, elevator, up_speed=0):
+        self.elevator = elevator
+        self.up_speed = up_speed
+
+    def execute(self):
+        while True:
+            self.elevator.go_up(self.up_speed)
+            yield
+
+    def stop(self):
+        self.elevator.stop()
+
+
+class Parallel(BaseAutonomous):
+    def __init__(self, *autos, exit_any=False):
+        self.autos = autos
+        self.exit_any = exit_any
+
+    def init(self):
+        for auto in self.autos:
+            auto.init()
+        return self
+
+    def execute(self):
+        items = [auto.execute() for auto in self.autos]
+        running = True
+        while running:
+            for item in items:
+                try:
+                    next(item)
+                except StopIteration:
+                    if exit_any:
+                        running = False
+            yield
+
+    def stop(self):
+        for auto in self.autos():
+            auto.stop()
