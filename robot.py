@@ -168,10 +168,10 @@ class Robot(wpilib.IterativeRobot):
         # elif right_trigger > TRIGGER_LEVEL or left_trigger > TRIGGER_LEVEL:
         #     self.grabber.absorb(max(right_trigger, left_trigger))
 
-        debug_encoder(self.left1, "left1: ")
-        debug_encoder(self.right1, "right1: ")
-        debug_encoder(self.left2, "left2: ")
-        debug_encoder(self.right2, "right2: ")
+        # debug_encoder(self.left1, "left1: ")
+        # debug_encoder(self.right1, "right1: ")
+        # debug_encoder(self.left2, "left2: ")
+        # debug_encoder(self.right2, "right2: ")
 
     def autonomousInit(self):
         print("Autonomous Begin!")
