@@ -66,7 +66,7 @@ def get_game_specific_message(game_message):
 
 
 def dead_reckon(drivetrain):
-    yield from Timed(ArcadeAutonomous(drivetrain, forward=0.7, rotate=0), duration=4.0).run()
+    yield from Timed(ArcadeAutonomous(drivetrain, forward=0.7, rotate=0), duration=3.0).run()
 
 # Used when the robot starts in the center
 def center_straight(grabber, elevator, drivetrain, gyro, vision_socket, switch_position):
