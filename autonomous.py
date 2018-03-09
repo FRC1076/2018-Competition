@@ -91,11 +91,10 @@ def switch_to_same_side(grabber, elevator, drivetrain, gyro, vision_socket, swit
     # Makes the elevator go up at the same time as the first drive forward phase
     yield from Timed(Parallel(
         ElevatorAutonomous(elevator, up_speed=1.0),
-        EncoderAutonomous(drivetrain, inches = SAME_SIDE_DIST, speed = 0.7)),
-        duration = 2.0).run()
-    yield from Timed(EncoderAutonomous(drivetrain, inches = SAME_SIDE_DIST, speed = 0.7),duration = 3).run()
-    yield from Timed(RotateAutonomous(drivetrain, gyro, angle = rotate, turn_speed=0.5), duration=1).run()
-    yield from Timed(GrabberAutonomous(grabber, in_speed=-1), duration=1).run()
+        ArcadeAutonomous(drivetrain, forward=0.7, rotate=0)),
+        duration = 3.0).run()
+    yield from Timed(RotateAutonomous(drivetrain, gyro, angle=rotate, turn_speed=0.5), duration=1).run()
+    yield from Timed(GrabberAutonomous(grabber, in_speed=1), duration=1).run()
     grabber.set(0)
 
 # Used when the switch is on the opposite side of the starting position. For
