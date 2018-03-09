@@ -84,6 +84,7 @@ def center_straight(grabber, elevator, drivetrain, gyro, vision_socket, switch_p
     yield from Timed(ArcadeAutonomous(drivetrain, forward=0.7, rotate=0), duration=3).run()
     yield from Timed(RotateAutonomous(drivetrain, gyro, angle=-50 * sign, turn_speed=0.6), duration=1).run()
     yield from Timed(ArcadeAutonomous(drivetrain, forward=0.7, rotate=0), duration=2).run() # TODO: Lower how far forward this goes
+    yield from Timed(GrabberAutonomous(grabber, in_speed=-1), duration=1).run()
     self.grabber.set(0)
     # yield from VisionAuto(drivetrain, gyro, vision_socket, 0.5).run()
 
@@ -273,7 +274,7 @@ class ArcadeAutonomous(BaseAutonomous):
 
 
 class ElevatorAutonomous(BaseAutonomous):
-    """ Controls the elevator and cube manipulator during autonomous"""
+    """ Controls the elevator during autonomous"""
     def __init__(self, elevator, up_speed=0):
         self.elevator = elevator
         self.up_speed = up_speed
@@ -286,6 +287,16 @@ class ElevatorAutonomous(BaseAutonomous):
     def stop(self):
         self.elevator.stop()
 
+class GrabberAutonomous(BaseAutonomous):
+    """ Controls the cube manipulator during autonomous"""
+    def __init__(self, grabber, in_speed=0):
+        self.grabber = grabber
+        self.in_speed = in_speed
+
+    def execute(self):
+        while True:
+            self.grabber.set(self.in_speed)
+            yield
 
 class Parallel(BaseAutonomous):
     def __init__(self, *autos, exit_any=False):
@@ -312,3 +323,4 @@ class Parallel(BaseAutonomous):
     def stop(self):
         for auto in self.autos():
             auto.stop()
+
