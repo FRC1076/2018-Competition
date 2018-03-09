@@ -118,9 +118,10 @@ class Robot(wpilib.IterativeRobot):
         gear_high = self.driver.getBumper(RIGHT)
 
         if gear_high:
-            self.drivetrain.shift_high()
-        else:
             self.drivetrain.shift_low()
+        else:
+            self.drivetrain.shift_high()
+
 
         left_trigger = self.operator.getTriggerAxis(LEFT)
         right_trigger = self.operator.getTriggerAxis(RIGHT)
