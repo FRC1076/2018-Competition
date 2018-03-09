@@ -31,22 +31,57 @@ def test_routine():
 # These aren't really rigous tests, just ones mean as a spot check that
 # they don't cause crashes.
 
-def test_autonomous_routines():
+def test_zig_zag():
     # These take a long time to run (about 15 seconds total), so we really only
     # want to run this on TravisCI.
     # According to https://docs.travis-ci.com/user/environment-variables/#Convenience-Variables
     # the environment variable "CI" along with others is set to True when we're in a
     # Travis environment.
-    if os.environ.get("CI") == "true":
+    if os.environ.get("CI") != "true":
         drivetrain = MockDrivetrain()
         gyro = MockGyro()
         vision_socket = network.MockSocket()
-        auton = autonomous.center_to_switch(drivetrain, gyro, vision_socket, autonomous.Position.LEFT)
-        for _ in auton: pass
-        auton = autonomous.switch_same_side(drivetrain, gyro, vision_socket, autonomous.Position.LEFT)
-        for _ in auton: pass
-        auton = autonomous.switch_opposite_side(drivetrain, gyro, vision_socket, autonomous.Position.LEFT)
-        for _ in auton: pass
+        grabber = MockGrabber()
+        elevator = MockElevator()
+        auton = autonomous.zig_zag(grabber, elevator, drivetrain, gyro, vision_socket, autonomous.Position.LEFT)
+        for _ in auton: drivetrain.position += 1
+
+def test_center_straight():
+    if os.environ.get("CI") != "true":
+        drivetrain = MockDrivetrain()
+        gyro = MockGyro()
+        vision_socket = network.MockSocket()
+        grabber = MockGrabber()
+        elevator = MockElevator()
+        auton = autonomous.center_straight(grabber, elevator, drivetrain, gyro, vision_socket, autonomous.Position.LEFT)
+        for _ in auton: drivetrain.position += 1
+
+def test_switch_to_same_side_left():
+    if os.environ.get("CI") != "true":
+        drivetrain = MockDrivetrain()
+        gyro = MockGyro()
+        vision_socket = network.MockSocket()
+        grabber = MockGrabber()
+        elevator = MockElevator()
+        auton = autonomous.switch_to_same_side_left(grabber, elevator, drivetrain, gyro, vision_socket, autonomous.Position.LEFT)
+        for _ in auton: drivetrain.position += 1
+
+def test_switch_to_same_side_right():
+    if os.environ.get("CI") != "true":
+        drivetrain = MockDrivetrain()
+        gyro = MockGyro()
+        vision_socket = network.MockSocket()
+        grabber = MockGrabber()
+        elevator = MockElevator()
+        auton = autonomous.switch_to_same_side_right(grabber, elevator, drivetrain, gyro, vision_socket, autonomous.Position.LEFT)
+        for _ in auton: drivetrain.position += 1
+
+        # auton = autonomous.center_straight(grabber, elevator, drivetrain, gyro, vision_socket, autonomous.Position.LEFT)
+        # for _ in auton: drivetrain.position += 1
+        # auton = autonomous.switch_to_same_side_left(grabber, elevator, drivetrain, gyro, vision_socket, autonomous.Position.LEFT)
+        # for _ in auton: drivetrain.position += 1
+        # auton = autonomous.switch_to_same_side_right(grabber, elevator, drivetrain, gyro, vision_socket, autonomous.Position.LEFT)
+        # for _ in auton: drivetrain.position += 1
 
 def test_encoder_autonomous():
     drivetrain = MockDrivetrain()
@@ -85,7 +120,7 @@ class MockGyro:
 
 class MockDrivetrain(Drivetrain):
     def __init__(self):
-        pass
+        self.position = 0
 
     def arcade_drive(self, forward, rotate):
         pass
@@ -100,4 +135,35 @@ class MockDrivetrain(Drivetrain):
         pass
 
     def get_encoder_position(self):
-        return 1001
+        return self.position
+
+class MockElevator:
+    def __init__(self):
+        pass
+
+    def go_up(self, speed=1.0):
+        pass
+
+    def go_down(self, speed=1.0):
+        pass
+
+    def stop(self):
+        pass
+
+import wpilib
+
+class MockGrabber:
+    def __init__(self):
+        pass
+
+    def set(self, speed=1.0):
+        pass
+
+    def set_left(self, speed=1.0):
+        pass
+
+    def set_right(self, speed=1.0):
+        pass
+
+    def has_cube(self):
+        pass
