@@ -186,7 +186,7 @@ class Robot(wpilib.IterativeRobot):
 
         routine = autonomous.get_routine(robot_position=robot_position, switch_position=switch_position)
         print("Switch Position: ", switch_position)
-        self.auton = autonomous.test_auton(self.drivetrain, self.gyro, self.vision_socket, switch_position)
+        self.auton = autonomous.center_straight(self.grabber, self.elevator, self.drivetrain, self.gyro, self.vision_socket, switch_position)
         # if routine == autonomous.AutonomousRoutine.CENTER:
         #     self.auton = autonomous.center_to_switch(self.drivetrain, self.gyro, self.vision_socket, switch_position)
         # elif routine == autonomous.AutonomousRoutine.SIDE_TO_SAME:
