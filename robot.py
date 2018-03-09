@@ -160,6 +160,7 @@ class Robot(wpilib.IterativeRobot):
             self.wings.lower_right()
 
         INTAKE_DEADZONE = 0.2
+        # Inverted due to yaxis inversion built into the joystick
         left_stick = -deadzone(self.operator.getY(LEFT), INTAKE_DEADZONE)
         right_stick = -deadzone(self.operator.getY(RIGHT), INTAKE_DEADZONE)
         self.grabber.set_left(left_stick * 0.5)
