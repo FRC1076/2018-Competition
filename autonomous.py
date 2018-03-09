@@ -74,7 +74,7 @@ def get_game_specific_message(game_message):
 
 # Used when the robot starts in the center
 def center_straight(grabber, elevator, drivetrain, gyro, vision_socket, switch_position):
-    self.grabber.set(1)
+    grabber.set(1)
     # Makes the elevator go up at the same time as the first drive forward phase
     yield from Timed(Parallel(
             ElevatorAutonomous(elevator, up_speed=1.0),
@@ -85,28 +85,41 @@ def center_straight(grabber, elevator, drivetrain, gyro, vision_socket, switch_p
     yield from Timed(RotateAutonomous(drivetrain, gyro, angle=-50 * sign, turn_speed=0.6), duration=1).run()
     yield from Timed(ArcadeAutonomous(drivetrain, forward=0.7, rotate=0), duration=2).run() # TODO: Lower how far forward this goes
     yield from Timed(GrabberAutonomous(grabber, in_speed=-1), duration=1).run()
-    self.grabber.set(0)
+    grabber.set(-1)
     # yield from VisionAuto(drivetrain, gyro, vision_socket, 0.5).run()
 
 # Used when the switch is on the same side of the starting position. For
 # example, when the robot starts on the left side and the switch is on the left side
-def switch_to_same_side_left(drivetrain, gyro, vision_socket, switch_position):
+def switch_to_same_side_left(drivetrain, gyro, vision_socket, switch_position, grabber):
+
+    grabber.set(1)
+    # Makes the elevator go up at the same time as the first drive forward phase
+    yield from Timed(Parallel(
+        ElevatorAutonomous(elevator, up_speed=1.0),
+        EncoderAutonomous(drivetrain, forward = SAME_SIDE_DIST, speed = 0.7),
+        ), duration = 2.0).run()
     
-    yield from Timed(EncoderAutonomous(drivetrain, forward = SAME_SIDE_DIST, speed = 0.7), duration = 3)
     yield from Timed(RotateAutonomous(drivetrain, gyro, angle = -SAME_TURN_ANGLE, turn_speed=0.5), duration=1).run()
     yield from Timed(VisionAuto(drivetrain, gyro, vision_socket, 0.6), duration=1).run()
+    grabber.set(-1)
 
 # Used when switch is on the same side as the starting position, robot is on right and switch is on right    
-def switch_to_same_side_right(drivetrain, gyro, vision_socket, switch_position):
+def switch_to_same_side_right(drivetrain, gyro, vision_socket, switch_position, grabber):
+    grabber.set(1)
+    # Makes the elevator go up at the same time as the first drive forward phase
+    yield from Timed(Parallel(
+        ElevatorAutonomous(elevator, up_speed=1.0),
+        EncoderAutonomous(drivetrain, forward = SAME_SIDE_DIST, speed = 0.7),
+        duration = 2.0)).run()
     
     yield from Timed(EncoderAutonomous(drivetrain, forward = SAME_SIDE_DIST, speed = 0.7),duration = 3)
     yield from Timed(RotateAutonomous(drivetrain, gyro, angle = SAME_TURN_ANGLE, turn_speed=0.5), duration=1).run()
     yield from Timed(VisionAuto(drivetrain, gyro, vision_socket, 0.6), duration=1).run()
+    grabber.set(-1)
 
 # Used when the switch is on the opposite side of the starting position. For
 # example, when the robot starts on the left side but the switch is on the right side, zigzag
 def zig_zag(drivetrain, gyro, vision_socket, switch_position):
-
     yield from Timed(ArcadeAutonomous(drivetrain, forward=0.7, rotate=0), duration=1.0).run()
     yield from Timed(RotateAutonomous(drivetrain, gyro, angle=angle * sign, turn_speed=0.5), duration=1.0).run()
     yield from Timed(ArcadeAutonomous(drivetrain, forward=0.7, rotate=0), duration=1.0).run()
