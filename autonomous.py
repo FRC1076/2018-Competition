@@ -6,8 +6,24 @@ import wpilib
 
 # In inches per second
 ROBOT_SPEED = 9.0*12
-DIST_SWITCH = 120.0 + 12.0 # TODO: Measure this
+ENCODER_TICKS_PER_FOOT = 830
 
+# All measurements in inches unless specified
+
+# robot in center
+# WALL_TO_SWITCH = 11.0*12.0 # distance from the wall to the switch
+CENTER_FORWARD_DIST = 6.0*12.0
+CENTER_ROTATE_ANGLE = 30.0 # in degrees
+CENTER_FORWARD_DIST_2 = 6.0*12.0
+
+# robot on side, going to same side switch
+SAME_SIDE_DIST = 14.0*12.0
+SAME_TURN_ANGLE = -90.0 # in degrees
+
+# robot on side, going to far side switch
+FAR_VERTICAL_DIST = 19.00 * 12.00 + 10.00
+FAR_TURN_ANGLE = 90 # in degrees
+FAR_HORIZONTAL_DIST = 13.0*12.0 + 4.0
 # Edit this to try out different autonomi
 def test_auton(drivetrain, gyro, vision_socket, switch_position):
     # Chaining together autonomi is as simple as just adding more yield froms!
