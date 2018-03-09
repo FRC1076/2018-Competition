@@ -11,11 +11,11 @@ class Grabber:
         self.sensor = sensor
 
     def set(self, speed=1.0):
-        self.left_motor.set(speed)
-        self.right_motor.set(-speed)
+        self.set_left(speed)
+        self.set_right(speed)
 
     def set_left(self, speed=1.0):
-        self.left_motor.set(speed)
+        self.left_motor.set(-speed)
 
     def set_right(self, speed=1.0):
         self.right_motor.set(-speed)
