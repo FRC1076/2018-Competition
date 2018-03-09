@@ -160,8 +160,8 @@ class Robot(wpilib.IterativeRobot):
             self.wings.lower_right()
 
         INTAKE_DEADZONE = 0.2
-        left_stick = deadzone(self.operator.getY(LEFT), INTAKE_DEADZONE)
-        right_stick = deadzone(self.operator.getY(RIGHT), INTAKE_DEADZONE)
+        left_stick = -deadzone(self.operator.getY(LEFT), INTAKE_DEADZONE)
+        right_stick = -deadzone(self.operator.getY(RIGHT), INTAKE_DEADZONE)
         self.grabber.set_left(left_stick * 0.5)
         self.grabber.set_right(right_stick * 0.5)
         # if right_trigger > TRIGGER_LEVEL and left_trigger > TRIGGER_LEVEL:
