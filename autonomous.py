@@ -26,12 +26,6 @@ SAME_TURN_ANGLE = -90.0 # in degrees
 FAR_DIST_1 = 19.00 * 12.00 + 10.00
 FAR_TURN_ANGLE = 90 # in degrees
 FAR_DIST_2 = 13.0*12.0 + 4.0
-# Edit this to try out different autonomi
-def test_auton(drivetrain, gyro, vision_socket, switch_position):
-    # Chaining together autonomi is as simple as just adding more yield froms!
-    yield from Timed(VisionAuto(drivetrain, gyro, vision_socket, forward=0.7), duration=1).run()
-    # yield from Timed(ArcadeAutonomous(drivetrain, forward=0.7, rotate=0), duration=1.5).run()
-    # yield from Timed(RotateAutonomous(drivetrain, gyro, angle=45, turn_speed=0.6), duration=1).run()
 
 
 # Describes the position of the scales and switches
@@ -71,6 +65,9 @@ def get_game_specific_message(game_message):
         return None
 
 
+def dead_reckon(drivetrain):
+    yield from Timed(ArcadeAutonomous(drivetrain, forward=0.7, rotate=0), duration=4.0).run()
+
 # Used when the robot starts in the center
 def center_straight(grabber, elevator, drivetrain, gyro, vision_socket, switch_position):
     grabber.set(1)
@@ -88,28 +85,16 @@ def center_straight(grabber, elevator, drivetrain, gyro, vision_socket, switch_p
 
 # Used when the switch is on the same side of the starting position. For
 # example, when the robot starts on the left side and the switch is on the left side
-def switch_to_same_side_left(grabber, elevator, drivetrain, gyro, vision_socket, switch_position):
+def switch_to_same_side(grabber, elevator, drivetrain, gyro, vision_socket, switch_position):
     grabber.set(1)
+    rotate = SAME_TURN_ANGLE if switch_position == Position.LEFT else -SAME_TURN_ANGLE
     # Makes the elevator go up at the same time as the first drive forward phase
     yield from Timed(Parallel(
         ElevatorAutonomous(elevator, up_speed=1.0),
         EncoderAutonomous(drivetrain, inches = SAME_SIDE_DIST, speed = 0.7)),
         duration = 2.0).run()
     yield from Timed(EncoderAutonomous(drivetrain, inches = SAME_SIDE_DIST, speed = 0.7),duration = 3).run()
-    yield from Timed(RotateAutonomous(drivetrain, gyro, angle = -SAME_TURN_ANGLE, turn_speed=0.5), duration=1).run()
-    yield from Timed(GrabberAutonomous(grabber, in_speed=-1), duration=1).run()
-    grabber.set(0)
-
-# Used when switch is on the same side as the starting position, robot is on right and switch is on right
-def switch_to_same_side_right(grabber, elevator, drivetrain, gyro, vision_socket, switch_position):
-    grabber.set(1)
-    # Makes the elevator go up at the same time as the first drive forward phase
-    yield from Timed(Parallel(
-        ElevatorAutonomous(elevator, up_speed=1.0),
-        EncoderAutonomous(drivetrain, inches = SAME_SIDE_DIST, speed = 0.7)),
-        duration = 2.0).run()
-    yield from Timed(EncoderAutonomous(drivetrain, inches = SAME_SIDE_DIST, speed = 0.7),duration = 3).run()
-    yield from Timed(RotateAutonomous(drivetrain, gyro, angle = SAME_TURN_ANGLE, turn_speed=0.5), duration=1).run()
+    yield from Timed(RotateAutonomous(drivetrain, gyro, angle = rotate, turn_speed=0.5), duration=1).run()
     yield from Timed(GrabberAutonomous(grabber, in_speed=-1), duration=1).run()
     grabber.set(0)
 
@@ -201,7 +186,7 @@ class VisionAuto(BaseAutonomous):
             if angle is not None:
                 correction = self.correction
                 # print("self.Correction: ", self.correction)
-                print("Correction: ", correction)
+                # print("Correction: ", correction)
                 correction = math.copysign(self.correction, angle)/2.0
                 self.drivetrain.arcade_drive(self.forward, correction)
             else:

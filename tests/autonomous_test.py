@@ -37,7 +37,7 @@ def test_zig_zag():
     # According to https://docs.travis-ci.com/user/environment-variables/#Convenience-Variables
     # the environment variable "CI" along with others is set to True when we're in a
     # Travis environment.
-    if os.environ.get("CI") != "true":
+    if os.environ.get("CI") == "true":
         drivetrain = MockDrivetrain()
         gyro = MockGyro()
         vision_socket = network.MockSocket()
@@ -47,7 +47,7 @@ def test_zig_zag():
         for _ in auton: drivetrain.position += 1
 
 def test_center_straight():
-    if os.environ.get("CI") != "true":
+    if os.environ.get("CI") == "true":
         drivetrain = MockDrivetrain()
         gyro = MockGyro()
         vision_socket = network.MockSocket()
@@ -56,24 +56,14 @@ def test_center_straight():
         auton = autonomous.center_straight(grabber, elevator, drivetrain, gyro, vision_socket, autonomous.Position.LEFT)
         for _ in auton: drivetrain.position += 1
 
-def test_switch_to_same_side_left():
-    if os.environ.get("CI") != "true":
+def test_switch_to_same_side():
+    if os.environ.get("CI") == "true":
         drivetrain = MockDrivetrain()
         gyro = MockGyro()
         vision_socket = network.MockSocket()
         grabber = MockGrabber()
         elevator = MockElevator()
-        auton = autonomous.switch_to_same_side_left(grabber, elevator, drivetrain, gyro, vision_socket, autonomous.Position.LEFT)
-        for _ in auton: drivetrain.position += 1
-
-def test_switch_to_same_side_right():
-    if os.environ.get("CI") != "true":
-        drivetrain = MockDrivetrain()
-        gyro = MockGyro()
-        vision_socket = network.MockSocket()
-        grabber = MockGrabber()
-        elevator = MockElevator()
-        auton = autonomous.switch_to_same_side_right(grabber, elevator, drivetrain, gyro, vision_socket, autonomous.Position.LEFT)
+        auton = autonomous.switch_to_same_side(grabber, elevator, drivetrain, gyro, vision_socket, autonomous.Position.LEFT)
         for _ in auton: drivetrain.position += 1
 
         # auton = autonomous.center_straight(grabber, elevator, drivetrain, gyro, vision_socket, autonomous.Position.LEFT)

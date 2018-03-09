@@ -85,7 +85,7 @@ class Robot(wpilib.IterativeRobot):
         SmartDashboard.putData(SIDE_SELECTOR, self.chooser)
 
     def robotPeriodic(self):
-        if self.timer % 250 == 0:
+        if self.timer % 1000 == 0:
             print("angle: ", self.vision_socket.get_angle(1.0))
             print("ID: ", self.vision_socket.get_id())
             # print("is bound: ", self.vision_socket.is_bound())
@@ -181,22 +181,26 @@ class Robot(wpilib.IterativeRobot):
         # and it is not useful in teleop mode, so we only get the message here.
         game_message = wpilib.DriverStation.getInstance().getGameSpecificMessage()
         switch_position = autonomous.get_game_specific_message(game_message)
-        robot_position = autonomous.Position.CENTER # TODO: have an actual way to set this outside of the program
 
-        alliance_side =  wpilib.DriverStation.getInstance().getAlliance()
+        robot_position = autonomous.Position.LEFT # TODO: have an actual way to set this outside of the program
+
+        # alliance_side =  wpilib.DriverStation.getInstance().getAlliance()
 
         routine = autonomous.get_routine(robot_position=robot_position, switch_position=switch_position)
+
+        print("Game Message: ", game_message)
         print("Switch Position: ", switch_position)
-        self.auton = autonomous.center_straight(self.grabber, self.elevator, self.drivetrain, self.gyro, self.vision_socket, switch_position)
+        print("Routine: ", routine)
+        self.auton = autonomous.dead_reckon(self.drivetrain)
         # if routine == autonomous.AutonomousRoutine.CENTER:
-        #     self.auton = autonomous.center_to_switch(self.drivetrain, self.gyro, self.vision_socket, switch_position)
+        #     self.auton = autonomous.center_straight(self.grabber, self.elevator, self.drivetrain, self.gyro, self.vision_socket, switch_position)
         # elif routine == autonomous.AutonomousRoutine.SIDE_TO_SAME:
-        #     self.auton = autonomous.switch_same_side(self.drivetrain, self.gyro, self.vision_socket, switch_position)
+        #     self.auton = autonomous.switch_to_same_side(self.grabber, self.elevator, self.drivetrain, self.gyro, self.vision_socket, switch_position)
         # elif routine == autonomous.AutonomousRoutine.SIDE_TO_OPPOSITE:
-        #     self.auton = autonomous.switch_opposite_side(self.drivetrain, self.gyro, self.vision_socket, switch_position)
+        #     self.auton = autonomous.zig_zag(self.grabber, self.elevator, self.drivetrain, self.gyro, self.vision_socket, switch_position)
         # else:
         #     # Default to the center autonomous
-        #     self.auton = autonomous.center_to_switch(self.drivetrain, self.gyro, self.vision_socket, switch_position)
+        #     self.auton = autonomous.center_straight(self.grabber, self.elevator, self.drivetrain, self.gyro, self.vision_socket, switch_position)
 
 
     def autonomousPeriodic(self):
