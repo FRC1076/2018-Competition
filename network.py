@@ -78,7 +78,7 @@ class VisionSocket(Thread):
     """
     def _read_packet(self, data):
         parsed = json.loads(data.decode())
-        if parsed["sender"] == "vision":
+        if parsed["sender"] == "vision" and parsed["object"] == "retroreflective":
             self.angle = parsed["angle"]
             self.packet_id = parsed["id"]
         self.last_packet_time = time.time()
