@@ -73,9 +73,8 @@ def get_game_specific_message(game_message):
 
 
 # Used when the robot starts in the center
-def center_to_switch(drivetrain, gyro, vision_socket, switch_position):
-    # angle = 45
-    sign = 1 if switch_position == Position.LEFT else -1
+def center_straight(drivetrain, gyro, vision_socket, switch_position):
+
     yield from Timed(ArcadeAutonomous(drivetrain, forward=0.7, rotate=0), duration=1.5).run()
     yield from Timed(RotateAutonomous(drivetrain, gyro, angle=45 * sign, turn_speed=0.6), duration=1).run()
     yield from Timed(ArcadeAutonomous(drivetrain, forward=0.7, rotate=0), duration=3).run()
@@ -85,17 +84,23 @@ def center_to_switch(drivetrain, gyro, vision_socket, switch_position):
 
 # Used when the switch is on the same side of the starting position. For
 # example, when the robot starts on the left side and the switch is on the left side
-def switch_same_side(drivetrain, gyro, vision_socket, switch_position):
-    angle = 15
-    sign = 1 if switch_position == Position.LEFT else -1
-    yield from Timed(RotateAutonomous(drivetrain, gyro, angle=angle * sign, turn_speed=0.5), duration=1).run()
+def switch_to_same_side_left(drivetrain, gyro, vision_socket, switch_position):
+    
+    yield from Timed(EncoderAutonomous(drivetrain, forward = SAME_SIDE_DIST, speed = 0.7), duration = 3)
+    yield from Timed(RotateAutonomous(drivetrain, gyro, angle = -SAME_TURN_ANGLE, turn_speed=0.5), duration=1).run()
+    yield from Timed(VisionAuto(drivetrain, gyro, vision_socket, 0.6), duration=1).run()
+
+# Used when switch is on the same side as the starting position, robot is on right and switch is on right    
+def switch_to_same_side_right(drivetrain, gyro, vision_socket, switch_position):
+    
+    yield from Timed(EncoderAutonomous(drivetrain, forward = SAME_SIDE_DIST, speed = 0.7),duration = 3)
+    yield from Timed(RotateAutonomous(drivetrain, gyro, angle = SAME_TURN_ANGLE, turn_speed=0.5), duration=1).run()
     yield from Timed(VisionAuto(drivetrain, gyro, vision_socket, 0.6), duration=1).run()
 
 # Used when the switch is on the opposite side of the starting position. For
-# example, when the robot starts on the left side but the switch is on the right side
-def switch_opposite_side(drivetrain, gyro, vision_socket, switch_position):
-    angle = 90
-    sign = 1 if switch_position == Position.LEFT else -1
+# example, when the robot starts on the left side but the switch is on the right side, zigzag
+def zig_zag(drivetrain, gyro, vision_socket, switch_position):
+
     yield from Timed(ArcadeAutonomous(drivetrain, forward=0.7, rotate=0), duration=1.0).run()
     yield from Timed(RotateAutonomous(drivetrain, gyro, angle=angle * sign, turn_speed=0.5), duration=1.0).run()
     yield from Timed(ArcadeAutonomous(drivetrain, forward=0.7, rotate=0), duration=1.0).run()
