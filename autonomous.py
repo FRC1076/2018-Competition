@@ -87,11 +87,11 @@ def center_straight(grabber, elevator, drivetrain, gyro, vision_socket, switch_p
 # Used when the switch is on the same side of the starting position. For
 # example, when the robot starts on the left side and the switch is on the left side
 def switch_to_same_side(grabber, elevator, drivetrain, gyro, vision_socket, switch_position):
-    grabber.set(1)
+    # grabber.set(-1)
     rotate = SAME_TURN_ANGLE if switch_position == Position.LEFT else -SAME_TURN_ANGLE
     # Makes the elevator go up at the same time as the first drive forward phase
     yield from Timed(Parallel(
-        # ElevatorAutonomous(elevator, up_speed=0.5),
+        ElevatorAutonomous(elevator, up_speed=0.5),
         ArcadeAutonomous(drivetrain, forward=0.7, rotate=0)),
         duration = 3.0).run()
     print("End parallel")
