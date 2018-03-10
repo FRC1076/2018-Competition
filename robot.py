@@ -85,7 +85,7 @@ class Robot(wpilib.IterativeRobot):
         SmartDashboard.putData(SIDE_SELECTOR, self.chooser)
 
     def robotPeriodic(self):
-        if self.timer % 500 == 0:
+        if self.timer % 100 == 0:
             print("angle (cube): ", self.vision_socket.get_angle(key="cube", max_staleness=1.0))
             print("angle (retro): ", self.vision_socket.get_angle(key="retroreflective", max_staleness=1.0))
             print("ID: ", self.vision_socket.get_id())
