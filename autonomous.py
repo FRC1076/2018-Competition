@@ -212,7 +212,7 @@ class VisionAuto(BaseAutonomous):
                 correction = self.correction
                 # print("self.Correction: ", self.correction)
                 # print("Correction: ", correction)
-                correction = math.copysign(self.correction, angle)/1.5
+                correction = math.copysign(self.correction, angle)/1.75
                 self.drivetrain.arcade_drive(self.forward, correction)
             else:
                 self.drivetrain.stop()
