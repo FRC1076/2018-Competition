@@ -92,6 +92,7 @@ class VisionSocket(Thread):
         print("id: ", self.packet_id)
         print("angle (cube): ", self.get_angle(key="cube", max_staleness=1.0))
         print("angle (retro): ", self.get_angle(key="retroreflective", max_staleness=1.0))
+        print("all angles: ", self.vision_dict)
 
     """
     Returns the most recently received angle, or none if
