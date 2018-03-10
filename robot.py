@@ -165,7 +165,6 @@ class Robot(wpilib.IterativeRobot):
         right_stick = -deadzone(self.operator.getY(RIGHT), INTAKE_DEADZONE)
         self.grabber.set_left(left_stick * 0.5)
         self.grabber.set_right(right_stick * 0.5)
-        print(self.gyro.getAngle())
         # if right_trigger > TRIGGER_LEVEL and left_trigger > TRIGGER_LEVEL:
         #     self.grabber.spit(min(right_trigger, left_trigger))
         # elif right_trigger > TRIGGER_LEVEL or left_trigger > TRIGGER_LEVEL:
