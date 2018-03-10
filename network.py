@@ -30,6 +30,9 @@ class MockSocket(Thread):
     def get_id(self):
         return -2 # -2 is never a valid packet ID
 
+    def debug(self):
+        pass
+
 
 class VisionSocket(Thread):
     """
