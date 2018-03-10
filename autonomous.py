@@ -91,7 +91,7 @@ def switch_to_same_side(grabber, elevator, drivetrain, gyro, vision_socket, swit
     rotate = SAME_TURN_ANGLE if switch_position == Position.LEFT else -SAME_TURN_ANGLE
     # Makes the elevator go up at the same time as the first drive forward phase
     yield from Timed(Parallel(
-        ElevatorAutonomous(elevator, up_speed=1.0),
+        ElevatorAutonomous(elevator, up_speed=0.5),
         ArcadeAutonomous(drivetrain, forward=0.7, rotate=0)),
         duration = 3.0).run()
     yield from Timed(RotateAutonomous(drivetrain, gyro, angle=rotate, turn_speed=0.5), duration=1).run()
