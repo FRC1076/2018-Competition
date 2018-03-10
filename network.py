@@ -90,6 +90,8 @@ class VisionSocket(Thread):
     def debug(self):
         print("time: ", self.last_packet_time)
         print("id: ", self.packet_id)
+        print("angle (cube): ", self.get_angle(key="cube", max_staleness=1.0))
+        print("angle (retro): ", self.get_angle(key="retroreflective", max_staleness=1.0))
 
     """
     Returns the most recently received angle, or none if
