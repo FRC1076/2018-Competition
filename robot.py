@@ -89,6 +89,7 @@ class Robot(wpilib.IterativeRobot):
             print("angle (cube): ", self.vision_socket.get_angle(key="cube", max_staleness=1.0))
             print("angle (retro): ", self.vision_socket.get_angle(key="retroreflective", max_staleness=1.0))
             print("ID: ", self.vision_socket.get_id())
+            print(self.vision_socket.debug())
             # print("is bound: ", self.vision_socket.is_bound())
             # print("choosen: ", self.chooser.getSelected())
             # game_message = wpilib.DriverStation.getInstance().getGameSpecificMessage()

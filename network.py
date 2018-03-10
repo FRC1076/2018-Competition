@@ -84,6 +84,9 @@ class VisionSocket(Thread):
             self.packet_id = parsed["id"]
         self.last_packet_time = time.time()
 
+    def debug(self):
+        print("time: ", self.last_packet_time)
+        print("id: ", self.packet_id)
 
     """
     Returns the most recently received angle, or none if
