@@ -91,7 +91,10 @@ class VisionSocket(Thread):
     """
     def get_angle(self, key, max_staleness):
         if max_staleness > time.time() - self.last_packet_time:
-            return self.vision_dict[key]
+            try:
+                return self.vision_dict[key]
+            except KeyError:
+                return None
         else:
             # print("Stale data! {}".format(time.time() - self.last_packet_time))
             return None

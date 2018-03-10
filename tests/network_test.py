@@ -11,3 +11,7 @@ def test_read_packet():
     vision_socket.close()
 
 
+def test_no_key():
+    vision_socket = network.VisionSocket()
+    assert vision_socket.get_angle(key="cube", max_staleness=9999) == None
+    vision_socket.close()
