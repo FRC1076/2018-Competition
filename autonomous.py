@@ -93,7 +93,7 @@ def center_straight(grabber, elevator, drivetrain, gyro, vision_socket, switch_p
 def switch_to_same_side(grabber, elevator, drivetrain, gyro, vision_socket, switch_position):
     # grabber.set(-1)
     # rotate = SAME_TURN_ANGLE if switch_position == Position.LEFT else -SAME_TURN_ANGLE
-    rotate = 0.7 if switch_position == Position.LEFT else -0.7
+    rotate = 1 if switch_position == Position.LEFT else -1
     # Makes the elevator go up at the same time as the first drive forward phase
     yield from Timed(ElevatorAutonomous(elevator, up_speed=0.7), duration = 0.5).run()
     print("end elevator")
