@@ -79,7 +79,7 @@ def test_encoder_autonomous():
     auton.init()
     for _ in range(0, 100):
         auton.run()
-    auton.stop()
+    auton.end()
 
 def test_arcade_autonomous():
     drivetrain = MockDrivetrain()

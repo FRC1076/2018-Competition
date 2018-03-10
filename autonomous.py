@@ -92,14 +92,14 @@ def switch_to_same_side(grabber, elevator, drivetrain, gyro, vision_socket, swit
     # Makes the elevator go up at the same time as the first drive forward phase
     yield from Timed(ElevatorAutonomous(elevator, up_speed=0.7), duration = 0.5).run()
     print("end elevator")
-   # yield from Timed(ArcadeAutonomous(drivetrain, forward=0.7, rotate=0), duration = 3.0).run()
+    yield from Timed(ArcadeAutonomous(drivetrain, forward=0.7, rotate=0), duration = 3.0).run()
     print("End arcade")
     yield from Timed(ArcadeAutonomous(drivetrain, forward=0, rotate=0.7), duration=1).run()
     # yield from Timed(RotateAutonomous(drivetrain, gyro, angle=rotate, turn_speed=0.7), duration=4).run()
     print("End rotate")
     yield from Timed(ElevatorAutonomous(elevator, up_speed=0.7), duration = 0.5).run()
     print("end elevator")
-    #yield from Timed(ArcadeAutonomous(drivetrain, forward=0.4, rotate=0), duration = 1.0).run()
+    yield from Timed(ArcadeAutonomous(drivetrain, forward=0.4, rotate=0), duration = 1.0).run()
     print("End arcade")
     yield from Timed(GrabberAutonomous(grabber, in_speed=1), duration=1).run()
     print("end grabber")
@@ -231,7 +231,7 @@ class RotateAutonomous(BaseAutonomous):
                 self.drivetrain.arcade_drive(0, -self.speed * correction_factor)
             yield
 
-    def stop(self):
+    def end(self):
         self.drivetrain.stop()
 
 '''
@@ -251,7 +251,7 @@ class EncoderAutonomous(BaseAutonomous):
             self.drivetrain.arcade_drive(self.forward, rotate=0)
             yield
 
-    def stop(self):
+    def end(self):
         self.drivetrain.stop()
 
 
@@ -272,7 +272,7 @@ class ArcadeAutonomous(BaseAutonomous):
             self.drivetrain.arcade_drive(self.forward, self.rotate)
             yield
 
-    def stop(self):
+    def end(self):
         self.drivetrain.stop()
 
 
@@ -287,7 +287,7 @@ class ElevatorAutonomous(BaseAutonomous):
             self.elevator.go_up(self.up_speed)
             yield
 
-    def stop(self):
+    def end(self):
         self.elevator.stop()
 
 class GrabberAutonomous(BaseAutonomous):
@@ -301,7 +301,7 @@ class GrabberAutonomous(BaseAutonomous):
             self.grabber.set(self.in_speed)
             yield
 
-    def stop(self):
+    def end(self):
         self.grabber.set(0)
 
 class Parallel(BaseAutonomous):
@@ -326,7 +326,7 @@ class Parallel(BaseAutonomous):
                         running = False
             yield
 
-    def stop(self):
+    def end(self):
         for auto in self.autos():
-            auto.stop()
+            auto.end()
 
