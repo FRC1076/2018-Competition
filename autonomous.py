@@ -70,18 +70,22 @@ def dead_reckon(drivetrain):
 
 # Used when the robot starts in the center
 def center_straight(grabber, elevator, drivetrain, gyro, vision_socket, switch_position):
-    grabber.set(1)
-    # Makes the elevator go up at the same time as the first drive forward phase
-    yield from Timed(Parallel(
-            ElevatorAutonomous(elevator, up_speed=0.10),
-            GrabberAutonomous(grabber, in_speed=1),
-            EncoderAutonomous(drivetrain, speed=0.7, inches=CENTER_FORWARD_DIST),
-        ), duration=2.0).run()
-    rotate = CENTER_ROTATE_ANGLE if switch_position == Position.RIGHT else -CENTER_ROTATE_ANGLE
-    yield from Timed(RotateAutonomous(drivetrain, gyro, angle=rotate, turn_speed=0.6), duration=1).run()
-    yield from Timed(VisionAuto(drivetrain, gyro, vision_socket, 0.6), duration=1).run()
+    yield from Timed(ElevatorAutonomous(elevator, up_speed=0.10)).run()
+    print("end elevator 1")
+    yield from Timed(ArcadeAutonomous(drivetrain, forward=0.7, rotate=0), duration = 1.5).run()
+    print("end drive 1")
+    rotate = 0.7 if switch_position == Position.RIGHT else -0.7
+    yield from Timed(ArcadeAutonomous(drivetrain, forward=0, rotate=rotate), duration=1.0).run()
+    print("end rotate 1")
+    yield from Timed(ElevatorAutonomous(elevator, up_speed=0.7), duration = 1.4).run()
+    print("end elevator 2")
+    yield from Timed(ArcadeAutonomous(drivetrain, forward=0.7, rotate=0), duration = 1.5).run()
+    print("end drive 2")
+    yield from Timed(ArcadeAutonomous(drivetrain, forward=0, rotate=-rotate), duration=1.0).run()
+    print("end unrotate 2")
     yield from Timed(GrabberAutonomous(grabber, in_speed=-1), duration=1).run()
-    grabber.set(0)
+    print("end grabber")
+    drivetrain.stop()
     # yield from VisionAuto(drivetrain, gyro, vision_socket, 0.5).run()
 
 # Used when the switch is on the same side of the starting position. For
@@ -89,7 +93,7 @@ def center_straight(grabber, elevator, drivetrain, gyro, vision_socket, switch_p
 def switch_to_same_side(grabber, elevator, drivetrain, gyro, vision_socket, switch_position):
     # grabber.set(-1)
     # rotate = SAME_TURN_ANGLE if switch_position == Position.LEFT else -SAME_TURN_ANGLE
-    rotate = 0.7 if switch_position == Position.LEFT else -0.7
+    rotate = 1 if switch_position == Position.LEFT else -1
     # Makes the elevator go up at the same time as the first drive forward phase
     yield from Timed(ElevatorAutonomous(elevator, up_speed=0.7), duration = 0.5).run()
     print("end elevator")
