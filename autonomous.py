@@ -73,7 +73,8 @@ def center_straight(grabber, elevator, drivetrain, gyro, vision_socket, switch_p
     grabber.set(1)
     # Makes the elevator go up at the same time as the first drive forward phase
     yield from Timed(Parallel(
-            ElevatorAutonomous(elevator, up_speed=1.0),
+            ElevatorAutonomous(elevator, up_speed=0.5),
+            GrabberAutonomous(grabber, in_speed=1),
             EncoderAutonomous(drivetrain, speed=0.7, inches=CENTER_FORWARD_DIST),
         ), duration=2.0).run()
     rotate = CENTER_ROTATE_ANGLE if switch_position == Position.RIGHT else -CENTER_ROTATE_ANGLE
