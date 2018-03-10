@@ -112,7 +112,7 @@ def zig_zag(grabber, elevator, drivetrain, gyro, vision_socket, switch_position)
         ElevatorAutonomous(elevator, up_speed=1.0),
         EncoderAutonomous(drivetrain, inches=FAR_DIST_1, speed = 0.7)),
         duration = 2.0).run()
-    yield from Timed(RotateAutonomous(drivetrain, gyro, angle=rotate, turn_speed=0.5), duration=1).run()
+    yield from Timed(RotateAutonomous(drivetrain, gyro, angle=rotate, turn_speed=0.3), duration=1.5).run()
     yield from Timed(EncoderAutonomous(drivetrain, inches=FAR_DIST_2, speed = 0.7), duration = 3).run()
     yield from Timed(RotateAutonomous(drivetrain, gyro, angle=rotate, turn_speed=0.5), duration=1).run()
     yield from Timed(GrabberAutonomous(grabber, in_speed=-1), duration=1).run()
@@ -224,7 +224,6 @@ class RotateAutonomous(BaseAutonomous):
             correction_factor = angle_error / 10.0
             if correction_factor > 1.0:
                 correction_factor = 1.0
-
             if self.angle_goal > 0:
                 self.drivetrain.arcade_drive(0, self.speed * correction_factor)
             else:
