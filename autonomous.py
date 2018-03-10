@@ -73,7 +73,7 @@ def center_straight(grabber, elevator, drivetrain, gyro, vision_socket, switch_p
     grabber.set(1)
     # Makes the elevator go up at the same time as the first drive forward phase
     yield from Timed(Parallel(
-            ElevatorAutonomous(elevator, up_speed=0.5),
+            ElevatorAutonomous(elevator, up_speed=0.10),
             GrabberAutonomous(grabber, in_speed=1),
             EncoderAutonomous(drivetrain, speed=0.7, inches=CENTER_FORWARD_DIST),
         ), duration=2.0).run()
@@ -91,10 +91,12 @@ def switch_to_same_side(grabber, elevator, drivetrain, gyro, vision_socket, swit
     rotate = SAME_TURN_ANGLE if switch_position == Position.LEFT else -SAME_TURN_ANGLE
     # Makes the elevator go up at the same time as the first drive forward phase
     yield from Timed(Parallel(
-        ElevatorAutonomous(elevator, up_speed=0.5),
+        # ElevatorAutonomous(elevator, up_speed=0.5),
         ArcadeAutonomous(drivetrain, forward=0.7, rotate=0)),
         duration = 3.0).run()
+    print("End parallel")
     yield from Timed(RotateAutonomous(drivetrain, gyro, angle=rotate, turn_speed=0.5), duration=1).run()
+    print("End rotate")
     yield from Timed(GrabberAutonomous(grabber, in_speed=1), duration=1).run()
     grabber.set(0)
 
@@ -295,6 +297,9 @@ class GrabberAutonomous(BaseAutonomous):
         while True:
             self.grabber.set(self.in_speed)
             yield
+
+    def stop(self):
+        self.grabber.set(0)
 
 class Parallel(BaseAutonomous):
     def __init__(self, *autos, exit_any=False):

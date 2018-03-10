@@ -194,8 +194,10 @@ class Robot(wpilib.IterativeRobot):
         print("Robot Position", robot_position)
         print("Routine: ", routine)
         if routine == autonomous.AutonomousRoutine.SIDE_TO_SAME:
+            print("SIDE TO SAME SIDE AUTON")
             self.auton = autonomous.switch_to_same_side(self.grabber, self.elevator, self.drivetrain, self.gyro, self.vision_socket, switch_position)
         else:
+            print("DEAD RECKON")
             self.auton = autonomous.dead_reckon(self.drivetrain)
         # if routine == autonomous.AutonomousRoutine.CENTER:
         #     self.auton = autonomous.center_straight(self.grabber, self.elevator, self.drivetrain, self.gyro, self.vision_socket, switch_position)
