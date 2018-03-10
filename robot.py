@@ -87,6 +87,7 @@ class Robot(wpilib.IterativeRobot):
     def robotPeriodic(self):
         if self.timer % 1000 == 0:
             print("angle (cube): ", self.vision_socket.get_angle(key="cube", max_staleness=1.0))
+            print("angle (retro): ", self.vision_socket.get_angle(key="retroreflective", max_staleness=1.0))
             print("ID: ", self.vision_socket.get_id())
             # print("is bound: ", self.vision_socket.is_bound())
             # print("choosen: ", self.chooser.getSelected())
