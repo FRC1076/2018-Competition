@@ -17,7 +17,7 @@ class MockSocket(Thread):
     def update_packet(self):
         pass
 
-    def get_angle(self, max_staleness):
+    def get_angle(self, key, max_staleness):
         return 15
 
     def is_bound(self):
@@ -47,7 +47,7 @@ class VisionSocket(Thread):
         except IOError as e:
             print("Could not bind: {}".format(e))
         self.last_packet_time = time.time()
-        self.angle = None
+        self.vision_dict = dict()
         self.running = True
         # Marks that this thread is a Daemon, meaning the thread will be killed
         # automatically when the main thread exits. This is done to prevent pytest
@@ -78,8 +78,9 @@ class VisionSocket(Thread):
     """
     def _read_packet(self, data):
         parsed = json.loads(data.decode())
-        if parsed["sender"] == "vision" and parsed["object"] == "cube":
-            self.angle = parsed["angle"]
+        if parsed["sender"] == "vision":
+            key = parsed["object"]
+            self.vision_dict[key] = parsed["angle"]
             self.packet_id = parsed["id"]
         self.last_packet_time = time.time()
 
@@ -88,9 +89,9 @@ class VisionSocket(Thread):
     Returns the most recently received angle, or none if
     the max_staleness is exceeded (in seconds)
     """
-    def get_angle(self, max_staleness):
+    def get_angle(self, key, max_staleness):
         if max_staleness > time.time() - self.last_packet_time:
-            return self.angle
+            return self.vision_dict[key]
         else:
             # print("Stale data! {}".format(time.time() - self.last_packet_time))
             return None

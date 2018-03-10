@@ -100,7 +100,7 @@ def test_vision_autonomous():
     drivetrain = MockDrivetrain()
     gyro = MockGyro()
     vision_socket = network.MockSocket()
-    auton = autonomous.VisionAuto(drivetrain, gyro, vision_socket, forward=0.5)
+    auton = autonomous.VisionAuto(drivetrain, gyro, vision_socket, forward=0.5, look_for="a_thing")
     for _ in range(0, 100):
         auton.run()
 

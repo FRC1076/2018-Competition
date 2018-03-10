@@ -69,7 +69,7 @@ def dead_reckon(drivetrain):
     yield from Timed(ArcadeAutonomous(drivetrain, forward=0.7, rotate=0), duration=3.0).run()
 
 def vision_reckon(drivetrain, gyro, vision_socket):
-    yield from Timed(VisionAuto(drivetrain, gyro, vision_socket, forward=0.7), duration=5.0).run()
+    yield from Timed(VisionAuto(drivetrain, gyro, vision_socket, forward=0.7, look_for="retroreflective"), duration=5.0).run()
 
 
 # Used when the robot starts in the center
@@ -171,19 +171,20 @@ class VisionAuto(BaseAutonomous):
     Rotate the robot towards the target using incoming vision packets
     vision_socket is a VisionSocket, not a Python socket
     """
-    def __init__(self, drivetrain, gyro, vision_socket, forward):
+    def __init__(self, drivetrain, gyro, vision_socket, forward, look_for):
         self.drivetrain = drivetrain
         self.socket = vision_socket
         self.gyro = gyro
         self.forward = forward
         self.correction = 0
+        self.look_for = look_for
         # PID Constants, tuned as of March 5th
         self.PID = wpilib.PIDController(0.03, 0.01, 0.0,
             source=self._get_angle,
             output=self._set_correction)
 
     def _get_angle(self):
-        angle = self.socket.get_angle(max_staleness=0.5)
+        angle = self.socket.get_angle(key=self.look_for, max_staleness=0.5)
         if angle is None:
             return 0
         return angle
@@ -197,7 +198,7 @@ class VisionAuto(BaseAutonomous):
 
     def execute(self):
         while True:
-            angle = self.socket.get_angle(max_staleness=0.5)
+            angle = self.socket.get_angle(key=self.look_for, max_staleness=0.5)
             if angle is not None:
                 correction = self.correction
                 # print("self.Correction: ", self.correction)
