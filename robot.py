@@ -85,7 +85,7 @@ class Robot(wpilib.IterativeRobot):
         SmartDashboard.putData(SIDE_SELECTOR, self.chooser)
 
     def robotPeriodic(self):
-        if self.timer % 100 == 0:
+        if self.timer % 1000 == 0:
             print(self.vision_socket.debug())
             # print("is bound: ", self.vision_socket.is_bound())
             # print("choosen: ", self.chooser.getSelected())
@@ -192,26 +192,16 @@ class Robot(wpilib.IterativeRobot):
         print("Switch Position: ", switch_position)
         print("Robot Position", robot_position)
         print("Routine: ", routine)
-        self.auton = autonomous.vision_reckon(self.drivetrain, self.gyro, self.vision_socket)
-        # if routine == autonomous.AutonomousRoutine.SIDE_TO_SAME:
-        #     print("SIDE TO SAME SIDE AUTON")
-        #     self.auton = autonomous.switch_to_same_side(self.grabber, self.elevator, self.drivetrain, self.gyro, self.vision_socket, switch_position)
-        # elif routine == autonomous.AutonomousRoutine.CENTER:
-        #     print("CENTER AUTON")
-        #     self.auton = autonomous.center_straight(self.grabber, self.elevator, self.drivetrain, self.gyro, self.vision_socket, switch_position)
-        # else:
-        #     print("DEAD RECKON")
-        #     self.auton = autonomous.dead_reckon(self.drivetrain)
-        # if routine == autonomous.AutonomousRoutine.CENTER:
-        #     self.auton = autonomous.center_straight(self.grabber, self.elevator, self.drivetrain, self.gyro, self.vision_socket, switch_position)
-        # elif routine == autonomous.AutonomousRoutine.SIDE_TO_SAME:
-        #     self.auton = autonomous.switch_to_same_side(self.grabber, self.elevator, self.drivetrain, self.gyro, self.vision_socket, switch_position)
-        # elif routine == autonomous.AutonomousRoutine.SIDE_TO_OPPOSITE:
-        #     self.auton = autonomous.zig_zag(self.grabber, self.elevator, self.drivetrain, self.gyro, self.vision_socket, switch_position)
-        # else:
-        #     # Default to the center autonomous
-        #     self.auton = autonomous.center_straight(self.grabber, self.elevator, self.drivetrain, self.gyro, self.vision_socket, switch_position)
-
+        # self.auton = autonomous.vision_reckon(self.drivetrain, self.gyro, self.vision_socket)
+        if routine == autonomous.AutonomousRoutine.SIDE_TO_SAME:
+            print("SIDE TO SAME SIDE AUTON")
+            self.auton = autonomous.switch_to_same_side(self.grabber, self.elevator, self.drivetrain, self.gyro, self.vision_socket, switch_position)
+        elif routine == autonomous.AutonomousRoutine.CENTER:
+            print("CENTER AUTON")
+            self.auton = autonomous.center_straight(self.grabber, self.elevator, self.drivetrain, self.gyro, self.vision_socket, switch_position)
+        else:
+            print("DEAD RECKON")
+            self.auton = autonomous.dead_reckon(self.drivetrain)
 
     def autonomousPeriodic(self):
         try:
