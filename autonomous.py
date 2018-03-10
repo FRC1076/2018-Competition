@@ -99,7 +99,7 @@ def switch_to_same_side(grabber, elevator, drivetrain, gyro, vision_socket, swit
     print("end elevator")
     yield from Timed(ArcadeAutonomous(drivetrain, forward=0.7, rotate=0), duration = 3.0).run()
     print("End arcade")
-    yield from Timed(ArcadeAutonomous(drivetrain, forward=0, rotate=rotate), duration=1.25).run()
+    yield from Timed(ArcadeAutonomous(drivetrain, forward=0, rotate=rotate), duration=0.75).run()
     # yield from Timed(RotateAutonomous(drivetrain, gyro, angle=rotate, turn_speed=0.7), duration=4).run()
     print("End rotate")
     yield from Timed(ElevatorAutonomous(elevator, up_speed=0.7), duration = 1.4).run()
