@@ -69,7 +69,7 @@ def dead_reckon(drivetrain):
     yield from Timed(ArcadeAutonomous(drivetrain, forward=0.7, rotate=0), duration=3.0).run()
 
 def vision_reckon(drivetrain, gyro, vision_socket):
-    yield from Timed(VisionAuto(drivetrain, gyro, vision_socket, forward=0.5, look_for="cube"), duration=5.0).run()
+    yield from Timed(VisionAuto(drivetrain, gyro, vision_socket, forward=0.6, look_for="cube"), duration=5.0).run()
 
 
 # Used when the robot starts in the center
@@ -212,7 +212,7 @@ class VisionAuto(BaseAutonomous):
                 correction = self.correction
                 # print("self.Correction: ", self.correction)
                 # print("Correction: ", correction)
-                correction = math.copysign(self.correction, angle)/2.0
+                correction = math.copysign(self.correction, angle)/1.5
                 self.drivetrain.arcade_drive(self.forward, correction)
             else:
                 self.drivetrain.stop()
