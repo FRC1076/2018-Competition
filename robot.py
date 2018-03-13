@@ -199,6 +199,9 @@ class Robot(wpilib.IterativeRobot):
         elif routine == autonomous.AutonomousRoutine.CENTER:
             print("CENTER AUTON")
             self.auton = autonomous.center_straight(self.grabber, self.elevator, self.drivetrain, self.gyro, self.vision_socket, switch_position)
+        elif routine == autonomous.AutonomousRoutine.SIDE_TO_OPPOSITE:
+            print("ZIG ZAG AUTON")
+            self.auton = autonomous.zig_zag(self.grabber, self.elevator, self.drivetrain, self.gyro, self.vision_socket, switch_position)
         else:
             print("DEAD RECKON")
             self.auton = autonomous.dead_reckon(self.drivetrain)
