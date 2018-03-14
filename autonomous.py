@@ -71,7 +71,6 @@ def dead_reckon(drivetrain):
 def vision_reckon(drivetrain, gyro, vision_socket):
     yield from Timed(VisionAuto(drivetrain, gyro, vision_socket, forward=0.6, look_for="retroreflective"), duration=5.0).run()
 
-
 # Used when the robot starts in the center
 def center_straight(grabber, elevator, drivetrain, gyro, vision_socket, switch_position):
     yield from Timed(ElevatorAutonomous(elevator, up_speed=0.10)).run()
@@ -117,6 +116,8 @@ def switch_to_same_side(grabber, elevator, drivetrain, gyro, vision_socket, swit
 # Used when the switch is on the opposite side of the starting position. For
 # example, when the robot starts on the left side but the switch is on the right side, zigzag
 
+def vision(drivetrain, gyro, vision_socket, forward, look_for):
+    yield from Timed(VisionAuto(drivetrain, gyro, vision_socket, forward, look_for), duration = 30.0).run()
 
 def zig_zag(grabber, elevator, drivetrain, gyro, vision_socket, switch_position):
     rotate = 1 if switch_position == Position.LEFT else -1
@@ -183,6 +184,10 @@ class VisionAuto(BaseAutonomous):
     vision_socket is a VisionSocket, not a Python socket
     """
     def __init__(self, drivetrain, gyro, vision_socket, forward, look_for):
+        """
+        forward is 
+        look_for is either "retroreflective", or "cube"
+        """
         self.drivetrain = drivetrain
         self.socket = vision_socket
         self.gyro = gyro
