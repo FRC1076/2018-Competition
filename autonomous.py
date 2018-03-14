@@ -66,7 +66,7 @@ def get_game_specific_message(game_message):
 
 
 def dead_reckon(drivetrain):
-    yield from Timed(ArcadeAutonomous(drivetrain, forward=0.7, rotate=0), duration=3.0).run()
+    yield from Timed(EncoderAutonomous(drivetrain, 0.7, 120), duration = 0.5).run()
 
 def vision_reckon(drivetrain, gyro, vision_socket):
     yield from Timed(VisionAuto(drivetrain, gyro, vision_socket, forward=0.6, look_for="retroreflective"), duration=5.0).run()
@@ -116,22 +116,24 @@ def switch_to_same_side(grabber, elevator, drivetrain, gyro, vision_socket, swit
 
 # Used when the switch is on the opposite side of the starting position. For
 # example, when the robot starts on the left side but the switch is on the right side, zigzag
+
+
 def zig_zag(grabber, elevator, drivetrain, gyro, vision_socket, switch_position):
     rotate = 1 if switch_position == Position.LEFT else -1
     # Makes the elevator go up at the same time as the first drive forward phase
     yield from Timed(ElevatorAutonomous(elevator, up_speed=0.7), duration = 0.5).run()
     print("end elevator")
-    yield from Timed(ArcadeAutonomous(drivetrain, forward=0.7, rotate=0), duration = 4.0).run()
+    yield from Timed(ArcadeAutonomous(drivetrain, forward=0.5, rotate=0), duration = 2.0).run()
     print("End arcade")
     yield from Timed(ArcadeAutonomous(drivetrain, forward=0, rotate=rotate), duration=0.75).run()
     print("End rotate")
-    yield from Timed(ArcadeAutonomous(drivetrain, forward=0.7, rotate=0), duration = 1.0).run()
+    yield from Timed(ArcadeAutonomous(drivetrain, forward=0.5, rotate=0), duration = 0.5).run()
     print("End arcade2")
     yield from Timed(ElevatorAutonomous(elevator, up_speed=0.7), duration = 1.4).run()
     print("end elevator")
     yield from Timed(ArcadeAutonomous(drivetrain, forward=0, rotate=rotate), duration=0.75).run()
     print("end rotate2")
-    yield from Timed(ArcadeAutonomous(drivetrain, forward=0.4, rotate=0), duration = 1.5).run()
+    yield from Timed(ArcadeAutonomous(drivetrain, forward=0.4, rotate=0), duration = 0.75).run()
     print("End arcade3")
     yield from Timed(GrabberAutonomous(grabber, in_speed=1), duration=1).run()
     print("end grabber")
@@ -248,7 +250,10 @@ class RotateAutonomous(BaseAutonomous):
                 self.drivetrain.arcade_drive(0, self.speed * correction_factor)
             else:
                 self.drivetrain.arcade_drive(0, -self.speed * correction_factor)
-            yield
+            if angle_error > 1:
+                yield
+
+            
 
     def end(self):
         self.drivetrain.stop()
@@ -268,6 +273,7 @@ class EncoderAutonomous(BaseAutonomous):
     def execute(self):
         while abs(self.start_dist - self.drivetrain.get_encoder_position()) < self.distance:
             self.drivetrain.arcade_drive(self.forward, rotate=0)
+            print(f"EncoderAuton:execute:encoder position = {self.drivetrain.get_encoder_position()}")
             yield
 
     def end(self):
