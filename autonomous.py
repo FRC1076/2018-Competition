@@ -91,6 +91,24 @@ def center_straight(grabber, elevator, drivetrain, gyro, vision_socket, switch_p
     drivetrain.stop()
     # yield from VisionAuto(drivetrain, gyro, vision_socket, 0.5).run()
 
+def center_straight_vision(grabber, elevator, drivetrain, gyro, vision_socket, switch_position):
+    rotate = 0.7 if switch_position == Position.RIGHT else -0.7
+    yield from Timed(ElevatorAutonomous(elevator, up_speed=0.7), duration = 0.5).run()
+    print("ELEVATOR UP A LITTLE BIT")
+    yield from Timed(EncoderAutonomous(drivetrain, speed=0.7, inches=72), duration=10.0).run()
+    print("End the first forward distance")
+    yield from Timed(ArcadeAutonomous(drivetrain, forward=0, rotate=rotate), duration=0.75).run()
+    print("End first rotation")
+    yield from Timed(EncoderAutonomous(drivetrain, speed=0.7, inches=15), duration=10.0).run()
+    print("Go forward a little bit after rotation")
+    yield from Timed(VisionAuto(drivetrain, gyro, vision_socket, forward=0.5, "retroreflective"), duration=10.0).run()
+    print("Vision Autonomous Routine")
+
+
+
+
+
+
 # Used when the switch is on the same side of the starting position. For
 # example, when the robot starts on the left side and the switch is on the left side
 def switch_to_same_side(grabber, elevator, drivetrain, gyro, vision_socket, switch_position):
@@ -116,30 +134,27 @@ def switch_to_same_side(grabber, elevator, drivetrain, gyro, vision_socket, swit
 # Used when the switch is on the opposite side of the starting position. For
 # example, when the robot starts on the left side but the switch is on the right side, zigzag
 
-def vision(drivetrain, gyro, vision_socket, forward, look_for):
-    yield from Timed(VisionAuto(drivetrain, gyro, vision_socket, forward, look_for), duration = 30.0).run()
+# def vision(drivetrain, gyro, vision_socket, forward, look_for):
+#     yield from Timed(VisionAuto(drivetrain, gyro, vision_socket, forward, look_for), duration = 30.0).run()
 
-def zig_zag(grabber, elevator, drivetrain, gyro, vision_socket, switch_position):
+def zig_zag_encoder(grabber, elevator, drivetrain, gyro, vision_socket, switch_position):
     rotate = 1 if switch_position == Position.LEFT else -1
-    # Makes the elevator go up at the same time as the first drive forward phase
     yield from Timed(ElevatorAutonomous(elevator, up_speed=0.7), duration = 0.5).run()
-    print("end elevator")
-    yield from Timed(ArcadeAutonomous(drivetrain, forward=0.5, rotate=0), duration = 2.0).run()
-    print("End arcade")
+    print("End elevator inital")
+    yield from Timed(EncoderAutonomous(drivetrain, speed=0.7, inches=238), duration=10).run()
+    print("End the first forward distance")
     yield from Timed(ArcadeAutonomous(drivetrain, forward=0, rotate=rotate), duration=0.75).run()
-    print("End rotate")
-    yield from Timed(ArcadeAutonomous(drivetrain, forward=0.5, rotate=0), duration = 0.5).run()
-    print("End arcade2")
+    print("End first rotation right")
+    yield from Timed(EncoderAutonomous(drivetrain, speed=0.7, inches=160), duration=10)run()
+    print("End the second forward distance")
+    yield from Timed(ArcadeAutonomous(drivetrain, forward=0, rotate=rotate), duration=0.75).run()
+    print("End second rotation right")
     yield from Timed(ElevatorAutonomous(elevator, up_speed=0.7), duration = 1.4).run()
-    print("end elevator")
-    yield from Timed(ArcadeAutonomous(drivetrain, forward=0, rotate=rotate), duration=0.75).run()
-    print("end rotate2")
-    yield from Timed(ArcadeAutonomous(drivetrain, forward=0.4, rotate=0), duration = 0.75).run()
-    print("End arcade3")
+    print("End elevator final")
+    yield from Timed(ArcadeAutonomous(drivetrain, forward=0.4, rotate=0), duration=1.5).run()
+    print("End second rotation right")
     yield from Timed(GrabberAutonomous(grabber, in_speed=1), duration=1).run()
-    print("end grabber")
-    drivetrain.stop()
-
+    print("End grabber")
 
 class BaseAutonomous:
     def init(self):
@@ -321,7 +336,7 @@ class ElevatorAutonomous(BaseAutonomous):
         self.elevator.stop()
 
 class GrabberAutonomous(BaseAutonomous):
-    """ Controls the cube manipulator during autonomous"""
+    """ Controls the cube manipulator during autonomous - SPIT OUT IS POSITIVE 1, SUCK IS NEGATIVE 1"""
     def __init__(self, grabber, in_speed=0):
         self.grabber = grabber
         self.in_speed = in_speed
