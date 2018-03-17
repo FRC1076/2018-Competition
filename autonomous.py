@@ -101,7 +101,7 @@ def center_straight_vision(grabber, elevator, drivetrain, gyro, vision_socket, s
     print("End first rotation")
     yield from Timed(EncoderAutonomous(drivetrain, speed=0.7, inches=15), duration=10.0).run()
     print("Go forward a little bit after rotation")
-    yield from Timed(VisionAuto(drivetrain, gyro, vision_socket, forward=0.5, "retroreflective"), duration=10.0).run()
+    yield from Timed(VisionAuto(drivetrain, gyro, vision_socket, forward=0.5, look_for="retroreflective"), duration=10.0).run()
     print("Vision Autonomous Routine") #I DONT KNOW WHERE THIS STOPS SOMEONE PLEASE INFORM ME I DONT WANNA CRASH 
     yield from Timed(ElevatorAutonomous(elevator, up_speed=0.7), duration = 1.4).run()
     print("ELEVATOR UP A LITTLE BIT MORE")
@@ -145,7 +145,7 @@ def zig_zag_encoder(grabber, elevator, drivetrain, gyro, vision_socket, switch_p
     print("End the first forward distance")
     yield from Timed(ArcadeAutonomous(drivetrain, forward=0, rotate=rotate), duration=0.75).run()
     print("End first rotation right")
-    yield from Timed(EncoderAutonomous(drivetrain, speed=0.7, inches=160), duration=10)run()
+    yield from Timed(EncoderAutonomous(drivetrain, speed=0.7, inches=160), duration=10).run()
     print("End the second forward distance")
     yield from Timed(ArcadeAutonomous(drivetrain, forward=0, rotate=rotate), duration=0.75).run()
     print("End second rotation right")
