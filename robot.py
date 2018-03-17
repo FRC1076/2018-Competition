@@ -198,13 +198,14 @@ class Robot(wpilib.IterativeRobot):
             self.auton = autonomous.switch_to_same_side(self.grabber, self.elevator, self.drivetrain, self.gyro, self.vision_socket, switch_position)
         elif routine == autonomous.AutonomousRoutine.CENTER:
             print("CENTER AUTON")
-            self.auton = autonomous.center_straight(self.grabber, self.elevator, self.drivetrain, self.gyro, self.vision_socket, switch_position)
-        #elif routine == autonomous.AutonomousRoutine.SIDE_TO_OPPOSITE:
-           # print("ZIG ZAG AUTON")
-           # self.auton = autonomous.zig_zag(self.grabber, self.elevator, self.drivetrain, self.gyro, self.vision_socket, switch_position)
+            self.auton = autonomous.center_straight_vision(self.grabber, self.elevator, self.drivetrain, self.gyro, self.vision_socket, switch_position)
+        elif routine == autonomous.AutonomousRoutine.SIDE_TO_OPPOSITE:
+            print("ZIG ZAG AUTON")
+            self.auton = autonomous.zig_zag_encoder(self.grabber, self.elevator, self.drivetrain, self.gyro, self.vision_socket, switch_position)
         else:
+            #Use this else for testing purposes?
             print("VISION AUTO")
-            self.auton = autonomous.vision(self.drivetrain, self.gyro, self.vision_socket, 0.5, "retroreflective")
+            self.auton = autonomous.vision_reckon(self.drivetrain, self.gyro, self.vision_socket, 0.5, "retroreflective")
 
     def autonomousPeriodic(self):
         try:
