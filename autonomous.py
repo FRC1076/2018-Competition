@@ -102,11 +102,11 @@ def center_straight_vision(grabber, elevator, drivetrain, gyro, vision_socket, s
     yield from Timed(EncoderAutonomous(drivetrain, speed=0.7, inches=15), duration=10.0).run()
     print("Go forward a little bit after rotation")
     yield from Timed(VisionAuto(drivetrain, gyro, vision_socket, forward=0.5, "retroreflective"), duration=10.0).run()
-    print("Vision Autonomous Routine")
-
-
-
-
+    print("Vision Autonomous Routine") #I DONT KNOW WHERE THIS STOPS SOMEONE PLEASE INFORM ME I DONT WANNA CRASH 
+    yield from Timed(ElevatorAutonomous(elevator, up_speed=0.7), duration = 1.4).run()
+    print("ELEVATOR UP A LITTLE BIT MORE")
+    yield from Timed(GrabberAutonomous(grabber, in_speed=-1), duration=1).run()
+    print("End grabber spit")
 
 
 # Used when the switch is on the same side of the starting position. For
