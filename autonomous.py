@@ -100,7 +100,7 @@ def center_straight_vision(grabber, elevator, drivetrain, gyro, vision_socket, s
     print("End the first forward distance")
     yield from Timed(ArcadeAutonomous(drivetrain, forward=0, rotate=rotate), duration=0.27).run()
     print("End first rotation")
-    yield from Timed(EncoderAutonomous(drivetrain, speed=0.7, inches=15), duration=5.0).run()
+    yield from Timed(EncoderAutonomous(drivetrain, speed=0.7, inches=21), duration=5.0).run()
     print("Go forward after first rotation")
     yield from Timed(ArcadeAutonomous(drivetrain, forward=0, rotate=-rotate), duration=0.27).run()
     print("End second rotation")
