@@ -100,8 +100,8 @@ def center_straight_vision(grabber, elevator, drivetrain, gyro, vision_socket, s
     yield from Timed(ArcadeAutonomous(drivetrain, forward=0, rotate=rotate), duration=0.75).run()
     print("End first rotation")
     yield from Timed(EncoderAutonomous(drivetrain, speed=0.7, inches=15), duration=10.0).run()
-    print("Go forward a little bit after rotation")
-    yield from Timed(VisionAuto(drivetrain, gyro, vision_socket, forward=0.5, look_for="retroreflective"), duration=10.0).run()
+    print("Go forward after first rotation")
+    yield from Timed(VisionAuto(drivetrain, gyro, vision_socket, forward=0.5, look_for="retroreflective"), duration=7.0).run()
     print("Vision Autonomous Routine") #I DONT KNOW WHERE THIS STOPS SOMEONE PLEASE INFORM ME I DONT WANNA CRASH 
     yield from Timed(ElevatorAutonomous(elevator, up_speed=0.7), duration = 1.4).run()
     print("ELEVATOR UP A LITTLE BIT MORE")
@@ -152,7 +152,7 @@ def zig_zag_encoder(grabber, elevator, drivetrain, gyro, vision_socket, switch_p
     yield from Timed(ElevatorAutonomous(elevator, up_speed=0.7), duration = 1.4).run()
     print("End elevator final")
     yield from Timed(ArcadeAutonomous(drivetrain, forward=0.4, rotate=0), duration=1.5).run()
-    print("End second rotation right")
+    print("End final distance forward")
     yield from Timed(GrabberAutonomous(grabber, in_speed=1), duration=1).run()
     print("End grabber")
 
@@ -228,13 +228,18 @@ class VisionAuto(BaseAutonomous):
         self.PID.enable()
 
     def execute(self):
+        # Values to make angle correction smaller:
+        # ~57% = (x / 1.75)
+        # ~47% = (x / 2.13)
+        # ~42% = (x / 2.38)
+        # ~30% = (x / 3.33)
         while True:
             angle = self.socket.get_angle(key=self.look_for, max_staleness=0.5)
             if angle is not None:
                 correction = self.correction
                 # print("self.Correction: ", self.correction)
                 # print("Correction: ", correction)
-                correction = math.copysign(self.correction, angle)/1.75
+                correction = math.copysign(self.correction, angle)/2.13
                 self.drivetrain.arcade_drive(self.forward, correction)
             else:
                 self.drivetrain.stop()
