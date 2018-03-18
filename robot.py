@@ -44,7 +44,7 @@ class Robot(wpilib.IterativeRobot):
         self.right2 = ctre.WPI_TalonSRX(RIGHT2_ID)
         right = wpilib.SpeedControllerGroup(self.right1, self.right2)
 
-        self.drivetrain = Drivetrain(left, right, wpilib.DoubleSolenoid(2, 3), encoder_motor=self.right2)
+        self.drivetrain = Drivetrain(left, right, wpilib.DoubleSolenoid(2, 3), encoder_motor=self.left1)
 
         self.grabber = Grabber(
             ctre.WPI_TalonSRX(LEFT_GRABBER_ID),
