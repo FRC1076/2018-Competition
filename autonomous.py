@@ -71,7 +71,7 @@ def dead_reckon(drivetrain):
 def vision_reckon(drivetrain, gyro, vision_socket):
     yield from Timed(VisionAuto(drivetrain, gyro, vision_socket, forward=0.6, look_for="retroreflective"), duration=5.0).run()
 
-# Used when the robot starts in the center
+# Used when the robot starts in the center, no vision implemented at all
 def center_straight(grabber, elevator, drivetrain, gyro, vision_socket, switch_position):
     yield from Timed(ElevatorAutonomous(elevator, up_speed=0.10)).run()
     print("end elevator 1")
@@ -91,17 +91,20 @@ def center_straight(grabber, elevator, drivetrain, gyro, vision_socket, switch_p
     drivetrain.stop()
     # yield from VisionAuto(drivetrain, gyro, vision_socket, 0.5).run()
 
+# Used when the robot starts in the center, vision implemented
 def center_straight_vision(grabber, elevator, drivetrain, gyro, vision_socket, switch_position):
-    rotate = 0.7 if switch_position == Position.RIGHT else -0.7
+    rotate = 1 if switch_position == Position.RIGHT else -1
     yield from Timed(ElevatorAutonomous(elevator, up_speed=0.7), duration = 0.5).run()
     print("ELEVATOR UP A LITTLE BIT")
     yield from Timed(EncoderAutonomous(drivetrain, speed=0.7, inches=72), duration=10.0).run()
     print("End the first forward distance")
-    yield from Timed(ArcadeAutonomous(drivetrain, forward=0, rotate=rotate), duration=0.75).run()
+    yield from Timed(ArcadeAutonomous(drivetrain, forward=0, rotate=rotate), duration=0.27).run()
     print("End first rotation")
-    yield from Timed(EncoderAutonomous(drivetrain, speed=0.7, inches=15), duration=10.0).run()
+    yield from Timed(EncoderAutonomous(drivetrain, speed=0.7, inches=15), duration=5.0).run()
     print("Go forward after first rotation")
-    yield from Timed(VisionAuto(drivetrain, gyro, vision_socket, forward=0.5, look_for="retroreflective"), duration=7.0).run()
+    yield from Timed(ArcadeAutonomous(drivetrain, forward=0, rotate=-rotate), duration=0.27).run()
+    print("End second rotation")
+    yield from Timed(VisionAuto(drivetrain, gyro, vision_socket, forward=0.5, look_for="retroreflective"), duration=5.0).run()
     print("Vision Autonomous Routine") #I DONT KNOW WHERE THIS STOPS SOMEONE PLEASE INFORM ME I DONT WANNA CRASH 
     yield from Timed(ElevatorAutonomous(elevator, up_speed=0.7), duration = 1.4).run()
     print("ELEVATOR UP A LITTLE BIT MORE")
@@ -239,7 +242,7 @@ class VisionAuto(BaseAutonomous):
                 correction = self.correction
                 # print("self.Correction: ", self.correction)
                 # print("Correction: ", correction)
-                correction = math.copysign(self.correction, angle)/2.13
+                correction = math.copysign(self.correction, angle)/2.38 #42%
                 self.drivetrain.arcade_drive(self.forward, correction)
             else:
                 self.drivetrain.stop()
