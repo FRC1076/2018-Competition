@@ -92,20 +92,24 @@ def center_straight(grabber, elevator, drivetrain, gyro, vision_socket, switch_p
     # yield from VisionAuto(drivetrain, gyro, vision_socket, 0.5).run()
 
 # Used when the robot starts in the center, vision implemented
+# Currently, vision is set at a hard limit of 5 seconds, which means we may drive into the switch a little bit (which is fine essentially)
+# But having a "stop" of some sort would be nice
 def center_straight_vision(grabber, elevator, drivetrain, gyro, vision_socket, switch_position):
     rotate = 1 if switch_position == Position.RIGHT else -1
     yield from Timed(ElevatorAutonomous(elevator, up_speed=0.7), duration = 0.5).run()
     print("ELEVATOR UP A LITTLE BIT")
     yield from Timed(EncoderAutonomous(drivetrain, speed=0.7, inches=72), duration=10.0).run()
     print("End the first forward distance")
-    yield from Timed(ArcadeAutonomous(drivetrain, forward=0, rotate=rotate), duration=0.27).run()
+    #The angle below needs to be tuned to the field... if we have a gryo set it between 30-40 degrees
+    yield from Timed(ArcadeAutonomous(drivetrain, forward=0, rotate=rotate), duration=0.34).run() 
     print("End first rotation")
-    yield from Timed(EncoderAutonomous(drivetrain, speed=0.7, inches=25), duration=5.0).run()
+    #This distance below must also be retested, this is not calibrated to field measurements
+    yield from Timed(EncoderAutonomous(drivetrain, speed=0.7, inches=35), duration=5.0).run()
     print("Go forward after first rotation")
-    yield from Timed(ArcadeAutonomous(drivetrain, forward=0, rotate=-rotate), duration=0.27).run()
+    yield from Timed(ArcadeAutonomous(drivetrain, forward=0, rotate=-rotate), duration=0.34).run()
     print("End second rotation")
     yield from Timed(VisionAuto(drivetrain, gyro, vision_socket, forward=0.5, look_for="retroreflective"), duration=5.0).run()
-    print("Vision Autonomous Routine") #I DONT KNOW WHERE THIS STOPS SOMEONE PLEASE INFORM ME I DONT WANNA CRASH 
+    print("Vision Autonomous Routine") 
     yield from Timed(ElevatorAutonomous(elevator, up_speed=0.7), duration = 1.4).run()
     print("ELEVATOR UP A LITTLE BIT MORE")
     yield from Timed(GrabberAutonomous(grabber, in_speed=-1), duration=1).run()
