@@ -285,8 +285,6 @@ class RotateAutonomous(BaseAutonomous):
             if angle_error > 1:
                 yield
 
-            
-
     def end(self):
         self.drivetrain.stop()
 

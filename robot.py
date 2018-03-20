@@ -44,7 +44,7 @@ class Robot(wpilib.IterativeRobot):
         self.right2 = ctre.WPI_TalonSRX(RIGHT2_ID)
         right = wpilib.SpeedControllerGroup(self.right1, self.right2)
 
-        self.drivetrain = Drivetrain(left, right, wpilib.DoubleSolenoid(2, 3), encoder_motor=self.left1)
+        self.drivetrain = Drivetrain(left, right, wpilib.DoubleSolenoid(3, 4), encoder_motor=self.left1)
 
         self.grabber = Grabber(
             ctre.WPI_TalonSRX(LEFT_GRABBER_ID),
@@ -55,8 +55,12 @@ class Robot(wpilib.IterativeRobot):
         self.elevator = Elevator(ctre.WPI_TalonSRX(ELEVATOR_ID))
 
         self.wings = Wings(
-            wpilib.DoubleSolenoid(0, 1),
-            wpilib.DoubleSolenoid(4, 5),
+            left_retract=wpilib.Solenoid(0),
+            right_retract=wpilib.Solenoid(7),
+            left_out_extend=wpilib.Solenoid(2),
+            right_out_extend=wpilib.Solenoid(5),
+            left_center_extend=wpilib.Solenoid(1),
+            right_center_extend=wpilib.Solenoid(6),
         )
 
         self.driver = wpilib.XboxController(0)
@@ -95,10 +99,12 @@ class Robot(wpilib.IterativeRobot):
         self.timer += 1
 
     def teleopInit(self):
+        self.left_activated = False
+        self.right_activated = False
         print("Teleop Init Begin!")
 
     def teleopPeriodic(self):
-        # @Todo: Deadzone these
+        # Arcade Driver Controlls
         DEADZONE = 0.1
         forward = -self.driver.getY(RIGHT)
         rotate = self.driver.getX(LEFT)
@@ -109,11 +115,13 @@ class Robot(wpilib.IterativeRobot):
         forward = deadzone(forward * MAX_FORWARD, DEADZONE)
         rotate = deadzone(rotate * MAX_ROTATE, DEADZONE)
 
+        # Brake Button
         if self.driver.getXButton():
             self.drivetrain.stop()
         else:
             self.drivetrain.arcade_drive(forward, rotate)
 
+        # Gear shifter, held = high gear
         gear_high = self.driver.getBumper(RIGHT)
 
         if gear_high:
@@ -121,7 +129,8 @@ class Robot(wpilib.IterativeRobot):
         else:
             self.drivetrain.shift_high()
 
-
+        # Elevator Controllers
+        # When the operator holds the trigger buttons, the elevator will move up and down
         left_trigger = self.operator.getTriggerAxis(LEFT)
         right_trigger = self.operator.getTriggerAxis(RIGHT)
 
@@ -134,28 +143,48 @@ class Robot(wpilib.IterativeRobot):
         else:
             self.elevator.stop()
 
-        if self.operator.getPOV() != -1 and self.driver.getPOV() != -1:
+        # Wing Activations
+        # Wings will activate when BOTH operator and driver hold Start (right wings)
+        # or Select (left wings). After activation, control of the wings transfers exclusively to
+        # the operator for control.
+
+        # Note that the back button may also be called the select button depending on controller
+        activate_left = self.operator.getBackButton() and self.driver.getBackButton()
+        activate_right = self.operator.getStartButton() and self.driver.getStartButton()
+
+        activate_left_released = self.operator.getBackButtonReleased() or self.driver.getBackButtonReleased()
+        activate_right_released = self.operator.getStartButtonReleased() or self.driver.getStartButtonReleased()
+
+        if activate_left:
+            self.wings.raise_center_left()
+        if activate_right:
+            self.wings.raise_center_right()
+        if activate_left_released:
+            self.wings.lower_left()
+            self.left_activated = True
+        if activate_right_released:
+            self.wings.lower_right()
+            self.right_activated = True
+
+        # Wing Controls
+        if self.operator.getPOV() != -1:
             op_pov = self.operator.getPOV()
-            driver_pov = self.driver.getPOV()
-            left_wing_up = (
-                (op_pov < 20 or 340 < op_pov) and
-                (driver_pov < 20 or 340 < driver_pov)
-            )
-            left_wing_down = 160 < op_pov < 200 and 160 < driver_pov < 200
+            left_wing_up = op_pov < 20 or 340 < op_pov
+            left_wing_down = 160 < op_pov < 200
         else:
             left_wing_up = False
             left_wing_down = False
 
-        right_wing_up = self.operator.getYButton() and self.driver.getYButton()
-        right_wing_down = self.operator.getAButton() and self.driver.getAButton()
+        right_wing_up = self.operator.getYButton()
+        right_wing_down = self.operator.getAButton()
 
-        if left_wing_up:
+        if left_wing_up and self.left_activated:
             self.wings.raise_left()
-        if left_wing_down:
+        if left_wing_down and self.left_activated:
             self.wings.lower_left()
-        if right_wing_up:
+        if right_wing_up and self.right_activated:
             self.wings.raise_right()
-        if right_wing_down:
+        if right_wing_down and self.right_activated:
             self.wings.lower_right()
 
         INTAKE_DEADZONE = 0.2
