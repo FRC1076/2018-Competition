@@ -275,6 +275,10 @@ class RotateAutonomous(BaseAutonomous):
         while True:
             # We need the different between the goal angle delta and the current angle delta
             angle_error = abs(self.angle_goal) - abs(self.start_angle - self.gyro.getAngle())
+
+            if angle_error < 1.0:
+                break
+
             correction_factor = angle_error / 10.0
             if correction_factor > 1.0:
                 correction_factor = 1.0
