@@ -138,6 +138,23 @@ def switch_to_same_side(grabber, elevator, drivetrain, gyro, vision_socket, swit
     print("end grabber")
     drivetrain.stop()
 
+def scale_to_same_side(grabber, elevator, drivetrain, gyro, vision_socket, switch_position):
+    rotate = 1 if switch_position == Position.LEFT else -1
+    yield from Timed(EncoderAutonomous(drivetrain, speed=0.7, inches=300), duration=10.0).run()
+    yield from Timed(ArcadeAutonomous(drivetrain, forward=0, rotate=rotate), duration=0.75).run()
+    yield from Timed(ElevatorAutonomous(elevator, up_speed=1), duration=3.5).run()
+    yield from Timed(GrabberAutonomous(grabber, in_speed=1), duration=1).run()
+
+def scale_zig_zag(grabber, elevator, drivetrain, gyro, vision_socket, switch_position):
+    rotate = 1 if switch_position == Position.LEFT else -1
+    yield from Timed(EncoderAutonomous(drivetrain, speed=0.7, inches=228.5), duration=10.0).run()
+    yield from Timed(ArcadeAutonomous(drivetrain, forward=0, rotate=rotate), duration=0.75).run()
+    yield from Timed(EncoderAutonomous(drivetrain, speed=0.7, inches=120), duration=10.0).run()
+    yield from Timed(ArcadeAutonomous(drivetrain, forward=0, rotate=-rotate), duration=0.75).run()
+    yield from Timed(ElevatorAutonomous(elevator, up_speed=1), duration=3.5).run()
+    yield from Timed(EncoderAutonomous(drivetrain, speed=0.7, inches=65), duration=5).run()
+    yield from Timed(GrabberAutonomous(grabber, in_speed=1), duration=1).run()
+
 # Used when the switch is on the opposite side of the starting position. For
 # example, when the robot starts on the left side but the switch is on the right side, zigzag
 
