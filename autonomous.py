@@ -217,9 +217,12 @@ class VisionAuto(BaseAutonomous):
         self.correction = 0
         self.look_for = look_for
         # PID Constants, tuned as of March 5th
-        self.PID = wpilib.PIDController(0.03, 0.01, 0.0,
+        self.P = 0.04
+        self.PID = wpilib.PIDController(self.P, 0.00, 0.0,
             source=self._get_angle,
             output=self._set_correction)
+
+        print("P: ", self.P)
 
     def _get_angle(self):
         angle = self.socket.get_angle(key=self.look_for, max_staleness=0.5)
@@ -246,7 +249,7 @@ class VisionAuto(BaseAutonomous):
                 correction = self.correction
                 # print("self.Correction: ", self.correction)
                 # print("Correction: ", correction)
-                correction = math.copysign(self.correction, angle)/3.33 # 30%
+                correction = math.copysign(self.correction, angle)
                 self.drivetrain.arcade_drive(self.forward, correction)
             else:
                 self.drivetrain.stop()
