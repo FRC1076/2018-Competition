@@ -1,6 +1,7 @@
 import autonomous
 import ctre
 import network
+import robotpy_ext.common_drivers.navx as navx
 import wpilib
 from networktables import NetworkTables
 from subsystems.drivetrain import Drivetrain
@@ -17,7 +18,6 @@ from wpilib.interfaces import GenericHID
 # or left bumper.
 LEFT = GenericHID.Hand.kLeft
 RIGHT = GenericHID.Hand.kRight
-
 
 
 ELEVATOR_ID = 6
@@ -68,7 +68,8 @@ class Robot(wpilib.IterativeRobot):
 
         self.auto_exec = iter([])
 
-        self.gyro = wpilib.ADXRS450_Gyro()
+        # self.gyro = wpilib.ADXRS450_Gyro()
+        self.gyro = navx.ahrs.AHRS.create_spi()
 
         # Use a mock socket in tests instead of a real one because we can't
         # actually bind to a port when testing the code.
@@ -89,8 +90,11 @@ class Robot(wpilib.IterativeRobot):
         SmartDashboard.putData(SIDE_SELECTOR, self.chooser)
 
     def robotPeriodic(self):
-        if self.timer % 1000 == 0:
+        if self.timer % 100 == 0:
             print(self.vision_socket.debug())
+            # print('pitch ', self.gyro.getPitch())
+            # print('yaw ', self.gyro.getYaw())
+            # print('roll ', self.gyro.getRoll())
             # print("is bound: ", self.vision_socket.is_bound())
             # print("choosen: ", self.chooser.getSelected())
             # game_message = wpilib.DriverStation.getInstance().getGameSpecificMessage()
