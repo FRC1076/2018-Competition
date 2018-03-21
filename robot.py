@@ -113,7 +113,7 @@ class Robot(wpilib.IterativeRobot):
         forward = -self.driver.getY(RIGHT)
         rotate = self.driver.getX(LEFT)
 
-        MAX_FORWARD = 0.8
+        MAX_FORWARD = 0.9
         MAX_ROTATE = 1.0
 
         forward = deadzone(forward * MAX_FORWARD, DEADZONE)
