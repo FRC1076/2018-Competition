@@ -31,6 +31,14 @@ RIGHT2_ID = 8
 
 # 5 is not mapped currently to any motor
 
+# Wing Solenoid IDs
+LEFT_RETRACT = 0
+LEFT_CENTER_EXTEND = 1
+LEFT_OUTER_EXTEND = 2
+RIGHT_RETRACT = 7
+RIGHT_CENTER_EXTEND = 6
+RIGHT_OUTER_EXTEND = 5
+
 # If you modify this key, also update the value in index.html!
 SIDE_SELECTOR = "side_selector"
 
@@ -55,12 +63,12 @@ class Robot(wpilib.IterativeRobot):
         self.elevator = Elevator(ctre.WPI_TalonSRX(ELEVATOR_ID))
 
         self.wings = Wings(
-            left_retract=wpilib.Solenoid(0),
-            right_retract=wpilib.Solenoid(7),
-            left_out_extend=wpilib.Solenoid(2),
-            right_out_extend=wpilib.Solenoid(5),
-            left_center_extend=wpilib.Solenoid(1),
-            right_center_extend=wpilib.Solenoid(6),
+            left_retract=wpilib.Solenoid(LEFT_RETRACT),
+            right_retract=wpilib.Solenoid(RIGHT_RETRACT),
+            left_out_extend=wpilib.Solenoid(LEFT_OUTER_EXTEND),
+            right_out_extend=wpilib.Solenoid(RIGHT_OUTER_EXTEND),
+            left_center_extend=wpilib.Solenoid(LEFT_CENTER_EXTEND),
+            right_center_extend=wpilib.Solenoid(RIGHT_CENTER_EXTEND),
         )
 
         self.driver = wpilib.XboxController(0)
