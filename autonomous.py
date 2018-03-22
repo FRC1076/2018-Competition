@@ -332,7 +332,7 @@ class EncoderAutonomous(BaseAutonomous):
     def execute(self):
         while abs(self.start_dist - self.drivetrain.get_encoder_position()) < self.distance:
             self.drivetrain.arcade_drive(self.forward, rotate=0)
-            print(f"EncoderAuton:execute:encoder position = {self.drivetrain.get_encoder_position()}")
+            print("EncoderAuton:execute:encoder position = {self.drivetrain.get_encoder_position()}")
             yield
 
     def end(self):
