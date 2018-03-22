@@ -161,11 +161,11 @@ class Robot(wpilib.IterativeRobot):
         # the operator for control.
 
         # Note that the back button may also be called the select button depending on controller
-        activate_left = self.operator.getBackButton() and self.driver.getBackButton()
-        activate_right = self.operator.getStartButton() and self.driver.getStartButton()
+        activate_right = self.operator.getBackButton() and self.driver.getBackButton()
+        activate_left = self.operator.getStartButton() and self.driver.getStartButton()
 
-        activate_left_released = self.operator.getBackButtonReleased() or self.driver.getBackButtonReleased()
-        activate_right_released = self.operator.getStartButtonReleased() or self.driver.getStartButtonReleased()
+        activate_right_released = self.operator.getBackButtonReleased() or self.driver.getBackButtonReleased()
+        activate_left_released = self.operator.getStartButtonReleased() or self.driver.getStartButtonReleased()
 
         if activate_left:
             self.wings.raise_center_left()
@@ -181,14 +181,14 @@ class Robot(wpilib.IterativeRobot):
         # Wing Controls
         if self.operator.getPOV() != -1:
             op_pov = self.operator.getPOV()
-            left_wing_up = op_pov < 20 or 340 < op_pov
-            left_wing_down = 160 < op_pov < 200
+            right_wing_up = op_pov < 20 or 340 < op_pov
+            right_wing_down = 160 < op_pov < 200
         else:
-            left_wing_up = False
-            left_wing_down = False
+            right_wing_up = False
+            right_wing_down = False
 
-        right_wing_up = self.operator.getYButton()
-        right_wing_down = self.operator.getAButton()
+        left_wing_up = self.operator.getYButton()
+        left_wing_down = self.operator.getAButton()
 
         if left_wing_up and self.left_activated:
             self.wings.raise_left()

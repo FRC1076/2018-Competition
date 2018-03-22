@@ -27,6 +27,10 @@ FAR_DIST_1 = 19.00 * 12.00 + 10.00
 FAR_TURN_ANGLE = 90 # in degrees
 FAR_DIST_2 = 13.0*12.0 + 4.0
 
+# VisionAuto PID constants
+VISION_P = 0.04
+VISION_I = 0.00
+VISION_D = 0.00
 
 # Describes the position of the scales and switches
 class Position(Enum):
@@ -101,7 +105,7 @@ def center_straight_vision(grabber, elevator, drivetrain, gyro, vision_socket, s
     yield from Timed(EncoderAutonomous(drivetrain, speed=0.7, inches=72), duration=10.0).run()
     print("End the first forward distance")
     #The angle below needs to be tuned to the field... if we have a gryo set it between 30-40 degrees
-    yield from Timed(ArcadeAutonomous(drivetrain, forward=0, rotate=rotate), duration=0.34).run() 
+    yield from Timed(ArcadeAutonomous(drivetrain, forward=0, rotate=rotate), duration=0.34).run()
     print("End first rotation")
     #This distance below must also be retested, this is not calibrated to field measurements
     yield from Timed(EncoderAutonomous(drivetrain, speed=0.7, inches=35), duration=5.0).run()
@@ -109,7 +113,7 @@ def center_straight_vision(grabber, elevator, drivetrain, gyro, vision_socket, s
     yield from Timed(ArcadeAutonomous(drivetrain, forward=0, rotate=-rotate), duration=0.34).run()
     print("End second rotation")
     yield from Timed(VisionAuto(drivetrain, gyro, vision_socket, forward=0.5, look_for="retroreflective"), duration=5.0).run()
-    print("Vision Autonomous Routine") 
+    print("Vision Autonomous Routine")
     yield from Timed(ElevatorAutonomous(elevator, up_speed=0.7), duration = 1.4).run()
     print("ELEVATOR UP A LITTLE BIT MORE")
     yield from Timed(GrabberAutonomous(grabber, in_speed=-1), duration=1).run()
@@ -199,7 +203,7 @@ class BaseAutonomous:
         return _execute()
 
 class Timed(BaseAutonomous):
-    def __init__(self, auto, duration=0):
+    def __init__(self, auto, duration):
         self.auto = auto
         self.duration = duration
 
@@ -224,7 +228,7 @@ class VisionAuto(BaseAutonomous):
     """
     def __init__(self, drivetrain, gyro, vision_socket, forward, look_for):
         """
-        forward is 
+        forward is from 0 to 1
         look_for is either "retroreflective", or "cube"
         """
         self.drivetrain = drivetrain
@@ -234,12 +238,13 @@ class VisionAuto(BaseAutonomous):
         self.correction = 0
         self.look_for = look_for
         # PID Constants, tuned as of March 5th
-        self.P = 0.04
-        self.PID = wpilib.PIDController(self.P, 0.00, 0.0,
+        self.PID = wpilib.PIDController(VISION_P, VISION_I, VISION_D,
             source=self._get_angle,
             output=self._set_correction)
 
-        print("P: ", self.P)
+        print("P: ", VISION_P)
+        print("I: ", VISION_I)
+        print("D: ", VISION_D)
 
     def _get_angle(self):
         angle = self.socket.get_angle(key=self.look_for, max_staleness=0.5)
