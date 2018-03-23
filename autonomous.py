@@ -110,14 +110,14 @@ def switch_to_same_side(grabber, elevator, drivetrain, gyro, vision_socket, swit
     # Makes the elevator go up at the same time as the first drive forward phase
     # yield from Timed(ElevatorAutonomous(elevator, up_speed=1), duration = 0.5).run()
     # print("end elevator")
-    yield from Timed(ArcadeAutonomous(drivetrain, forward=0.7, rotate=0), duration = 3.0).run()
+    yield from Timed(ArcadeAutonomous(drivetrain, forward=0.7, rotate=0), duration = 3.12).run()
     print("End arcade")
     yield from Timed(RotateAutonomous(drivetrain, gyro, angle=rotate, turn_speed=1), duration=1).run()
     # yield from Timed(RotateAutonomous(drivetrain, gyro, angle=rotate, turn_speed=0.7), duration=4).run()
     print("End rotate")
     yield from Timed(ElevatorAutonomous(elevator, up_speed=1), duration = 3.4).run()
     print("end elevator")
-    yield from Timed(ArcadeAutonomous(drivetrain, forward=0.4, rotate=0), duration = 1.5).run()
+    yield from Timed(ArcadeAutonomous(drivetrain, forward=0.5, rotate=0), duration = 1.5).run()
     print("End arcade")
     yield from Timed(GrabberAutonomous(grabber, in_speed=1), duration=1).run()
     print("end grabber")
@@ -147,10 +147,10 @@ def scale_zig_zag(grabber, elevator, drivetrain, gyro, vision_socket, switch_pos
 #     yield from Timed(VisionAuto(drivetrain, gyro, vision_socket, forward, look_for), duration = 30.0).run()
 
 def zig_zag_encoder(grabber, elevator, drivetrain, gyro, vision_socket, switch_position):
-    rotate = 90 if switch_position == Position.LEFT else -90
+    rotate = 90 if switch_position == Position.RIGHT else -90
     # yield from Timed(ElevatorAutonomous(elevator, up_speed=0.7), duration = 0.5).run()
     # print("End elevator inital")
-    yield from Timed(EncoderAutonomous(drivetrain, speed=0.7, inches=238), duration=10).run()
+    yield from Timed(EncoderAutonomous(drivetrain, speed=0.7, inches=200), duration=10).run()
     print("End the first forward distance")
     yield from Timed(RotateAutonomous(drivetrain, gyro, angle=rotate, turn_speed=1), duration=1).run()
     print("End first rotation right")
