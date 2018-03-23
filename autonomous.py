@@ -75,26 +75,6 @@ def dead_reckon(drivetrain):
 def vision_reckon(drivetrain, gyro, vision_socket):
     yield from Timed(VisionAuto(drivetrain, gyro, vision_socket, forward=0.6, look_for="retroreflective"), duration=5.0).run()
 
-# Used when the robot starts in the center, no vision implemented at all
-def center_straight(grabber, elevator, drivetrain, gyro, vision_socket, switch_position):
-    yield from Timed(ElevatorAutonomous(elevator, up_speed=0.10)).run()
-    print("end elevator 1")
-    yield from Timed(ArcadeAutonomous(drivetrain, forward=0.7, rotate=0), duration = 1.5).run()
-    print("end drive 1")
-    rotate = 0.7 if switch_position == Position.RIGHT else -0.7
-    yield from Timed(ArcadeAutonomous(drivetrain, forward=0, rotate=rotate), duration=1.0).run()
-    print("end rotate 1")
-    yield from Timed(ElevatorAutonomous(elevator, up_speed=0.7), duration = 1.4).run()
-    print("end elevator 2")
-    yield from Timed(ArcadeAutonomous(drivetrain, forward=0.7, rotate=0), duration = 1.5).run()
-    print("end drive 2")
-    yield from Timed(ArcadeAutonomous(drivetrain, forward=0, rotate=-rotate), duration=1.0).run()
-    print("end unrotate 2")
-    yield from Timed(GrabberAutonomous(grabber, in_speed=-1), duration=1).run()
-    print("end grabber")
-    drivetrain.stop()
-    # yield from VisionAuto(drivetrain, gyro, vision_socket, 0.5).run()
-
 # Used when the robot starts in the center, vision implemented
 # Currently, vision is set at a hard limit of 5 seconds, which means we may drive into the switch a little bit (which is fine essentially)
 # But having a "stop" of some sort would be nice
