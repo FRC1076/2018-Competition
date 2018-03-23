@@ -100,10 +100,10 @@ class Robot(wpilib.IterativeRobot):
     def robotPeriodic(self):
         if self.timer % 100 == 0:
             print(self.vision_socket.debug())
-            print('angle ', self.gyro.getAngle())
-            print('pitch ', self.gyro.getPitch())
-            print('yaw ', self.gyro.getYaw())
-            print('roll ', self.gyro.getRoll())
+            # print('angle ', self.gyro.getAngle())
+            # print('pitch ', self.gyro.getPitch())
+            # print('yaw ', self.gyro.getYaw())
+            # print('roll ', self.gyro.getRoll())
             print("is bound: ", self.vision_socket.is_bound())
             print("choosen: ", self.chooser.getSelected())
             # game_message = wpilib.DriverStation.getInstance().getGameSpecificMessage()
