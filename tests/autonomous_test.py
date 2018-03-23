@@ -105,7 +105,7 @@ def test_vision_autonomous():
         auton.run()
 
 class MockGyro:
-    def getAngle(self):
+    def getYaw(self):
         return 180
 
 class MockDrivetrain(Drivetrain):
