@@ -105,7 +105,7 @@ class Robot(wpilib.IterativeRobot):
             print('yaw ', self.gyro.getYaw())
             print('roll ', self.gyro.getRoll())
             print("is bound: ", self.vision_socket.is_bound())
-            # print("choosen: ", self.chooser.getSelected())
+            print("choosen: ", self.chooser.getSelected())
             # game_message = wpilib.DriverStation.getInstance().getGameSpecificMessage()
             # print("game msg: ", autonomous.get_game_specific_message(game_message))
             # print("routine: ", autonomous.get_routine(self.chooser.getSelected(), autonomous.get_game_specific_message(game_message)))
@@ -224,7 +224,8 @@ class Robot(wpilib.IterativeRobot):
         game_message = wpilib.DriverStation.getInstance().getGameSpecificMessage()
         switch_position = autonomous.get_game_specific_message(game_message)
 
-        robot_position = autonomous.Position.CENTER # TODO: have an actual way to set this outside of the program
+        robot_position = self.chooser.getSelected()
+        # robot_position = autonomous.Position.CENTER # TODO: have an actual way to set this outside of the program
 
         # alliance_side =  wpilib.DriverStation.getInstance().getAlliance()
 
