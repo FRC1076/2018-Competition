@@ -88,7 +88,8 @@ def center_straight_vision(grabber, elevator, drivetrain, gyro, vision_socket, s
     yield from Timed(ArcadeAutonomous(drivetrain, forward=0, rotate=rotate), duration=0.34).run()
     print("End first rotation")
     #This distance below must also be retested, this is not calibrated to field measurements
-    yield from Timed(EncoderAutonomous(drivetrain, speed=0.7, inches=35), duration=5.0).run()
+    distance = 35 if switch_position == Position.RIGHT else 45
+    yield from Timed(EncoderAutonomous(drivetrain, speed=0.7, inches=distance), duration=5.0).run()
     print("Go forward after first rotation")
     yield from Timed(ArcadeAutonomous(drivetrain, forward=0, rotate=-rotate), duration=0.34).run()
     print("End second rotation")
