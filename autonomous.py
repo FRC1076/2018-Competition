@@ -255,7 +255,7 @@ class VisionAuto(BaseAutonomous):
                 correction = math.copysign(self.correction, angle)
                 self.drivetrain.arcade_drive(self.forward, correction)
             else:
-                self.drivetrain.stop()
+                self.drivetrain.arcade_drive(self.forward, 0)
             yield
 
     def end(self):
