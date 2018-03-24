@@ -35,6 +35,7 @@ VISION_D = 0.00
 # Describes the position of the scales and switches
 class Position(Enum):
     # Format is always our switch, scale, enemy side switch
+    UNKNOWN = "Unknown"
     LEFT = "Left"
     RIGHT = "Right"
     CENTER = "Center"
@@ -44,15 +45,17 @@ class AutonomousRoutine(Enum):
     CENTER = "robot in center"
     SIDE_TO_SAME = "robot on side, switch same side"
     SIDE_TO_OPPOSITE = "robot on side, switch opposite side"
+    AUTON_LINE = "robot on side, breaking auto line only"
 
 def get_routine(robot_position, switch_position):
-    if robot_position == Position.CENTER:
+    if robot_position == Position.UNKNOWN:
+        return AutonomousRoutine.AUTON_LINE
+    elif robot_position == Position.CENTER:
         return AutonomousRoutine.CENTER
     elif robot_position == switch_position:
         return AutonomousRoutine.SIDE_TO_SAME
     else:
         return AutonomousRoutine.SIDE_TO_OPPOSITE
-
 
 '''Returns the switch and scale configurations'''
 def get_game_specific_message(game_message):
@@ -70,7 +73,7 @@ def get_game_specific_message(game_message):
 
 
 def dead_reckon(drivetrain):
-    yield from Timed(EncoderAutonomous(drivetrain, 0.7, 120), duration = 0.5).run()
+    yield from Timed(ArcadeAutonomous(drivetrain, forward=0.7, rotate=0), duration=3.12).run()
 
 def vision_reckon(drivetrain, gyro, vision_socket):
     yield from Timed(VisionAuto(drivetrain, gyro, vision_socket, forward=0.6, look_for="retroreflective"), duration=5.0).run()
@@ -79,10 +82,11 @@ def vision_reckon(drivetrain, gyro, vision_socket):
 # Currently, vision is set at a hard limit of 5 seconds, which means we may drive into the switch a little bit (which is fine essentially)
 # But having a "stop" of some sort would be nice
 def center_straight_vision(grabber, elevator, drivetrain, gyro, vision_socket, switch_position):
-    rotate = 35 if switch_position == Position.RIGHT else -35
+    print("BEGIN CENTER STRAIGHT VISION AUTON")
+    rotate = 60 if switch_position == Position.RIGHT else -60
     # yield from Timed(ElevatorAutonomous(elevator, up_speed=0.7), duration = 0.5).run()
     # print("ELEVATOR UP A LITTLE BIT")
-    yield from Timed(EncoderAutonomous(drivetrain, speed=0.7, inches=60), duration=10.0).run()
+    yield from Timed(EncoderAutonomous(drivetrain, speed=0.7, inches=45), duration=10.0).run()
     print("End the first forward distance")
     #The angle below needs to be tuned to the field... if we have a gryo set it between 30-40 degrees
     yield from Timed(RotateAutonomous(drivetrain, gyro, angle=rotate, turn_speed=1), duration=1).run() 
@@ -147,6 +151,7 @@ def scale_zig_zag(grabber, elevator, drivetrain, gyro, vision_socket, switch_pos
 #     yield from Timed(VisionAuto(drivetrain, gyro, vision_socket, forward, look_for), duration = 30.0).run()
 
 def zig_zag_encoder(grabber, elevator, drivetrain, gyro, vision_socket, switch_position):
+    print("BEGIN ZIG ZAG ENCODER AUTON")
     rotate = 90 if switch_position == Position.RIGHT else -90
     # yield from Timed(ElevatorAutonomous(elevator, up_speed=0.7), duration = 0.5).run()
     # print("End elevator inital")
@@ -156,9 +161,9 @@ def zig_zag_encoder(grabber, elevator, drivetrain, gyro, vision_socket, switch_p
     print("End first rotation right")
     yield from Timed(EncoderAutonomous(drivetrain, speed=0.7, inches=160), duration=10).run()
     print("End the second forward distance")
-    yield from Timed(RotateAutonomous(drivetrain, gyro, angle=-rotate, turn_speed=1), duration=1).run()
+    yield from Timed(RotateAutonomous(drivetrain, gyro, angle=rotate, turn_speed=1), duration=1).run()
     print("End second rotation right")
-    yield from Timed(ElevatorAutonomous(elevator, up_speed=1), duration = 3.4).run()
+    yield from Timed(ElevatorAutonomous(elevator, up_speed=1), duration = 2.0).run()
     print("End elevator final")
     yield from Timed(ArcadeAutonomous(drivetrain, forward=0.4, rotate=0), duration=1.5).run()
     print("End final distance forward")
@@ -313,7 +318,7 @@ class EncoderAutonomous(BaseAutonomous):
     def execute(self):
         while abs(self.start_dist - self.drivetrain.get_encoder_position()) < self.distance:
             self.drivetrain.arcade_drive(self.forward, rotate=0)
-            print("encoder dist", self.start_dist - self.drivetrain.get_encoder_position())
+            print("encoder dist", abs(self.start_dist - self.drivetrain.get_encoder_position()), "goal distance", self.distance)
             yield
 
     def end(self):

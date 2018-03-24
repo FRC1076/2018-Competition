@@ -92,6 +92,7 @@ class Robot(wpilib.IterativeRobot):
         self.sd = NetworkTables.getTable('SmartDashboard')
 
         self.chooser = wpilib.SendableChooser()
+        self.chooser.addDefault('unknown', autonomous.Position.UNKNOWN)
         self.chooser.addObject('left', autonomous.Position.LEFT)
         self.chooser.addObject('right', autonomous.Position.RIGHT)
         self.chooser.addObject('center', autonomous.Position.CENTER)
@@ -245,6 +246,9 @@ class Robot(wpilib.IterativeRobot):
         elif routine == autonomous.AutonomousRoutine.SIDE_TO_OPPOSITE:
             print("ZIG ZAG AUTON")
             self.auton = autonomous.zig_zag_encoder(self.grabber, self.elevator, self.drivetrain, self.gyro, self.vision_socket, switch_position)
+        elif routine == autonomous.AutonomousRoutine.AUTON_LINE:
+            print("DEAD RECKON")
+            self.auton = autonomous.dead_reckon(self.drivetrain)
         else:
             #Use this else for testing purposes?
             print("VISION AUTO")
