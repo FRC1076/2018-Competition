@@ -116,24 +116,33 @@ class Robot(wpilib.IterativeRobot):
         self.left_activated = False
         self.right_activated = False
         print("Teleop Init Begin!")
+        self.forward = 0
 
     def teleopPeriodic(self):
         # Arcade Driver Controlls
         DEADZONE = 0.1
-        forward = -self.driver.getY(RIGHT)
+        MAX_ACCELERATION = 0.2
+        goal_forward = -self.driver.getY(RIGHT)
         rotate = self.driver.getX(LEFT)
 
         MAX_FORWARD = 1.0
         MAX_ROTATE = 1.0
 
-        forward = deadzone(forward * MAX_FORWARD, DEADZONE)
+        goal_forward = deadzone(self.forward * MAX_FORWARD, DEADZONE)
         rotate = deadzone(rotate * MAX_ROTATE, DEADZONE)
+
+        delta = goal_forward - self.forward
+
+        if abs(delta) < MAX_ACCELERATION:
+            self.forward += delta
+        else:
+            self.forward += MAX_ACCELERATION * sign(delta)
 
         # Brake Button
         if self.driver.getXButton():
             self.drivetrain.stop()
         else:
-            self.drivetrain.arcade_drive(forward, rotate)
+            self.drivetrain.arcade_drive(self.forward, rotate)
 
         # Gear shifter, held = high gear
         gear_high = self.driver.getBumper(RIGHT)
@@ -272,6 +281,13 @@ def deadzone(val, deadzone):
     if abs(val) < deadzone:
         return 0
     return val
+
+def sign(number):
+    if number > 0:
+        return 1
+    else:
+        return -1
+
 
 def debug_encoder(talon, name):
     # print(name, " encoder pos", talon.getPinStateQuadA())
