@@ -75,7 +75,8 @@ def test_switch_to_same_side():
 
 def test_encoder_autonomous():
     drivetrain = MockDrivetrain()
-    auton = autonomous.EncoderAutonomous(drivetrain, speed=0.42, inches=1.0)
+    gyro = MockGyro()
+    auton = autonomous.EncoderAutonomous(drivetrain, gyro=gyro, speed=0.42, inches=1.0)
     auton.init()
     for _ in range(0, 100):
         auton.run()
@@ -107,6 +108,9 @@ def test_vision_autonomous():
 class MockGyro:
     def getYaw(self):
         return 180
+
+    def getAngle(self):
+        return 0
 
 class MockDrivetrain(Drivetrain):
     def __init__(self):
