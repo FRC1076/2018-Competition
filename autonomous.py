@@ -86,19 +86,19 @@ def eight_foot(grabber, elevator, drivetrain, gyro, vision_socket, switch_positi
 # Used when the robot starts in the center, vision implemented
 # Currently, vision is set at a hard limit of 5 seconds, which means we may drive into the switch a little bit (which is fine essentially)
 # But having a "stop" of some sort would be nice
-def center_straight_vision(grabber, elevator, drivetrain, gyro, vision_socket, switch_position):
-    print("BEGIN CENTER STRAIGHT VISION AUTON")
-    rotate = 60 if switch_position == Position.RIGHT else -60
+def center_straight(grabber, elevator, drivetrain, gyro, vision_socket, switch_position):
+    print("BEGIN CENTER STRAIGHT AUTON")
+    rotate = 45 if switch_position == Position.RIGHT else -45
     # yield from Timed(ElevatorAutonomous(elevator, up_speed=0.7), duration = 0.5).run()
     # print("ELEVATOR UP A LITTLE BIT")
-    yield from Timed(EncoderAutonomous(drivetrain, speed=0.7, inches=45), duration=10.0).run()
+    yield from Timed(EncoderAutonomous(drivetrain, gyro=gyro, speed=0.7, inches=45), duration=10.0).run()
     print("End the first forward distance")
     #The angle below needs to be tuned to the field... if we have a gryo set it between 30-40 degrees
     yield from Timed(RotateAutonomous(drivetrain, gyro, angle=rotate, turn_speed=1), duration=1).run() 
     print("End first rotation")
     #This distance below must also be retested, this is not calibrated to field measurements
     distance = 35 if switch_position == Position.RIGHT else 45
-    yield from Timed(EncoderAutonomous(drivetrain, speed=0.7, inches=distance), duration=5.0).run()
+    yield from Timed(EncoderAutonomous(drivetrain, gyro=gyro, speed=0.7, inches=distance), duration=5.0).run()
     print("Go forward after first rotation")
     yield from Timed(RotateAutonomous(drivetrain, gyro, angle=-rotate, turn_speed=1), duration=1).run()
     print("End second rotation")
@@ -119,34 +119,36 @@ def switch_to_same_side(grabber, elevator, drivetrain, gyro, vision_socket, swit
     # Makes the elevator go up at the same time as the first drive forward phase
     # yield from Timed(ElevatorAutonomous(elevator, up_speed=1), duration = 0.5).run()
     # print("end elevator")
-    yield from Timed(ArcadeAutonomous(drivetrain, forward=0.7, rotate=0), duration = 3.12).run()
-    print("End arcade")
+    yield from Timed(EncoderAutonomous(drivetrain, gyro=gyro, speed=0.6, inches=SAME_SIDE_DIST), duration = 3.5).run()
+
+    yield from Timed(ArcadeAutonomous(drivetrain, forward=0, rotate=0, duration=0.3)) # this is the STOP for when the cage comes down
+    
     yield from Timed(RotateAutonomous(drivetrain, gyro, angle=rotate, turn_speed=1), duration=1).run()
     # yield from Timed(RotateAutonomous(drivetrain, gyro, angle=rotate, turn_speed=0.7), duration=4).run()
-    print("End rotate")
-    yield from Timed(ElevatorAutonomous(elevator, up_speed=1), duration = 3.4).run()
-    print("end elevator")
-    yield from Timed(ArcadeAutonomous(drivetrain, forward=0.5, rotate=0), duration = 1.5).run()
-    print("End arcade")
+    
+    yield from Timed(ElevatorAutonomous(elevator, up_speed=1), duration = 1.0).run()
+    
+    yield from Timed(EncoderAutonomous(drivetrain, gyro=gyro, speed=0.5, inches=SAME_SIDE_DIST_2), duration = 1.5).run()
+   
     yield from Timed(GrabberAutonomous(grabber, in_speed=1), duration=1).run()
-    print("end grabber")
+    
     drivetrain.stop()
 
 def scale_to_same_side(grabber, elevator, drivetrain, gyro, vision_socket, switch_position):
     rotate = 1 if switch_position == Position.LEFT else -1
-    yield from Timed(EncoderAutonomous(drivetrain, speed=0.7, inches=300), duration=10.0).run()
+    yield from Timed(EncoderAutonomous(drivetrain, gyro=gyro, speed=0.7, inches=300), duration=10.0).run()
     yield from Timed(ArcadeAutonomous(drivetrain, forward=0, rotate=rotate), duration=0.75).run()
     yield from Timed(ElevatorAutonomous(elevator, up_speed=1), duration=3.5).run()
     yield from Timed(GrabberAutonomous(grabber, in_speed=1), duration=1).run()
 
 def scale_zig_zag(grabber, elevator, drivetrain, gyro, vision_socket, switch_position):
     rotate = 1 if switch_position == Position.LEFT else -1
-    yield from Timed(EncoderAutonomous(drivetrain, speed=0.7, inches=228.5), duration=10.0).run()
+    yield from Timed(EncoderAutonomous(drivetrain, gyro=gyro, speed=0.7, inches=228.5), duration=10.0).run()
     yield from Timed(ArcadeAutonomous(drivetrain, forward=0, rotate=90), duration=0.75).run()
-    yield from Timed(EncoderAutonomous(drivetrain, speed=0.7, inches=120), duration=10.0).run()
+    yield from Timed(EncoderAutonomous(drivetrain, gyro=gyro, speed=0.7, inches=120), duration=10.0).run()
     yield from Timed(RotateAutonomous(drivetrain, forward=0, rotate=-90), duration=0.75).run()
     yield from Timed(ElevatorAutonomous(elevator, up_speed=1), duration=3.5).run()
-    yield from Timed(EncoderAutonomous(drivetrain, speed=0.7, inches=65), duration=5).run()
+    yield from Timed(EncoderAutonomous(drivetrain, gyro=gyro, speed=0.7, inches=65), duration=5).run()
     yield from Timed(GrabberAutonomous(grabber, in_speed=1), duration=1).run()
 
 # Used when the switch is on the opposite side of the starting position. For
