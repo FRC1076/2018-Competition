@@ -99,7 +99,7 @@ class Robot(wpilib.IterativeRobot):
         SmartDashboard.putData(SIDE_SELECTOR, self.chooser)
 
     def robotPeriodic(self):
-        if self.timer % 100 == 0:
+        if self.timer % 1000 == 0:
             print(self.vision_socket.debug())
             # print('angle ', self.gyro.getAngle())
             # print('pitch ', self.gyro.getPitch())
@@ -245,7 +245,7 @@ class Robot(wpilib.IterativeRobot):
         print("Switch Position: ", switch_position)
         print("Robot Position", robot_position)
         print("Routine: ", routine)
-        self.auton = autonomous.two_foot(self.grabber, self.elevator, self.drivetrain, self.gyro, self.vision_socket, switch_position)
+        self.auton = autonomous.switch_to_same_side(self.grabber, self.elevator, self.drivetrain, self.gyro, self.vision_socket, switch_position)
         # if routine == autonomous.AutonomousRoutine.SIDE_TO_SAME:
         #     print("SIDE TO SAME SIDE AUTON")
         #     self.auton = autonomous.switch_to_same_side(self.grabber, self.elevator, self.drivetrain, self.gyro, self.vision_socket, switch_position)
@@ -266,6 +266,7 @@ class Robot(wpilib.IterativeRobot):
     def autonomousPeriodic(self):
         try:
             next(self.auton)
+            print("Angle", self.gyro.getAngle())
         except StopIteration:
             # WPILib prints a ton of error messages when the motor has no output
             # send to it, so we stop the drivetrain to make it quiet. Also,

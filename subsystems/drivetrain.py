@@ -9,7 +9,6 @@ class Drivetrain:
     """
     LOW_GEAR = DoubleSolenoid.Value.kReverse
     HIGH_GEAR = DoubleSolenoid.Value.kForward
-
     def __init__(self, left, right, gear_shifter, encoder_motor=None):
         self.encoder_motor = encoder_motor
         self.robot_drive = wpilib.drive.DifferentialDrive(left, right)
