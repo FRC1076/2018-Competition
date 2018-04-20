@@ -121,14 +121,14 @@ class Robot(wpilib.IterativeRobot):
     def teleopPeriodic(self):
         # Arcade Driver Controlls
         DEADZONE = 0.1
-        MAX_ACCELERATION = 0.2
+        MAX_ACCELERATION = 0.3
         goal_forward = -self.driver.getY(RIGHT)
         rotate = self.driver.getX(LEFT)
 
         MAX_FORWARD = 1.0
         MAX_ROTATE = 1.0
 
-        goal_forward = deadzone(self.forward * MAX_FORWARD, DEADZONE)
+        goal_forward = deadzone(goal_forward * MAX_FORWARD, DEADZONE)
         rotate = deadzone(rotate * MAX_ROTATE, DEADZONE)
 
         delta = goal_forward - self.forward
