@@ -79,9 +79,9 @@ def dead_reckon(drivetrain):
 def vision_reckon(drivetrain, gyro, vision_socket):
     yield from Timed(VisionAuto(drivetrain, gyro, vision_socket, forward=0.6, look_for="retroreflective"), duration=5.0).run()
 
-def two_foot(grabber, elevator, drivetrain, gyro, vision_socket, switch_position):
-    print("Begin TWO FOOT AUTON")
-    yield from Timed(EncoderAutonomous(drivetrain, speed=1.0, inches=48), duration=10.0).run()
+def eight_foot(grabber, elevator, drivetrain, gyro, vision_socket, switch_position):
+    print("Begin EIGHT FOOT AUTON")
+    yield from Timed(EncoderAutonomous(drivetrain, gyro=gyro, speed=0.5, inches=12*8), duration=20.0).run()
 
 # Used when the robot starts in the center, vision implemented
 # Currently, vision is set at a hard limit of 5 seconds, which means we may drive into the switch a little bit (which is fine essentially)
