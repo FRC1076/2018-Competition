@@ -7,7 +7,7 @@ import wpilib
 # In inches per second
 ROBOT_SPEED = 9.0*12
 ENCODER_TICKS_PER_FOOT = 830.0
-ENCODER_TICKS_PER_INCH = 830.0 / 12.0
+ENCODER_TICKS_PER_INCH = ENCODER_TICKS_PER_FOOT / 12.0
 
 
 # All measurements in inches unless specified
@@ -20,6 +20,7 @@ CENTER_FORWARD_DIST_2 = 6.0*12.0
 
 # robot on side, going to same side switch
 SAME_SIDE_DIST = 14.0*12.0
+SAME_SIDE_DIST_2 = 6.0
 SAME_TURN_ANGLE = -90.0 # in degrees
 
 # robot on side, going to far side switch
@@ -159,11 +160,11 @@ def zig_zag_encoder(grabber, elevator, drivetrain, gyro, vision_socket, switch_p
     rotate = 90 if switch_position == Position.RIGHT else -90
     # yield from Timed(ElevatorAutonomous(elevator, up_speed=0.7), duration = 0.5).run()
     # print("End elevator inital")
-    yield from Timed(EncoderAutonomous(drivetrain, speed=0.7, inches=200), duration=10).run()
+    yield from Timed(EncoderAutonomous(drivetrain, gyro=gyro, speed=0.7, inches=200), duration=10).run()
     print("End the first forward distance")
     yield from Timed(RotateAutonomous(drivetrain, gyro, angle=rotate, turn_speed=1), duration=1).run()
     print("End first rotation right")
-    yield from Timed(EncoderAutonomous(drivetrain, speed=0.7, inches=160), duration=10).run()
+    yield from Timed(EncoderAutonomous(drivetrain, gyro=gyro, speed=0.7, inches=160), duration=10).run()
     print("End the second forward distance")
     yield from Timed(RotateAutonomous(drivetrain, gyro, angle=rotate, turn_speed=1), duration=1).run()
     print("End second rotation right")
@@ -311,16 +312,22 @@ class RotateAutonomous(BaseAutonomous):
 Drives the robot forward using the encoder
 '''
 class EncoderAutonomous(BaseAutonomous):
-    def __init__(self, drivetrain, speed=0, inches=0):
+    def __init__(self, drivetrain, gyro, speed=0, inches=0):
         self.drivetrain = drivetrain
         self.distance = inches * ENCODER_TICKS_PER_INCH
         self.forward = speed
+        self.gyro = gyro
 
     def init(self):
         self.start_dist = self.drivetrain.get_encoder_position()
+        self.start_angle = self.gyro.getAngle()
 
     def execute(self):
         while abs(self.start_dist - self.drivetrain.get_encoder_position()) < self.distance:
+            delta_angle = self.start_angle - self.gyro.getAngle()
+            delta_rotate = 0
+            delta_rotate = delta_angle/90.0
+            print("delta ang", delta_angle, "delta_rotate", delta_rotate)
             self.drivetrain.arcade_drive(self.forward, rotate=0)
             print("encoder dist", abs(self.start_dist - self.drivetrain.get_encoder_position()), "goal distance", self.distance)
             yield
