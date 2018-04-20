@@ -16,7 +16,7 @@ class Drivetrain:
         self.gear_shifter = gear_shifter
 
     def arcade_drive(self, forward, rotate):
-        self.robot_drive.arcadeDrive(forward, rotate)
+        self.robot_drive.arcadeDrive(-forward, rotate)
 
     def stop(self):
         self.robot_drive.stopMotor()
