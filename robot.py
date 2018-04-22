@@ -56,7 +56,7 @@ class Robot(wpilib.IterativeRobot):
         self.gyro = navx.ahrs.AHRS.create_spi()
 
 
-        self.drivetrain = Drivetrain(left, right, wpilib.DoubleSolenoid(3, 4), encoder_motor=self.left1)
+        self.drivetrain = Drivetrain(left, right, wpilib.DoubleSolenoid(3, 4), self.gyro, encoder_motor=self.left1)
 
         self.grabber = Grabber(
             ctre.WPI_TalonSRX(LEFT_GRABBER_ID),
