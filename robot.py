@@ -52,7 +52,11 @@ class Robot(wpilib.IterativeRobot):
         self.right2 = ctre.WPI_TalonSRX(RIGHT2_ID)
         right = wpilib.SpeedControllerGroup(self.right1, self.right2)
 
-        self.drivetrain = Drivetrain(left, right, wpilib.DoubleSolenoid(3, 4), encoder_motor=self.left1)
+        # self.gyro = wpilib.ADXRS450_Gyro()
+        self.gyro = navx.ahrs.AHRS.create_spi()
+
+
+        self.drivetrain = Drivetrain(left, right, wpilib.DoubleSolenoid(3, 4), self.gyro, encoder_motor=self.left1)
 
         self.grabber = Grabber(
             ctre.WPI_TalonSRX(LEFT_GRABBER_ID),
@@ -76,8 +80,7 @@ class Robot(wpilib.IterativeRobot):
 
         self.auto_exec = iter([])
 
-        # self.gyro = wpilib.ADXRS450_Gyro()
-        self.gyro = navx.ahrs.AHRS.create_spi()
+        
 
         # Use a mock socket in tests instead of a real one because we can't
         # actually bind to a port when testing the code.
@@ -251,7 +254,7 @@ class Robot(wpilib.IterativeRobot):
         #     self.auton = autonomous.switch_to_same_side(self.grabber, self.elevator, self.drivetrain, self.gyro, self.vision_socket, switch_position)
         # elif routine == autonomous.AutonomousRoutine.CENTER:
         #     print("CENTER AUTON")
-        #     self.auton = autonomous.center_straight_vision(self.grabber, self.elevator, self.drivetrain, self.gyro, self.vision_socket, switch_position)
+        #     self.auton = autonomous.center_straight(self.grabber, self.elevator, self.drivetrain, self.gyro, self.vision_socket, switch_position)
         # elif routine == autonomous.AutonomousRoutine.SIDE_TO_OPPOSITE:
         #     print("ZIG ZAG AUTON")
         #     self.auton = autonomous.zig_zag_encoder(self.grabber, self.elevator, self.drivetrain, self.gyro, self.vision_socket, switch_position)
