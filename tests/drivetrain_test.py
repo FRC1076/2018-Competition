@@ -34,3 +34,4 @@ def test_gear_shifter():
     assert pneumatic.state == Drivetrain.HIGH_GEAR
     drivetrain.shift_low()
     assert pneumatic.state ==  Drivetrain.LOW_GEAR
+
