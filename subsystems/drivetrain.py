@@ -26,7 +26,7 @@ class Drivetrain:
         self.setpoint = setpoint
 
     def PID(self):
-        error = self.setpoint = self.gyro.getAngle()
+        error = self.setpoint - self.gyro.getAngle()
         self.integral = integral + (error * 0.2)
         derivative = (error -self.prev_error) / 0.2
         self.rcw = self.P * error + self.I * self.integral + self.D * derivative
