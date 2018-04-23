@@ -44,3 +44,6 @@ class MockGyro:
 
     def getAngle(self):
         return 0
+
+    def getRate(self):
+        return 0

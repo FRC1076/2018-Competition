@@ -21,18 +21,24 @@ class Drivetrain:
         self.D = 0
         self.integral = 0
         self.prev_error = 0
+        self.rcw = 0
 
     def setSetPoint(self, setpoint):
         self.setpoint = setpoint
 
     def PID(self):
-        error = self.setpoint - self.gyro.getAngle()
-        self.integral = integral + (error * 0.2)
-        derivative = (error -self.prev_error) / 0.2
+        error = self.setpoint - self.gyro.getRate()
+        self.integral = self.integral + (error * 0.05)
+        derivative = (error -self.prev_error) / 0.05
         self.rcw = self.P * error + self.I * self.integral + self.D * derivative
+        self.prev_error = error
 
     def arcade_drive(self, forward, rotate):
-        self.robot_drive.arcadeDrive(-forward, rotate)
+        if abs(rotate) < 0.2:
+            self.robot_drive.arcadeDrive(-forward, rotate + self.rcw)
+        else:
+            self.robot_drive.arcadeDrive(-forward, rotate)
+        self.setpoint = rotate * 9.0 # Experimentally determined that gyro.getRate outputs between +-9.0 usually
 
     def stop(self):
         self.robot_drive.stopMotor()
@@ -46,7 +52,6 @@ class Drivetrain:
     def get_encoder_position(self):
         return self.encoder_motor.getQuadraturePosition()
 
-    def execute(self):
+    def updatePID(self):
         self.PID()
-        self.robot_drive.arcade_drive(0, self.rcw)
-
+        print("Correction: ", self.rcw, " | Setpoint:", self.setpoint, " | Gyro", self.gyro.getRate())

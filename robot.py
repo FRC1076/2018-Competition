@@ -102,6 +102,7 @@ class Robot(wpilib.IterativeRobot):
         SmartDashboard.putData(SIDE_SELECTOR, self.chooser)
 
     def robotPeriodic(self):
+        self.drivetrain.updatePID()
         if self.timer % 1000 == 0:
             print(self.vision_socket.debug())
             # print('angle ', self.gyro.getAngle())
@@ -123,7 +124,7 @@ class Robot(wpilib.IterativeRobot):
 
     def teleopPeriodic(self):
         # Arcade Driver Controlls
-        DEADZONE = 0.1
+        DEADZONE = 0.2
         MAX_ACCELERATION = 0.3
         goal_forward = -self.driver.getY(RIGHT)
         rotate = self.driver.getX(LEFT)
