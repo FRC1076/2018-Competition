@@ -119,25 +119,27 @@ def switch_to_same_side(grabber, elevator, drivetrain, gyro, vision_socket, swit
     # Makes the elevator go up at the same time as the first drive forward phase
     # yield from Timed(ElevatorAutonomous(elevator, up_speed=1), duration = 0.5).run()
     # print("end elevator")
-    yield from Timed(EncoderAutonomous(drivetrain, gyro=gyro, speed=0.6, inches=SAME_SIDE_DIST), duration = 3.5).run()
+    yield from Timed(EncoderAutonomous(drivetrain, gyro=gyro, speed=1, inches=145), duration = 3.5).run()
 
-    yield from Timed(ArcadeAutonomous(drivetrain, forward=0, rotate=0, duration=0.3)) # this is the STOP for when the cage comes down
+    yield from Timed(ArcadeAutonomous(drivetrain, forward=0, rotate=0), duration=0.3).run() # this is the STOP for when the cage comes down
     
-    yield from Timed(RotateAutonomous(drivetrain, gyro, angle=rotate, turn_speed=1), duration=1).run()
-    # yield from Timed(RotateAutonomous(drivetrain, gyro, angle=rotate, turn_speed=0.7), duration=4).run()
+    yield from Timed(Parallel(
+        RotateAutonomous(drivetrain, gyro, angle=rotate, turn_speed=0.6),
+        GrabberAutonomous(grabber, in_speed=-0.25),
+        ), duration=1).run()
     
-    yield from Timed(ElevatorAutonomous(elevator, up_speed=1), duration = 1.0).run()
+    yield from Timed(ElevatorAutonomous(elevator, up_speed=1), duration = 1.5).run()
     
-    yield from Timed(EncoderAutonomous(drivetrain, gyro=gyro, speed=0.5, inches=SAME_SIDE_DIST_2), duration = 1.5).run()
+    yield from Timed(EncoderAutonomous(drivetrain, gyro=gyro, speed=0.5, inches=10), duration = 1.5).run()
    
     yield from Timed(GrabberAutonomous(grabber, in_speed=1), duration=1).run()
     
-    drivetrain.stop()
+    
 
 def scale_to_same_side(grabber, elevator, drivetrain, gyro, vision_socket, switch_position):
-    rotate = 1 if switch_position == Position.LEFT else -1
-    yield from Timed(EncoderAutonomous(drivetrain, gyro=gyro, speed=0.7, inches=300), duration=10.0).run()
-    yield from Timed(ArcadeAutonomous(drivetrain, forward=0, rotate=rotate), duration=0.75).run()
+    rotate = 90 if switch_position == Position.LEFT else -90
+    yield from Timed(EncoderAutonomous(drivetrain, gyro=gyro, speed=1, inches=300), duration=10.0).run()
+    yield from Timed(ArcadeAutonomous(drivetrain, forward=0, rotate=rotate), duration=1).run()
     yield from Timed(ElevatorAutonomous(elevator, up_speed=1), duration=3.5).run()
     yield from Timed(GrabberAutonomous(grabber, in_speed=1), duration=1).run()
 
@@ -330,7 +332,10 @@ class EncoderAutonomous(BaseAutonomous):
             delta_rotate = 0
             delta_rotate = delta_angle/90.0
             print("delta ang", delta_angle, "delta_rotate", delta_rotate)
-            self.drivetrain.arcade_drive(self.forward, rotate=0)
+            if abs(self.start_dist - self.drivetrain.get_encoder_position()) > 0.9 * self.distance:
+                self.drivetrain.arcade_drive(self.forward * 0.7, rotate=0)
+            else:
+                self.drivetrain.arcade_drive(self.forward, rotate=0)
             print("encoder dist", abs(self.start_dist - self.drivetrain.get_encoder_position()), "goal distance", self.distance)
             yield
 
@@ -410,6 +415,6 @@ class Parallel(BaseAutonomous):
             yield
 
     def end(self):
-        for auto in self.autos():
+        for auto in self.autos:
             auto.end()
 
