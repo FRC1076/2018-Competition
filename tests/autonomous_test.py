@@ -5,27 +5,22 @@ from subsystems.drivetrain import Drivetrain
 import os
 
 def test_get_game_specific_message():
-    assert get_game_specific_message("LLL") == Position.LEFT
-    assert get_game_specific_message("LRL") == Position.LEFT
-    assert get_game_specific_message("RLR") == Position.RIGHT
-    assert get_game_specific_message("RRR") == Position.RIGHT
+    assert get_game_specific_message("LLL") == (Position.LEFT, Position.LEFT)
+    assert get_game_specific_message("LRL") == (Position.LEFT, Position.RIGHT)
+    assert get_game_specific_message("RLR") == (Position.RIGHT, Position.LEFT)
+    assert get_game_specific_message("RRR") == (Position.RIGHT, Position.RIGHT)
 
 
 def test_routine():
-    assert get_routine(Position.LEFT, Position.LEFT) == AutonomousRoutine.SIDE_TO_SAME
-    assert get_routine(Position.LEFT, Position.LEFT) == AutonomousRoutine.SIDE_TO_SAME
-    assert get_routine(Position.LEFT, Position.RIGHT) == AutonomousRoutine.SIDE_TO_OPPOSITE
-    assert get_routine(Position.LEFT, Position.RIGHT) == AutonomousRoutine.SIDE_TO_OPPOSITE
+    assert get_routine(Position.LEFT, Position.LEFT, Position.LEFT) == AutonomousRoutine.SCALE
+    assert get_routine(Position.LEFT, Position.LEFT, Position.RIGHT) == AutonomousRoutine.SWITCH
+    assert get_routine(Position.LEFT, Position.RIGHT, Position.LEFT) == AutonomousRoutine.SCALE
+    assert get_routine(Position.LEFT, Position.RIGHT, Position.RIGHT) == AutonomousRoutine.ZIG_ZAG
 
-    assert get_routine(Position.RIGHT, Position.LEFT) == AutonomousRoutine.SIDE_TO_OPPOSITE
-    assert get_routine(Position.RIGHT, Position.LEFT) == AutonomousRoutine.SIDE_TO_OPPOSITE
-    assert get_routine(Position.RIGHT, Position.RIGHT) == AutonomousRoutine.SIDE_TO_SAME
-    assert get_routine(Position.RIGHT, Position.RIGHT) == AutonomousRoutine.SIDE_TO_SAME
-
-    assert get_routine(Position.CENTER, Position.LEFT) == AutonomousRoutine.CENTER
-    assert get_routine(Position.CENTER, Position.LEFT) == AutonomousRoutine.CENTER
-    assert get_routine(Position.CENTER, Position.RIGHT) == AutonomousRoutine.CENTER
-    assert get_routine(Position.CENTER, Position.RIGHT) == AutonomousRoutine.CENTER
+    assert get_routine(Position.RIGHT, Position.LEFT, Position.LEFT) == AutonomousRoutine.ZIG_ZAG
+    assert get_routine(Position.RIGHT, Position.LEFT, Position.RIGHT) == AutonomousRoutine.SCALE
+    assert get_routine(Position.RIGHT, Position.RIGHT, Position.LEFT) == AutonomousRoutine.SWITCH
+    assert get_routine(Position.RIGHT, Position.RIGHT, Position.RIGHT) == AutonomousRoutine.SCALE
 
 
 # These aren't really rigous tests, just ones mean as a spot check that

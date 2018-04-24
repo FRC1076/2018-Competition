@@ -95,10 +95,9 @@ class Robot(wpilib.IterativeRobot):
         self.sd = NetworkTables.getTable('SmartDashboard')
 
         self.chooser = wpilib.SendableChooser()
-        self.chooser.addDefault('unknown', autonomous.Position.UNKNOWN)
+        self.chooser.addDefault('unknown (defaults to auton line crossing)', autonomous.Position.UNKNOWN)
         self.chooser.addObject('left', autonomous.Position.LEFT)
         self.chooser.addObject('right', autonomous.Position.RIGHT)
-        self.chooser.addObject('center', autonomous.Position.CENTER)
         SmartDashboard.putData(SIDE_SELECTOR, self.chooser)
 
     def robotPeriodic(self):
@@ -236,36 +235,33 @@ class Robot(wpilib.IterativeRobot):
         # It is not avaliable during disable mode before the game starts
         # and it is not useful in teleop mode, so we only get the message here.
         game_message = wpilib.DriverStation.getInstance().getGameSpecificMessage()
-        switch_position = autonomous.get_game_specific_message(game_message)
+        (switch_position, scale_position) = autonomous.get_game_specific_message(game_message)
 
         robot_position = self.chooser.getSelected()
         # robot_position = autonomous.Position.CENTER # TODO: have an actual way to set this outside of the program
 
         # alliance_side =  wpilib.DriverStation.getInstance().getAlliance()
 
-        routine = autonomous.get_routine(robot_position=robot_position, switch_position=switch_position)
+        routine = autonomous.get_routine(robot_position=robot_position, switch_position=switch_position, scale_position=scale_position)
 
         print("Game Message: ", game_message)
         print("Switch Position: ", switch_position)
         print("Robot Position", robot_position)
         print("Routine: ", routine)
-        self.auton = autonomous.switch_to_same_side(self.grabber, self.elevator, self.drivetrain, self.gyro, self.vision_socket, switch_position)
-        # if routine == autonomous.AutonomousRoutine.SIDE_TO_SAME:
-        #     print("SIDE TO SAME SIDE AUTON")
-        #     self.auton = autonomous.switch_to_same_side(self.grabber, self.elevator, self.drivetrain, self.gyro, self.vision_socket, switch_position)
-        # elif routine == autonomous.AutonomousRoutine.CENTER:
-        #     print("CENTER AUTON")
-        #     self.auton = autonomous.center_straight(self.grabber, self.elevator, self.drivetrain, self.gyro, self.vision_socket, switch_position)
-        # elif routine == autonomous.AutonomousRoutine.SIDE_TO_OPPOSITE:
-        #     print("ZIG ZAG AUTON")
-        #     self.auton = autonomous.zig_zag_encoder(self.grabber, self.elevator, self.drivetrain, self.gyro, self.vision_socket, switch_position)
-        # elif routine == autonomous.AutonomousRoutine.AUTON_LINE:
-        #     print("DEAD RECKON")
-        #     self.auton = autonomous.dead_reckon(self.drivetrain)
-        # else:
-        #     #Use this else for testing purposes?
-        #     print("VISION AUTO")
-        #     self.auton = autonomous.vision_reckon(self.drivetrain, self.gyro, self.vision_socket, 0.5, "retroreflective")
+        # self.auton = autonomous.switch_to_same_side(self.grabber, self.elevator, self.drivetrain, self.gyro, self.vision_socket, switch_position)
+      
+        if routine == autonomous.AutonomousRoutine.SWITCH:
+            print("SWITCH")
+            self.auton = autonomous.switch_to_same_side(self.grabber, self.elevator, self.drivetrain, self.gyro, self.vision_socket, switch_position)
+        elif routine == autonomous.AutonomousRoutine.SCALE:
+            print("SCALE")
+            self.auton = autonomous.scale_to_same_side(self.grabber, self.elevator, self.drivetrain, self.gyro, self.vision_socket, switch_position)
+        elif routine == autonomous.AutonomousRoutine.ZIG_ZAG:
+            print("ZIG ZAG AUTON")
+            self.auton = autonomous.zig_zag(self.grabber, self.elevator, self.drivetrain, self.gyro, self.vision_socket, switch_position)
+        else:
+            print("AUTON LINE")
+            self.auton = autonomous.dead_reckon(self.drivetrain, self.gyro)
 
     def autonomousPeriodic(self):
         try:
