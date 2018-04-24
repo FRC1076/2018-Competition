@@ -123,11 +123,14 @@ def switch_to_same_side(grabber, elevator, drivetrain, gyro, vision_socket, swit
     yield from Timed(EncoderAutonomous(drivetrain, gyro=gyro, speed=1.0, inches=145), duration = 3.5).run()
     print("asdf2")
     yield from Timed(ArcadeAutonomous(drivetrain, forward=0, rotate=0), duration=0.3).run() # this is the STOP for when the cage comes down
-    
+
+    # yield from Timed(GrabberAutonomous(grabber, in_speed=0.3), duration = 0.3).run()    
+    # yield from Timed(RotateAutonomous(drivetrain, gyro, angle=rotate, turn_speed=0.7), duration=2.5).run()
+
     yield from Timed(Parallel(
-        RotateAutonomous(drivetrain, gyro, angle=rotate, turn_speed=0.6),
+        RotateAutonomous(drivetrain, gyro, angle=rotate, turn_speed=0.7),
         GrabberAutonomous(grabber, in_speed=-0.25),
-        ), duration=1.5).run()
+        ), duration=2.5).run()
     
     yield from Timed(ElevatorAutonomous(elevator, up_speed=1), duration = 1.5).run()
     
@@ -139,12 +142,12 @@ def switch_to_same_side(grabber, elevator, drivetrain, gyro, vision_socket, swit
 
 def scale_to_same_side(grabber, elevator, drivetrain, gyro, vision_socket, switch_position):
     rotate = 90 if switch_position == Position.LEFT else -90
-    yield from Timed(EncoderAutonomous(drivetrain, gyro=gyro, speed=1, inches=175), duration=10.0).run()
+    yield from Timed(EncoderAutonomous(drivetrain, gyro=gyro, speed=1, inches=275), duration=10.0).run()
     yield from Timed(Parallel(
         ElevatorAutonomous(elevator, up_speed=1),
         GrabberAutonomous(grabber, in_speed=-0.30)),
         duration=4).run()
-    yield from Timed(RotateAutonomous(drivetrain, gyro, angle=rotate, turn_speed=0.6), duration=1.0).run()
+    yield from Timed(RotateAutonomous(drivetrain, gyro, angle=rotate, turn_speed=0.7), duration=1.5).run()
     # yield from Timed(EncoderAutonomous(drivetrain, gyro=gyro, speed=0.5, inches=10), duration = 1.5).run()
     yield from Timed(GrabberAutonomous(grabber, in_speed=1), duration=1).run()
 
@@ -302,6 +305,7 @@ class RotateAutonomous(BaseAutonomous):
             angle_error = abs(self.angle_goal) - abs(self.start_angle - self.gyro.getYaw())
 
             if angle_error < 1.0:
+                print("BROKE EARLY")
                 break
 
             correction_factor = angle_error / 10.0

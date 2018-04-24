@@ -249,7 +249,7 @@ class Robot(wpilib.IterativeRobot):
         print("Switch Position: ", switch_position)
         print("Robot Position", robot_position)
         print("Routine: ", routine)
-        self.auton = autonomous.scale_to_same_side(self.grabber, self.elevator, self.drivetrain, self.gyro, self.vision_socket, switch_position)
+        self.auton = autonomous.switch_to_same_side(self.grabber, self.elevator, self.drivetrain, self.gyro, self.vision_socket, switch_position)
         # if routine == autonomous.AutonomousRoutine.SIDE_TO_SAME:
         #     print("SIDE TO SAME SIDE AUTON")
         #     self.auton = autonomous.switch_to_same_side(self.grabber, self.elevator, self.drivetrain, self.gyro, self.vision_socket, switch_position)
