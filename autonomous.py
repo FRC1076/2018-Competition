@@ -139,13 +139,13 @@ def switch_to_same_side(grabber, elevator, drivetrain, gyro, vision_socket, swit
 
 def scale_to_same_side(grabber, elevator, drivetrain, gyro, vision_socket, switch_position):
     rotate = 90 if switch_position == Position.LEFT else -90
-    yield from Timed(EncoderAutonomous(drivetrain, gyro=gyro, speed=1, inches=300), duration=10.0).run()
+    yield from Timed(EncoderAutonomous(drivetrain, gyro=gyro, speed=1, inches=175), duration=10.0).run()
     yield from Timed(Parallel(
-        RotateAutonomous(drivetrain, gyro, angle=rotate, turn_speed=0.6),
-        GrabberAutonomous(grabber, in_speed=-0.30),
-        ), duration=1).run()
-    yield from Timed(ElevatorAutonomous(elevator, up_speed=1), duration=4).run()
-    yield from Timed(EncoderAutonomous(drivetrain, gyro=gyro, speed=0.5, inches=10), duration = 1.5).run()
+        ElevatorAutonomous(elevator, up_speed=1),
+        GrabberAutonomous(grabber, in_speed=-0.30)),
+        duration=4).run()
+    yield from Timed(RotateAutonomous(drivetrain, gyro, angle=rotate, turn_speed=0.6), duration=1.0).run()
+    # yield from Timed(EncoderAutonomous(drivetrain, gyro=gyro, speed=0.5, inches=10), duration = 1.5).run()
     yield from Timed(GrabberAutonomous(grabber, in_speed=1), duration=1).run()
 
 def scale_zig_zag(grabber, elevator, drivetrain, gyro, vision_socket, switch_position):
