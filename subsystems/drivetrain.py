@@ -15,6 +15,9 @@ class Drivetrain:
         self.gear_shifter = gear_shifter
         self.gyro = gyro
 
+        self.right = right
+        self.left = left
+
         self.setpoint = 0
         self.P = 1.8
         self.I = 0.0
@@ -39,6 +42,9 @@ class Drivetrain:
             # self.robot_drive.arcadeDrive(-forward, self.rcw)
         # else:
         self.robot_drive.arcadeDrive(-forward, rotate)
+        # this prevents the robot veering to the right (left and right are swapped as names proably)
+        right_power = self.right.get()
+        self.right.set(right_power*0.95)
             # self.integral = 0
 
     def stop(self):
@@ -55,4 +61,4 @@ class Drivetrain:
 
     def updatePID(self):
         self.PID()
-        print("Correction: ", self.rcw, " | Setpoint:", self.setpoint, " | Gyro", self.gyro.getRate())
+        # print("Correction: ", self.rcw, " | Setpoint:", self.setpoint, " | Gyro", self.gyro.getRate())
