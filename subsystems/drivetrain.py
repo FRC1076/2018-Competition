@@ -16,8 +16,8 @@ class Drivetrain:
         self.gyro = gyro
 
         self.setpoint = 0
-        self.P = 1
-        self.I = 0
+        self.P = 1.8
+        self.I = 0.0
         self.D = 0
         self.integral = 0
         self.prev_error = 0
@@ -34,11 +34,12 @@ class Drivetrain:
         self.prev_error = error
 
     def arcade_drive(self, forward, rotate):
-        if abs(rotate) < 0.2:
-            self.robot_drive.arcadeDrive(-forward, rotate + self.rcw)
-        else:
-            self.robot_drive.arcadeDrive(-forward, rotate)
-        self.setpoint = rotate * 9.0 # Experimentally determined that gyro.getRate outputs between +-9.0 usually
+        # Only do PID when we're probably driving straight
+        # if rotate == 0 and forward != 0:
+            # self.robot_drive.arcadeDrive(-forward, self.rcw)
+        # else:
+        self.robot_drive.arcadeDrive(-forward, rotate)
+            # self.integral = 0
 
     def stop(self):
         self.robot_drive.stopMotor()
