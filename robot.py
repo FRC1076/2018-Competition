@@ -103,16 +103,16 @@ class Robot(wpilib.IterativeRobot):
     def robotPeriodic(self):
         self.drivetrain.updatePID()
         if self.timer % 1000 == 0:
-            print(self.vision_socket.debug())
+            # print(self.vision_socket.debug())
             # print('angle ', self.gyro.getAngle())
             # print('pitch ', self.gyro.getPitch())
             # print('yaw ', self.gyro.getYaw())
             # print('roll ', self.gyro.getRoll())
-            print("is bound: ", self.vision_socket.is_bound())
+            # print("is bound: ", self.vision_socket.is_bound())
             print("choosen: ", self.chooser.getSelected())
-            # game_message = wpilib.DriverStation.getInstance().getGameSpecificMessage()
-            # print("game msg: ", autonomous.get_game_specific_message(game_message))
-            # print("routine: ", autonomous.get_routine(self.chooser.getSelected(), autonomous.get_game_specific_message(game_message)))
+            game_message = wpilib.DriverStation.getInstance().getGameSpecificMessage()
+            print("game msg: ", autonomous.get_game_specific_message(game_message))
+            print("routine: ", autonomous.get_routine(self.chooser.getSelected(), *autonomous.get_game_specific_message(game_message)))
         self.timer += 1
 
     def teleopInit(self):
