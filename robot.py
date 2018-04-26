@@ -102,6 +102,10 @@ class Robot(wpilib.IterativeRobot):
 
     def robotPeriodic(self):
         self.drivetrain.updatePID()
+        # print("left1", self.left1.getQuadraturePosition(), "current")
+        # print("left2", self.left2.getQuadraturePosition())
+        # print("right1", self.right1.getQuadraturePosition())
+        # print("right2", self.right2.getQuadraturePosition())
         if self.timer % 1000 == 0:
             # print(self.vision_socket.debug())
             # print('angle ', self.gyro.getAngle())
