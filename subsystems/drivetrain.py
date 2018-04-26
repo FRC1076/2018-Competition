@@ -44,7 +44,7 @@ class Drivetrain:
         self.robot_drive.arcadeDrive(-forward, rotate)
         # this prevents the robot veering to the right (left and right are swapped as names proably)
         right_power = self.right.get()
-        self.right.set(right_power*0.95)
+        self.right.set(right_power*1.00)
             # self.integral = 0
 
     def stop(self):
