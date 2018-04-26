@@ -138,8 +138,8 @@ def switch_to_same_side(grabber, elevator, drivetrain, gyro, vision_socket, swit
     yield from Timed(GrabberAutonomous(grabber, in_speed=1), duration=1).run()
     
 
-def scale_to_same_side(grabber, elevator, drivetrain, gyro, vision_socket, switch_position):
-    rotate = 90 if switch_position == Position.LEFT else -90
+def scale_to_same_side(grabber, elevator, drivetrain, gyro, vision_socket, scale_position):
+    rotate = 90 if scale_position == Position.LEFT else -90
     yield from Timed(EncoderAutonomous(drivetrain, gyro=gyro, speed=1, inches=275), duration=10.0).run()
     yield from Timed(Parallel(
         ElevatorAutonomous(elevator, up_speed=1),

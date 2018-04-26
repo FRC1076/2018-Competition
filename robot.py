@@ -252,14 +252,14 @@ class Robot(wpilib.IterativeRobot):
         print("Switch Position: ", switch_position)
         print("Robot Position", robot_position)
         print("Routine: ", routine)
-        # self.auton = autonomous.switch_to_same_side(self.grabber, self.elevator, self.drivetrain, self.gyro, self.vision_socket, switch_position)
+        # self.auton = autonomous.scale_to_same_side(self.grabber, self.elevator, self.drivetrain, self.gyro, self.vision_socket, switch_position)
       
         if routine == autonomous.AutonomousRoutine.SWITCH:
             print("SWITCH")
             self.auton = autonomous.switch_to_same_side(self.grabber, self.elevator, self.drivetrain, self.gyro, self.vision_socket, switch_position)
         elif routine == autonomous.AutonomousRoutine.SCALE:
             print("SCALE")
-            self.auton = autonomous.scale_to_same_side(self.grabber, self.elevator, self.drivetrain, self.gyro, self.vision_socket, switch_position)
+            self.auton = autonomous.scale_to_same_side(self.grabber, self.elevator, self.drivetrain, self.gyro, self.vision_socket, scale_position)
         elif routine == autonomous.AutonomousRoutine.ZIG_ZAG:
             print("ZIG ZAG AUTON")
             self.auton = autonomous.zig_zag(self.grabber, self.elevator, self.drivetrain, self.gyro, self.vision_socket, switch_position)
