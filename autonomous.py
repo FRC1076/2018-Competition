@@ -79,7 +79,7 @@ def get_game_specific_message(game_message):
 
 
 def dead_reckon(drivetrain, gyro):
-    yield from Timed(EncoderAutonomous(drivetrain, gyro=gyro, speed=1.0, inches=145), duration = 3.5).run()  
+    yield from Timed(EncoderAutonomous(drivetrain, gyro=gyro, speed=1.0, inches=135), duration = 3.5).run()  
 
 def vision_reckon(drivetrain, gyro, vision_socket):
     yield from Timed(VisionAuto(drivetrain, gyro, vision_socket, forward=0.6, look_for="retroreflective"), duration=5.0).run()
@@ -124,7 +124,7 @@ def switch_to_same_side(grabber, elevator, drivetrain, gyro, vision_socket, swit
     # Makes the elevator go up at the same time as the first drive forward phase
     # yield from Timed(ElevatorAutonomous(elevator, up_speed=1), duration = 0.5).run()
     # print("end elevator")
-    yield from Timed(EncoderAutonomous(drivetrain, gyro=gyro, speed=1.0, inches=145), duration = 3.5).run()  
+    yield from Timed(EncoderAutonomous(drivetrain, gyro=gyro, speed=1.0, inches=135), duration = 3.5).run()  
     yield from Timed(ArcadeAutonomous(drivetrain, forward=0, rotate=0), duration=0.3).run() # this is the STOP for when the cage comes down
     # yield from Timed(GrabberAutonomous(grabber, in_speed=0.3), duration = 0.3).run()    
     # yield from Timed(RotateAutonomous(drivetrain, gyro, angle=rotate, turn_speed=0.7), duration=2.5).run()
