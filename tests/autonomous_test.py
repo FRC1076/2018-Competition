@@ -12,7 +12,7 @@ def test_get_game_specific_message():
 
 
 def test_routine():
-    assert get_routine(Position.LEFT, Position.LEFT, Position.LEFT) == AutonomousRoutine.SCALE
+    assert get_routine(Position.LEFT, Position.LEFT, Position.LEFT) == AutonomousRoutine.SWITCH
     assert get_routine(Position.LEFT, Position.LEFT, Position.RIGHT) == AutonomousRoutine.SWITCH
     assert get_routine(Position.LEFT, Position.RIGHT, Position.LEFT) == AutonomousRoutine.SCALE
     assert get_routine(Position.LEFT, Position.RIGHT, Position.RIGHT) == AutonomousRoutine.ZIG_ZAG
@@ -20,7 +20,7 @@ def test_routine():
     assert get_routine(Position.RIGHT, Position.LEFT, Position.LEFT) == AutonomousRoutine.ZIG_ZAG
     assert get_routine(Position.RIGHT, Position.LEFT, Position.RIGHT) == AutonomousRoutine.SCALE
     assert get_routine(Position.RIGHT, Position.RIGHT, Position.LEFT) == AutonomousRoutine.SWITCH
-    assert get_routine(Position.RIGHT, Position.RIGHT, Position.RIGHT) == AutonomousRoutine.SCALE
+    assert get_routine(Position.RIGHT, Position.RIGHT, Position.RIGHT) == AutonomousRoutine.SWITCH
 
 
 # These aren't really rigous tests, just ones mean as a spot check that

@@ -56,10 +56,10 @@ If position is never set b/c dummies, will attempt an auton line crossing
 def get_routine(robot_position, switch_position, scale_position):
     if robot_position == Position.UNKNOWN:
         return AutonomousRoutine.AUTON_LINE
-    elif robot_position == scale_position:
-        return AutonomousRoutine.SCALE
     elif robot_position == switch_position:
         return AutonomousRoutine.SWITCH
+    elif robot_position == scale_position:
+        return AutonomousRoutine.SCALE
     else:
         return AutonomousRoutine.ZIG_ZAG
 
