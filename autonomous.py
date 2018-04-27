@@ -128,13 +128,13 @@ def switch_to_same_side(grabber, elevator, drivetrain, gyro, vision_socket, swit
     yield from Timed(ArcadeAutonomous(drivetrain, forward=0, rotate=0), duration=0.3).run() # this is the STOP for when the cage comes down
     # yield from Timed(GrabberAutonomous(grabber, in_speed=0.3), duration = 0.3).run()    
     # yield from Timed(RotateAutonomous(drivetrain, gyro, angle=rotate, turn_speed=0.7), duration=2.5).run()
-    yield from Timed(ElevatorAutonomous(elevator, up_speed=1), duration = 1.5).run() 
+    yield from Timed(ElevatorAutonomous(elevator, up_speed=1), duration = 2.0).run() 
     yield from Timed(Parallel(
         RotateAutonomous(drivetrain, gyro, angle=rotate, turn_speed=0.7),
         GrabberAutonomous(grabber, in_speed=-0.25),
         ), duration=2.5).run()    
      
-    yield from Timed(EncoderAutonomous(drivetrain, gyro=gyro, speed=0.5, inches=10), duration = 1.5).run()
+    yield from Timed(EncoderAutonomous(drivetrain, gyro=gyro, speed=0.5, inches=24), duration = 1.5).run()
     yield from Timed(GrabberAutonomous(grabber, in_speed=1), duration=1).run()
     
 
