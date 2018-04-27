@@ -19,8 +19,8 @@ from wpilib.interfaces import GenericHID
 LEFT = GenericHID.Hand.kLeft
 RIGHT = GenericHID.Hand.kRight
 
-
-ELEVATOR_ID = 6
+ELEVATOR1_ID = 5
+ELEVATOR2_ID = 6
 LEFT_GRABBER_ID = 4
 RIGHT_GRABBER_ID = 3
 
@@ -29,7 +29,6 @@ LEFT2_ID = 2
 RIGHT1_ID = 7
 RIGHT2_ID = 8
 
-# 5 is not mapped currently to any motor
 
 # Wing Solenoid IDs
 LEFT_RETRACT = 0
@@ -63,8 +62,10 @@ class Robot(wpilib.IterativeRobot):
             ctre.WPI_TalonSRX(RIGHT_GRABBER_ID),
             None,
         )
-
-        self.elevator = Elevator(ctre.WPI_TalonSRX(ELEVATOR_ID))
+        elevator1 = ctre.WPI_TalonSRX(ELEVATOR1_ID)
+        elevator2 = ctre.WPI_TalonSRX(ELEVATOR2_ID)
+        elevator2.setInverted(True)
+        self.elevator = Elevator(wpilib.SpeedControllerGroup(elevator1, elevator2))
 
         self.wings = Wings(
             left_retract=wpilib.Solenoid(LEFT_RETRACT),
