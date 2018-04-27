@@ -7,8 +7,8 @@ class Drivetrain:
     The drivetrain class handles driving around as well as shifting between
     low and high gear
     """
-    LOW_GEAR = DoubleSolenoid.Value.kReverse
-    HIGH_GEAR = DoubleSolenoid.Value.kForward
+    LOW_GEAR = DoubleSolenoid.Value.kForward
+    HIGH_GEAR = DoubleSolenoid.Value.kReverse
     def __init__(self, left, right, gear_shifter, gyro, encoder_motor=None):
         self.encoder_motor = encoder_motor
         self.robot_drive = wpilib.drive.DifferentialDrive(left, right)

@@ -156,9 +156,9 @@ class Robot(wpilib.IterativeRobot):
         gear_high = self.driver.getBumper(RIGHT)
 
         if gear_high:
-            self.drivetrain.shift_low()
-        else:
             self.drivetrain.shift_high()
+        else:
+            self.drivetrain.shift_low()
 
         # Elevator Controllers
         # When the operator holds the trigger buttons, the elevator will move up and down
