@@ -235,6 +235,7 @@ class Robot(wpilib.IterativeRobot):
         # debug_encoder(self.right2, "right2: ")
 
     def autonomousInit(self):
+        self.drivetrain.shift_low()
         print("Autonomous Begin!")
         # The game specific message is only given once autonomous starts
         # It is not avaliable during disable mode before the game starts
