@@ -144,7 +144,7 @@ def scale_to_same_side(grabber, elevator, drivetrain, gyro, vision_socket, scale
     yield from Timed(Parallel(
         ElevatorAutonomous(elevator, up_speed=0.6),
         GrabberAutonomous(grabber, in_speed=-0.25)),
-        duration=5).run()
+        duration=5.5).run()
     yield from Timed(RotateAutonomous(drivetrain, gyro, angle=rotate, turn_speed=0.7), duration=1.5).run()
     # yield from Timed(EncoderAutonomous(drivetrain, gyro=gyro, speed=0.5, inches=10), duration = 1.5).run()
     yield from Timed(GrabberAutonomous(grabber, in_speed=1), duration=1).run()
